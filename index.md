@@ -61,7 +61,7 @@ features:
 
   - icon: 🔐
     title: "07 - OIDC & RBAC"
-    details: "OIDC Authorization Code Flow with Keycloak for enterprise SSO. RBAC workspaces in Kong Manager — teams, roles, and consumer isolation."
+    details: "OIDC Authorization Code Flow with Keycloak for enterprise SSO. RBAC workspaces in Kong Manager - teams, roles, and consumer isolation."
     link: /module-07-enterprise/
     linkText: Go enterprise →
 
@@ -85,13 +85,13 @@ features:
 
   - icon: 🔄
     title: "APIOps Bootcamp ↗"
-    details: "GitOps with decK — Git as source of truth. GitHub Actions CI/CD: validate on PR, diff preview, sync to Konnect on merge."
+    details: "GitOps with decK - Git as source of truth. GitHub Actions CI/CD: validate on PR, diff preview, sync to Konnect on merge."
     link: https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/
     linkText: Go to APIOps →
 
   - icon: 🎮
     title: "Insomnia Bootcamp ↗"
-    details: "Master API testing with Insomnia — design, debug, and test REST, GraphQL, and gRPC APIs."
+    details: "Master API testing with Insomnia - design, debug, and test REST, GraphQL, and gRPC APIs."
     link: https://kong-grajesh-se.github.io/learn-insomnia/
     linkText: Go to Insomnia →
 ---

@@ -1,26 +1,26 @@
 # Kong API Gateway Bootcamp
 
-A partner-ready, end-to-end bootcamp for mastering Kong Gateway - the world's most-deployed API gateway. Nine structured modules, fully hands-on, from core concepts to enterprise AI and CI/CD.
+A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Seven structured modules, fully hands-on, from core concepts to enterprise patterns - plus specialist deep-dives.
 
 ## Overview
 
 | | |
 |---|---|
-| **Format** | 7 structured modules + Plugin Reference |
+| **Format** | 7 modules + Plugin Reference + Specialist Bootcamps |
 | **Flow** | Core → Auth → Traffic → Transform → Observe → Enterprise |
 | **Platform** | macOS · Linux · Docker |
 | **Audience** | Developers, DevOps, Platform teams, Enterprise architects |
 | **Demo repo** | [get-started-guide](https://github.com/Kong-Grajesh-SE/get-started-guide) |
-| **Plugin Reference** | [plugin-reference.md](./plugin-reference.md) — quick configs for all 17 plugins |
+| **Plugin Reference** | [plugin-reference.md](./plugin-reference.md) - quick configs for all 20 plugins |
 
 ## Bootcamp Modules
 
 | # | Module | Key Topics | Plugins |
 |---|---|---|---|
-| 01 | **Orientation & Setup** | Install, architecture, first proxied request, Kong Manager | — |
-| 02 | **Core Gateway Concepts** | Services, Routes, Upstreams, Consumers, decK | — |
+| 01 | **Orientation & Setup** | Install, architecture, first proxied request, Kong Manager | - |
+| 02 | **Core Gateway Concepts** | Services, Routes, Upstreams, Consumers, decK | - |
 | 03 | **Authentication Plugins** | Key Auth, JWT, HMAC Auth, OIDC / Keycloak | `key-auth` `hmac-auth` `jwt` `openid-connect` |
-| 04 | **Traffic Control** | Rate Limiting, Circuit Breaker, ACL, CORS, IP Restriction, Caching | `rate-limiting-advanced` `acl` `cors` `ip-restriction` `proxy-cache` |
+| 04 | **Traffic Control** | Rate Limiting, Circuit Breaker, ACL, CORS, IP Restriction, Caching | `rate-limiting-advanced` `acl` `cors` `ip-restriction` `proxy-cache` `proxy-cache-advanced` |
 | 05 | **Transformations** | Request/Response Transformer, Correlation ID | `request-transformer-advanced` `response-transformer-advanced` `correlation-id` |
 | 06 | **Observability** | HTTP Logging, Prometheus + Grafana, OpenTelemetry | `http-log` `prometheus` `opentelemetry` |
 | 07 | **OIDC & RBAC** | OIDC Auth Code Flow, RBAC, Upstream OAuth, OPA, Datakit | `openid-connect` `upstream-oauth` `opa` `datakit` |
@@ -39,7 +39,7 @@ Enterprise   → Module 07: OIDC (Kong Identity) · RBAC · Upstream OAuth · OP
 
 ## Plugins Covered
 
-17 plugins across 6 categories — each with quick config, parameter table, and lab link.
+20 plugins across 6 categories - each with quick config, parameter table, and lab link.
 See the **[Plugin Reference →](./plugin-reference.md)** for the full reference.
 
 | Category | Plugins |
@@ -50,6 +50,18 @@ See the **[Plugin Reference →](./plugin-reference.md)** for the full reference
 | **Traffic Control** | `rate-limiting-advanced` · `proxy-cache` · `proxy-cache-advanced` · `datakit` |
 | **Transformation** | `request-transformer-advanced` · `response-transformer-advanced` · `correlation-id` |
 | **Observability** | `http-log` · `prometheus` · `opentelemetry` |
+
+## Specialist Bootcamps
+
+After completing the core modules, go deep with these specialist tracks:
+
+| Bootcamp | Focus | Link |
+|---|---|---|
+| **AI Gateway** | LLM proxy, prompt injection guards, semantic caching, PII sanitization | [learn-kong-ai-gateway ↗](https://kong-grajesh-se.github.io/learn-kong-ai-gateway/) |
+| **Agentic AI & MCP** | MCP proxy, OAuth2/PKCE for agents, Agent-to-Agent routing | [learn-kong-agentic-bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/) |
+| **Developer Portal** | Publish APIs, OIDC SSO, self-service app registration, RBAC | [learn-kong-dev-portal ↗](https://kong-grajesh-se.github.io/learn-kong-dev-portal/) |
+| **APIOps** | GitOps with decK, GitHub Actions CI/CD, quality gates | [learn-kong-apiops-bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/) |
+| **Insomnia** | API design, testing, and debugging with Insomnia | [learn-insomnia ↗](https://kong-grajesh-se.github.io/learn-insomnia/) |
 
 ## Prerequisites
 
@@ -98,17 +110,19 @@ npm run dev:all     # starts frontend (:5173) + backend (:3001)
 api-gateway-bootcamp/
 ├── README.md
 ├── index.md                         ← VitePress home page
-├── plugin-reference.md              ← Quick configs for all 17 plugins
+├── plugin-reference.md              ← Quick configs for all 20 plugins
+├── prerequisites.md
+├── deployment-overview.md
+├── api-specs.md
 ├── package.json
 ├── public/
-│   ├── logomark.svg                 ← Kong logomark
-│   ├── kong-gateway-logo.svg        ← Kong Gateway product logo
+│   ├── kong-gateway-logo.svg
 │   └── favicon.png
 ├── docs/.vitepress/
 │   ├── config.js                    ← VitePress + navigation config
 │   └── theme/
-│       ├── index.js                 ← extends default theme
-│       └── style.css                ← Kong brand design system
+│       ├── index.js
+│       └── style.css
 ├── module-01-orientation/
 │   ├── README.md
 │   └── labs/
@@ -125,13 +139,17 @@ api-gateway-bootcamp/
 │   └── labs/
 │       ├── 03-key-auth.md
 │       ├── 03-jwt-auth.md
-│       └── 03-oidc-keycloak.md
+│       ├── 03-oidc-keycloak.md
+│       └── 03-hmac-auth.md
 ├── module-04-traffic-control/
 │   ├── README.md
 │   └── labs/
 │       ├── 04-rate-limiting.md
 │       ├── 04-circuit-breaker.md
-│       └── 04-acl.md
+│       ├── 04-acl.md
+│       ├── 04-cors.md
+│       ├── 04-ip-restriction.md
+│       └── 04-proxy-cache.md
 ├── module-05-transformations/
 │   ├── README.md
 │   └── labs/
@@ -144,11 +162,14 @@ api-gateway-bootcamp/
 │       ├── 06-http-logging.md
 │       ├── 06-prometheus.md
 │       └── 06-opentelemetry.md
-├── module-07-enterprise/
+└── module-07-enterprise/
     ├── README.md
     └── labs/
         ├── 07-oidc-auth-code.md
-        └── 07-rbac-teams.md
+        ├── 07-rbac-teams.md
+        ├── 07-upstream-oauth.md
+        ├── 07-opa.md
+        └── 07-datakit.md
 ```
 
 ## Resources
@@ -158,9 +179,6 @@ api-gateway-bootcamp/
 | Kong Gateway docs | https://developer.konghq.com/gateway/ |
 | Kong Plugin Hub | https://developer.konghq.com/plugins/ |
 | Kong Konnect | https://cloud.konghq.com |
-| decK docs | https://developer.konghq.com/deck/ |
 | OPA (Open Policy Agent) | https://www.openpolicyagent.org/ |
-| AI Gateway | https://developer.konghq.com/ai-gateway/ |
-| MCP specification | https://modelcontextprotocol.io/ |
 
 © Kong Inc. 2026 - The AI Connectivity Company

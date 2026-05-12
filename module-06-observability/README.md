@@ -103,7 +103,7 @@ plugins:
 
 | Parameter | Default | Description |
 |---|---|---|
-| `http_endpoint` | — | URL to POST log entries to |
+| `http_endpoint` | - | URL to POST log entries to |
 | `method` | `POST` | HTTP method for log delivery |
 | `content_type` | `application/json` | Payload content type |
 | `timeout` | `10000` | Send timeout in milliseconds |

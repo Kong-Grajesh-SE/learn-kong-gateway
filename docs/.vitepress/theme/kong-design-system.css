@@ -1,5 +1,5 @@
 /* ================================================================
-   Kong Design System — Colors & Type
+   Kong Design System - Colors & Type
    Source of truth for all Kong-branded designs.
    ================================================================ */
 
@@ -11,35 +11,35 @@
 
 :root {
   /* ============================================================
-     BRAND COLORS  — voltage running through the system
+     BRAND COLORS  - voltage running through the system
      ============================================================ */
-  --kong-electric-lime: rgb(204, 255, 0);   /* #CCFF00 — primary accent, the voltage */
+  --kong-electric-lime: rgb(204, 255, 0);   /* #CCFF00 - primary accent, the voltage */
   --kong-lime:          var(--kong-electric-lime); /* alias */
-  --kong-dark-green:    rgb(0, 15, 6);       /* #000F06 — Dark theme bg (Pantone Black 3 U) */
-  --kong-black:         rgb(0, 0, 0);        /* #000000 — deepest surface */
-  --kong-bay:           rgb(183, 189, 181);  /* #B7BDB5 — Bay theme bg (Pantone 7527 U) */
-  --kong-white:         rgb(255, 255, 255);  /* #FFFFFF — White theme bg (Pantone White U) */
+  --kong-dark-green:    rgb(0, 15, 6);       /* #000F06 - Dark theme bg (Pantone Black 3 U) */
+  --kong-black:         rgb(0, 0, 0);        /* #000000 - deepest surface */
+  --kong-bay:           rgb(183, 189, 181);  /* #B7BDB5 - Bay theme bg (Pantone 7527 U) */
+  --kong-white:         rgb(255, 255, 255);  /* #FFFFFF - White theme bg (Pantone White U) */
 
   /* ============================================================
-     GRAYSCALE — warm desaturated greens
+     GRAYSCALE - warm desaturated greens
      ============================================================ */
   --gray-0:   rgb(255, 255, 255); /* #FFFFFF */
   --gray-50:  rgb(231, 237, 229); /* #E7EDE5 */
   --gray-100: rgb(215, 222, 212); /* #D7DED4 */
-  --gray-150: rgb(205, 212, 203); /* #CDD4CB — light theme bg */
+  --gray-150: rgb(205, 212, 203); /* #CDD4CB - light theme bg */
   --gray-200: rgb(186, 193, 184); /* #BAC1B8 */
   --gray-300: rgb(174, 181, 167); /* #AEB5A7 */
   --gray-400: rgb(161, 166, 159); /* #A1A69F */
   --gray-500: rgb(138, 144, 136); /* typical mid */
-  --gray-600: rgb(74, 77, 73);    /* #4A4D49 — borders on dark */
+  --gray-600: rgb(74, 77, 73);    /* #4A4D49 - borders on dark */
   --gray-700: rgb(48, 53, 47);    /* #30352F */
   --gray-800: rgb(36, 37, 41);    /* #242529 */
-  --gray-850: rgb(49, 57, 25);    /* #313919 — olive border on lime bg cards */
-  --gray-900: rgb(13, 16, 5);     /* #0D1005 — near-black surface */
+  --gray-850: rgb(49, 57, 25);    /* #313919 - olive border on lime bg cards */
+  --gray-900: rgb(13, 16, 5);     /* #0D1005 - near-black surface */
   --gray-950: rgb(0, 15, 6);      /* #000F06 */
 
   /* ============================================================
-     SEMANTIC — DARK THEME (default)
+     SEMANTIC - DARK THEME (default)
      ============================================================ */
   --bg-0:   var(--kong-dark-green);  /* page bg */
   --bg-100: var(--kong-black);       /* elevated surface */
@@ -61,7 +61,7 @@
   --accent-glow:     0 0 94px 0 rgba(204, 255, 0, 0.5);
 
   /* ============================================================
-     RADIUS — Kong is mostly sharp; pills for CTAs
+     RADIUS - Kong is mostly sharp; pills for CTAs
      ============================================================ */
   --radius-none: 0;
   --radius-xs:   2px;
@@ -94,7 +94,7 @@
   --glow-lime-soft: 0 0 120px rgba(204,255,0,.22);
 
   /* ============================================================
-     MOTION — "speed" = compressed, fluid
+     MOTION - "speed" = compressed, fluid
      ============================================================ */
   --ease-out-swift: cubic-bezier(.2,.8,.2,1);
   --ease-in-out:    cubic-bezier(.7,0,.3,1);
@@ -132,7 +132,7 @@
 }
 
 /* ================================================================
-   TYPOGRAPHY SCALE — utility classes
+   TYPOGRAPHY SCALE - utility classes
    ================================================================ */
 
 .type-head-3xl { font-family: var(--font-display); font-weight: 800; font-size: 120px; line-height: 120px; letter-spacing: -0.01em; }

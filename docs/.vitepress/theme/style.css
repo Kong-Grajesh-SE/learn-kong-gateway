@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════════════════════
-   Kong API Gateway Bootcamp — Design System 2026 v1.1
+   Kong API Gateway Bootcamp - Design System 2026 v1.1
    Brand: Kong Brand Guidelines 2026 v1.1
    ─────────────────────────────────────────────────────────────────────────
    Colors   : Navy #001408 · Electric Lime #CCFF00 · Bay (gray) #CDD4CB
    Fonts    : Funnel Sans (headings/body) · Roboto Mono (code) · Space Grotesk (buttons)
-   Theme    : Dark (priority) — dark green bg, electric lime accents
+   Theme    : Dark (priority) - dark green bg, electric lime accents
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── Kong 2026 brand tokens ──────────────────────────────────────────────── */
@@ -96,7 +96,7 @@
   --vp-home-hero-name-background: linear-gradient(135deg, #4a7c20 0%, var(--kong-gray-500) 100%);
 }
 
-/* ════════ TYPOGRAPHY — Funnel Sans ══════════════════════════════════════ */
+/* ════════ TYPOGRAPHY - Funnel Sans ══════════════════════════════════════ */
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -248,7 +248,7 @@ body {
 .dark .custom-block.details summary { cursor: pointer; font-family: 'Funnel Sans', sans-serif; font-weight: 600; color: var(--kong-gray-200); }
 .dark .custom-block.details summary:hover { color: var(--kong-lime); }
 
-/* ════════ CODE BLOCKS — Roboto Mono ════════════════════════════════════ */
+/* ════════ CODE BLOCKS - Roboto Mono ════════════════════════════════════ */
 .dark .vp-code-group .tabs { background: #030c04; border-bottom: 1px solid var(--kong-border); border-radius: 8px 8px 0 0; }
 .dark .vp-code-group .tabs label { font-family: 'Roboto Mono', monospace; font-size: 0.76rem; font-weight: 500; color: var(--kong-text-muted); letter-spacing: 0.03em; }
 .dark .vp-code-group .tabs input:checked + label { color: var(--kong-lime); border-bottom-color: var(--kong-lime); }
@@ -331,7 +331,7 @@ body {
   .kong-deploy-grid { grid-template-columns: 1fr; }
 }
 
-/* ════════ SCROLL OFFSET — prevent headings hiding under sticky nav ══════ */
+/* ════════ SCROLL OFFSET - prevent headings hiding under sticky nav ══════ */
 /* VitePress nav is 64px tall; add 24px breathing room */
 .vp-doc h1,
 .vp-doc h2,

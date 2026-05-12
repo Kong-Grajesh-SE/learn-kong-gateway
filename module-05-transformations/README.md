@@ -94,7 +94,7 @@ plugins:
 | `remove` | Delete field |
 | `replace` | Overwrite if field exists; no-op if absent |
 | `rename` | Rename the key (value unchanged) |
-| `allow` | Allowlist — all other fields are stripped |
+| `allow` | Allowlist - all other fields are stripped |
 
 **Lab:** [05-A: Request Transformer](/module-05-transformations/labs/05-request-transformer)
 
@@ -123,7 +123,7 @@ plugins:
 | `add.json` | Add JSON key:value if absent (supports dotted paths) |
 | `remove.json` | Remove JSON field by key or dotted path |
 | `replace.json` | Overwrite JSON field if it exists |
-| `allow.json` | Allowlist — all other JSON fields stripped from response |
+| `allow.json` | Allowlist - all other JSON fields stripped from response |
 | `transform.functions` | Lua snippets for arbitrary body manipulation |
 
 **Lab:** [05-B: Response Transformer](/module-05-transformations/labs/05-response-transformer)

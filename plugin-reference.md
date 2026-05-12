@@ -1,6 +1,6 @@
 ---
 title: Plugin Reference
-description: Quick-reference for every Kong plugin covered in the API Gateway Bootcamp — config tables, code snippets, and links to labs.
+description: Quick-reference for every Kong plugin covered in the API Gateway Bootcamp - config tables, code snippets, and links to labs.
 ---
 
 # 🧩 Plugin Reference
@@ -11,21 +11,22 @@ Click any plugin name to jump to the full lab.
 | Plugin | Category | Lab |
 |---|---|---|
 | [key-auth](#key-auth) | Authentication | [Lab 03-A](/module-03-authentication/labs/03-key-auth) |
-| [hmac-auth](#hmac-auth) | Authentication | — |
+| [hmac-auth](#hmac-auth) | Authentication | [Lab 03-D](/module-03-authentication/labs/03-hmac-auth) |
 | [jwt](#jwt-auth) | Authentication | [Lab 03-B](/module-03-authentication/labs/03-jwt-auth) |
 | [openid-connect (Keycloak)](#openid-connect-with-keycloak) | Authentication | [Lab 03-C](/module-03-authentication/labs/03-oidc-keycloak) |
 | [openid-connect (Kong Identity)](#openid-connect-with-kong-identity) | Authentication | [Lab 07-A](/module-07-enterprise/labs/07-oidc-auth-code) |
-| [upstream-oauth](#upstream-oauth) | Authentication | — |
+| [upstream-oauth](#upstream-oauth) | Authentication | [Lab 07-C](/module-07-enterprise/labs/07-upstream-oauth) |
 | [acl](#acl) | Authorization | [Lab 04-C](/module-04-traffic-control/labs/04-acl) |
-| [cors](#cors) | Security | — |
-| [ip-restriction](#ip-restriction) | Security | — |
-| [opa](#opa) | Security | — |
+| [cors](#cors) | Security | [Lab 04-D](/module-04-traffic-control/labs/04-cors) |
+| [ip-restriction](#ip-restriction) | Security | [Lab 04-E](/module-04-traffic-control/labs/04-ip-restriction) |
+| [opa](#opa) | Security | [Lab 07-D](/module-07-enterprise/labs/07-opa) |
 | [rate-limiting-advanced](#rate-limiting-advanced) | Traffic Control | [Lab 04-A](/module-04-traffic-control/labs/04-rate-limiting) |
-| [proxy-cache](#proxy-cache) | Traffic Control | — |
-| [proxy-cache-advanced](#proxy-cache-advanced) | Traffic Control | — |
-| [datakit](#datakit) | Traffic Control | — |
+| [proxy-cache](#proxy-cache) | Traffic Control | [Lab 04-F](/module-04-traffic-control/labs/04-proxy-cache) |
+| [proxy-cache-advanced](#proxy-cache-advanced) | Traffic Control | [Lab 04-F](/module-04-traffic-control/labs/04-proxy-cache) |
+| [datakit](#datakit) | Traffic Control | [Lab 07-E](/module-07-enterprise/labs/07-datakit) |
 | [request-transformer-advanced](#request-transformer-advanced) | Transformation | [Lab 05-A](/module-05-transformations/labs/05-request-transformer) |
 | [response-transformer-advanced](#response-transformer-advanced) | Transformation | [Lab 05-B](/module-05-transformations/labs/05-response-transformer) |
+| [correlation-id](#correlation-id) | Transformation | [Lab 05-C](/module-05-transformations/labs/05-correlation-id) |
 | [opentelemetry](#opentelemetry) | Observability | [Lab 06-C](/module-06-observability/labs/06-opentelemetry) |
 | [prometheus](#prometheus) | Observability | [Lab 06-B](/module-06-observability/labs/06-prometheus) |
 | [http-log](#http-log) | Observability | [Lab 06-A](/module-06-observability/labs/06-http-logging) |
@@ -127,6 +128,8 @@ plugins:
 
 Min version: Kong Gateway 1.0 | [Plugin Hub](https://developer.konghq.com/plugins/hmac-auth/)
 
+**Module:** [03 - Authentication](/module-03-authentication/) · **Lab:** [03-D](/module-03-authentication/labs/03-hmac-auth)
+
 ### Quick Config
 
 ::: code-group
@@ -177,7 +180,7 @@ Clients must send an `Authorization` header:
 Authorization: hmac username="<username>", algorithm="hmac-sha256", headers="date @request-target", signature="<base64-signature>"
 ```
 
-The signature is a base64-encoded HMAC of the signing string — a newline-concatenation of the signed header values. Recommended headers to sign: `date`, `@request-target`, `host`.
+The signature is a base64-encoded HMAC of the signing string - a newline-concatenation of the signed header values. Recommended headers to sign: `date`, `@request-target`, `host`.
 
 ### Configuration Reference
 
@@ -194,7 +197,7 @@ The signature is a base64-encoded HMAC of the signing string — a newline-conca
 
 ## openid-connect with Keycloak
 
-> Full browser-based SSO using OIDC Authorization Code Flow. Kong acts as the OIDC Relying Party; Keycloak is the IdP. Tokens never reach the browser — all exchange is server-side.
+> Full browser-based SSO using OIDC Authorization Code Flow. Kong acts as the OIDC Relying Party; Keycloak is the IdP. Tokens never reach the browser - all exchange is server-side.
 
 **Module:** [03 - Authentication](/module-03-authentication/) · **Lab:** [03-C](/module-03-authentication/labs/03-oidc-keycloak)
 
@@ -247,7 +250,7 @@ plugins:
 
 ## openid-connect with Kong Identity
 
-> Configure the OIDC plugin using **Kong Konnect Identity** (Kong's built-in IdP) as the issuer — no external Keycloak required for service-to-service or admin API protection.
+> Configure the OIDC plugin using **Kong Konnect Identity** (Kong's built-in IdP) as the issuer - no external Keycloak required for service-to-service or admin API protection.
 
 **Module:** [07 - OIDC & RBAC](/module-07-enterprise/) · **Lab:** [07-A](/module-07-enterprise/labs/07-oidc-auth-code)
 
@@ -314,13 +317,13 @@ curl -H "Authorization: Bearer $TOKEN" \
 
 ## upstream-oauth
 
-> **Enterprise.** Allows Kong Gateway to obtain an OAuth 2.0 access token from a configured IdP and inject it into upstream requests — enables machine-to-machine auth without exposing credentials to the client.
+> **Enterprise.** Allows Kong Gateway to obtain an OAuth 2.0 access token from a configured IdP and inject it into upstream requests - enables machine-to-machine auth without exposing credentials to the client.
 
 ::: tip Kong Gateway Enterprise required
 `upstream-oauth` requires Kong Gateway Enterprise or Konnect. Min version: Kong Gateway 3.8. [Plugin Hub](https://developer.konghq.com/plugins/upstream-oauth/)
 :::
 
-**Module:** [07 - Enterprise](/module-07-enterprise/)
+**Module:** [07 - Enterprise](/module-07-enterprise/) · **Lab:** [07-C](/module-07-enterprise/labs/07-upstream-oauth)
 
 ### How It Works
 
@@ -373,10 +376,10 @@ plugins:
 
 | Parameter | Default | Description |
 |---|---|---|
-| `oauth.token_endpoint` | — | IdP token endpoint URL |
+| `oauth.token_endpoint` | - | IdP token endpoint URL |
 | `oauth.grant_type` | `client_credentials` | OAuth grant type |
-| `oauth.client_id` | — | OAuth client ID registered at the IdP |
-| `oauth.client_secret` | — | OAuth client secret |
+| `oauth.client_id` | - | OAuth client ID registered at the IdP |
+| `oauth.client_secret` | - | OAuth client secret |
 | `oauth.scopes` | `[]` | OAuth scopes to request |
 | `client_auth_method` | `client_secret_basic` | Auth method: `client_secret_basic`, `client_secret_post`, `client_secret_jwt` |
 | `cache.strategy` | `memory` | Token cache backend: `memory` or `redis` |
@@ -395,7 +398,7 @@ plugins:
 
 ::: code-group
 
-```yaml [decK YAML — allowlist]
+```yaml [decK YAML - allowlist]
 plugins:
   - name: acl
     config:
@@ -405,7 +408,7 @@ plugins:
       hide_groups_header: true
 ```
 
-```yaml [decK YAML — denylist]
+```yaml [decK YAML - denylist]
 plugins:
   - name: acl
     config:
@@ -448,6 +451,8 @@ Specify either `allow` **or** `deny`, not both.
 > Adds Cross-Origin Resource Sharing (CORS) response headers so browsers can make cross-origin requests to your APIs. Configure allowed origins, methods, headers, and credentials policy.
 
 Min version: Kong Gateway 1.0 | [Plugin Hub](https://developer.konghq.com/plugins/cors/)
+
+**Module:** [04 - Traffic Control](/module-04-traffic-control/) · **Lab:** [04-D](/module-04-traffic-control/labs/04-cors)
 
 ### Quick Config
 
@@ -513,7 +518,7 @@ plugins:
 :::
 
 ::: tip
-Use the CORS plugin only on Routes matching on **paths or methods** — not Host-only routes. Browsers cannot send a custom `Host` header during preflight.
+Use the CORS plugin only on Routes matching on **paths or methods** - not Host-only routes. Browsers cannot send a custom `Host` header during preflight.
 :::
 
 ---
@@ -523,6 +528,8 @@ Use the CORS plugin only on Routes matching on **paths or methods** — not Host
 > Restricts access to a Service or Route by allowing or blocking client IP addresses. Supports single IPs, multiple IPs, and CIDR notation for IPv4 and IPv6.
 
 Min version: Kong Gateway 1.0 | [Plugin Hub](https://developer.konghq.com/plugins/ip-restriction/)
+
+**Module:** [04 - Traffic Control](/module-04-traffic-control/) · **Lab:** [04-E](/module-04-traffic-control/labs/04-ip-restriction)
 
 ### Quick Config
 
@@ -564,8 +571,8 @@ trusted_ips    = 10.0.0.0/8, 172.16.0.0/12
 
 | Parameter | Default | Description |
 |---|---|---|
-| `allow` | `[]` | Allowlist of IPs/CIDRs — all other IPs are blocked |
-| `deny` | `[]` | Denylist of IPs/CIDRs — all other IPs are allowed |
+| `allow` | `[]` | Allowlist of IPs/CIDRs - all other IPs are blocked |
+| `deny` | `[]` | Denylist of IPs/CIDRs - all other IPs are allowed |
 | `status` | `403` | HTTP status code returned when access is denied |
 | `message` | `"Your IP address is not allowed"` | Error message body when denied |
 
@@ -582,6 +589,8 @@ Combine `allow` and `deny` to, for example, permit an entire CIDR range but bloc
 ::: tip Kong Gateway Enterprise required
 `opa` requires Kong Gateway Enterprise or Konnect. Min version: Kong Gateway 2.4. [Plugin Hub](https://developer.konghq.com/plugins/opa/)
 :::
+
+**Module:** [07 - Enterprise](/module-07-enterprise/) · **Lab:** [07-D](/module-07-enterprise/labs/07-opa)
 
 ### How It Works
 
@@ -667,7 +676,7 @@ allow {
 |---|---|---|
 | `opa_host` | `localhost` | OPA server hostname |
 | `opa_port` | `8181` | OPA server port |
-| `opa_path` | — | OPA data/rule API path (e.g. `/v1/data/myapp/authz/allow`) |
+| `opa_path` | - | OPA data/rule API path (e.g. `/v1/data/myapp/authz/allow`) |
 | `https` | `false` | Use HTTPS to connect to OPA |
 | `ssl_verify` | `true` | Verify OPA server TLS certificate |
 | `include_consumer_in_opa_input` | `false` | Include authenticated Consumer data in OPA payload |
@@ -679,11 +688,13 @@ allow {
 
 ## proxy-cache-advanced
 
-> Enterprise response caching plugin. Caches upstream responses in memory or Redis and serves them directly from Kong — reduces upstream load and improves latency.
+> Enterprise response caching plugin. Caches upstream responses in memory or Redis and serves them directly from Kong - reduces upstream load and improves latency.
 
 ::: tip Kong Gateway Enterprise required
 `proxy-cache-advanced` is an Enterprise plugin. The open-source edition includes `proxy-cache` (memory-only, no Redis, no cache bypass controls).
 :::
+
+**Module:** [04 - Traffic Control](/module-04-traffic-control/) · **Lab:** [04-F](/module-04-traffic-control/labs/04-proxy-cache)
 
 ### Quick Config
 
@@ -754,8 +765,8 @@ curl -X POST http://localhost:8001/routes/{route}/plugins \
 
 # Check cache status via response headers
 curl -si http://localhost:8000/api/flights | grep -i "X-Cache"
-# X-Cache-Status: Miss  (first request — cached)
-# X-Cache-Status: Hit   (subsequent requests — served from cache)
+# X-Cache-Status: Miss  (first request - cached)
+# X-Cache-Status: Hit   (subsequent requests - served from cache)
 
 # Purge cache for a specific resource
 curl -X DELETE http://localhost:8001/proxy-cache-advanced/{cache-key}
@@ -785,7 +796,7 @@ curl -X DELETE http://localhost:8001/proxy-cache-advanced/{cache-key}
 | `ignore_uri_case` | `false` | Treat `/Flights` and `/flights` as the same key |
 | `vary_headers` | `[]` | Additional headers that form part of the cache key |
 | `memory.dictionary_name` | `kong_db_cache` | Shared memory zone name |
-| `redis.host` | — | Redis server hostname |
+| `redis.host` | - | Redis server hostname |
 | `redis.port` | `6379` | Redis server port |
 | `redis.timeout` | `2000` | Redis connection timeout (ms) |
 
@@ -813,6 +824,8 @@ config:
 > Reverse proxy caching using in-memory storage (free tier). Caches upstream responses and serves them directly from Kong to reduce upstream load and improve latency. For Redis/cluster support and advanced controls, see [proxy-cache-advanced](#proxy-cache-advanced).
 
 Min version: Kong Gateway 1.2 | [Plugin Hub](https://developer.konghq.com/plugins/proxy-cache/)
+
+**Module:** [04 - Traffic Control](/module-04-traffic-control/) · **Lab:** [04-F](/module-04-traffic-control/labs/04-proxy-cache)
 
 ### Quick Config
 
@@ -854,7 +867,7 @@ curl -X POST http://localhost:8001/routes/{route}/plugins \
 
 # Check cache status from response headers
 curl -si http://localhost:8000/api/resource | grep X-Cache
-# X-Cache-Status: Miss   (first request — cached now)
+# X-Cache-Status: Miss   (first request - cached now)
 # X-Cache-Status: Hit    (subsequent requests from cache)
 ```
 
@@ -872,7 +885,7 @@ curl -si http://localhost:8000/api/resource | grep X-Cache
 
 | Parameter | Default | Description |
 |---|---|---|
-| `strategy` | `memory` | Storage backend (`memory` only — use `proxy-cache-advanced` for Redis) |
+| `strategy` | `memory` | Storage backend (`memory` only - use `proxy-cache-advanced` for Redis) |
 | `cache_ttl` | `300` | Entry lifetime in seconds |
 | `response_code` | `[200, 301, 404]` | HTTP response codes to cache |
 | `request_method` | `[GET, HEAD]` | HTTP methods to cache |
@@ -886,7 +899,7 @@ curl -si http://localhost:8000/api/resource | grep X-Cache
 
 ## request-transformer-advanced
 
-> Modify inbound requests — add, remove, replace, rename, or append headers, query parameters, and body fields. The **advanced** (Enterprise) variant adds Lua templating and conditional logic.
+> Modify inbound requests - add, remove, replace, rename, or append headers, query parameters, and body fields. The **advanced** (Enterprise) variant adds Lua templating and conditional logic.
 
 **Module:** [05 - Transformations](/module-05-transformations/) · **Lab:** [05-A](/module-05-transformations/labs/05-request-transformer)
 
@@ -943,13 +956,13 @@ plugins:
 | `remove` | Delete field if it exists |
 | `replace` | Overwrite field if it exists; no-op if absent |
 | `rename` | Rename field key (value unchanged) |
-| `allow` | Allowlist — fields not listed are **stripped** |
+| `allow` | Allowlist - fields not listed are **stripped** |
 
 ---
 
 ## response-transformer-advanced
 
-> Modify outbound responses — add, remove, replace headers and JSON body fields. The **advanced** variant supports JSON path operations on nested objects and Lua transformation functions.
+> Modify outbound responses - add, remove, replace headers and JSON body fields. The **advanced** variant supports JSON path operations on nested objects and Lua transformation functions.
 
 **Module:** [05 - Transformations](/module-05-transformations/) · **Lab:** [05-B](/module-05-transformations/labs/05-response-transformer)
 
@@ -985,7 +998,7 @@ plugins:
         headers:
           - "X-Legacy-Id:X-Canonical-Id"
       allow:
-        json: []               # allowlist — strips all other JSON fields
+        json: []               # allowlist - strips all other JSON fields
 ```
 
 ### JSON Path Operations (Advanced)
@@ -1009,8 +1022,62 @@ config:
 | `add.json_types` | Type for each added JSON value (`string`, `boolean`, `number`) |
 | `remove.json` | Remove JSON field by key or dotted path |
 | `replace.json` | Overwrite JSON field if it exists |
-| `allow.json` | Allowlist — all other JSON fields are stripped from the response |
+| `allow.json` | Allowlist - all other JSON fields are stripped from the response |
 | `transform.functions` | Lua snippets for arbitrary body manipulation |
+
+---
+
+## correlation-id
+
+> Injects a unique ID into every request (and optionally the response) for end-to-end tracing across Kong logs, upstream services, and external systems.
+
+Min version: Kong Gateway 1.0 | [Plugin Hub](https://developer.konghq.com/plugins/correlation-id/)
+
+**Module:** [05 - Transformations](/module-05-transformations/) · **Lab:** [05-C](/module-05-transformations/labs/05-correlation-id)
+
+### Quick Config
+
+::: code-group
+
+```yaml [decK YAML]
+plugins:
+  - name: correlation-id
+    config:
+      header_name: Kong-Request-ID
+      generator: uuid#counter
+      echo_downstream: true
+```
+
+```bash [Admin API]
+curl -X POST http://localhost:8001/plugins \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "correlation-id",
+    "config": {
+      "header_name": "Kong-Request-ID",
+      "generator": "uuid#counter",
+      "echo_downstream": true
+    }
+  }'
+```
+
+:::
+
+### Generator Options
+
+| Generator | Format | Example |
+|---|---|---|
+| `uuid` | Standard UUID v4 | `a1b2c3d4-e5f6-7890-abcd-ef1234567890` |
+| `uuid#counter` | UUID + request counter | `a1b2c3d4-...#42` |
+| `tracker` | Jaeger-compatible | `0123456789abcdef:0123456789abcdef:0` |
+
+### Configuration Reference
+
+| Parameter | Default | Description |
+|---|---|---|
+| `header_name` | `Kong-Request-ID` | Header injected into the request (and response if `echo_downstream` is true) |
+| `generator` | `uuid#counter` | ID generation format: `uuid`, `uuid#counter`, or `tracker` |
+| `echo_downstream` | `false` | Return the correlation ID in the response headers |
 
 ---
 
@@ -1118,11 +1185,13 @@ plugins:
 
 ## datakit
 
-> **Enterprise.** Node-based API workflow engine. Orchestrate third-party API calls, transform data with jq, decode/sign/verify JWTs, and conditionally modify requests and responses — all within a single Kong plugin.
+> **Enterprise.** Node-based API workflow engine. Orchestrate third-party API calls, transform data with jq, decode/sign/verify JWTs, and conditionally modify requests and responses - all within a single Kong plugin.
 
 ::: tip Kong Gateway Enterprise required
 `datakit` requires Kong Gateway Enterprise or Konnect. Min version: Kong Gateway 3.11. [Plugin Hub](https://developer.konghq.com/plugins/datakit/)
 :::
+
+**Module:** [07 - Enterprise](/module-07-enterprise/) · **Lab:** [07-E](/module-07-enterprise/labs/07-datakit)
 
 ### Use Cases
 
@@ -1174,12 +1243,12 @@ A Datakit config is a **directed acyclic graph (DAG) of nodes**. Each node consu
 
 | Node | Inputs | Outputs |
 |---|---|---|
-| `request` | — | `body`, `headers`, `query`, `method`, `path`, `scheme` |
-| `service_request` | `body`, `headers`, `query` | — |
-| `service_response` | — | `body`, `headers`, `status` |
-| `response` | `body`, `headers` | — |
+| `request` | - | `body`, `headers`, `query`, `method`, `path`, `scheme` |
+| `service_request` | `body`, `headers`, `query` | - |
+| `service_response` | - | `body`, `headers`, `status` |
+| `response` | `body`, `headers` | - |
 
-### Quick Config — Third-party Auth Injection
+### Quick Config - Third-party Auth Injection
 
 ```yaml
 plugins:
@@ -1219,7 +1288,7 @@ plugins:
 | `nodes[].outputs` | Named output connections map |
 | `resources.cache` | Cache resource config for `cache` nodes (`strategy`: `memory` or `redis`) |
 | `resources.vault` | Vault secret references used in nodes |
-| `debug` | Enable detailed error output in responses (**dev/test only — never in production**) |
+| `debug` | Enable detailed error output in responses (**dev/test only - never in production**) |
 
 ---
 

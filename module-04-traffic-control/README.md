@@ -80,8 +80,8 @@ plugins:
 
 | Parameter | Default | Description |
 |---|---|---|
-| `limit` | — | Request limits per window (array, matches `window_size`) |
-| `window_size` | — | Window durations in seconds |
+| `limit` | - | Request limits per window (array, matches `window_size`) |
+| `window_size` | - | Window durations in seconds |
 | `window_type` | `sliding` | `sliding` (smooth) or `fixed` (resets on interval) |
 | `identifier` | `consumer` | What to rate-limit by: `consumer`, `ip`, `credential`, `header`, `path` |
 | `sync_rate` | `-1` | How often (seconds) to sync counters to Redis (`-1` = every request) |
@@ -172,8 +172,8 @@ plugins:
 
 | Parameter | Default | Description |
 |---|---|---|
-| `allow` | `[]` | Allowlisted IPs/CIDRs — all others blocked |
-| `deny` | `[]` | Denylisted IPs/CIDRs — all others allowed |
+| `allow` | `[]` | Allowlisted IPs/CIDRs - all others blocked |
+| `deny` | `[]` | Denylisted IPs/CIDRs - all others allowed |
 | `status` | `403` | HTTP status when denied |
 
 ---

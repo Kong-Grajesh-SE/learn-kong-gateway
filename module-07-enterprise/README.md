@@ -41,7 +41,7 @@
 
 ### openid-connect (Kong Identity)
 
-Kong Identity is Konnect's built-in OIDC/OAuth2 IdP — zero external infrastructure required for M2M auth.
+Kong Identity is Konnect's built-in OIDC/OAuth2 IdP - zero external infrastructure required for M2M auth.
 
 **Get your issuer URL:** Konnect → Settings → Identity → copy Issuer URL.
 
@@ -76,7 +76,7 @@ curl -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/protected
 
 ### upstream-oauth
 
-Allows Kong to fetch an OAuth 2.0 access token from an IdP and inject it into upstream requests — without exposing credentials to clients.
+Allows Kong to fetch an OAuth 2.0 access token from an IdP and inject it into upstream requests - without exposing credentials to clients.
 
 ```yaml
 plugins:
@@ -95,7 +95,7 @@ plugins:
 
 | Parameter | Default | Description |
 |---|---|---|
-| `oauth.token_endpoint` | — | IdP token URL |
+| `oauth.token_endpoint` | - | IdP token URL |
 | `oauth.grant_type` | `client_credentials` | OAuth grant type |
 | `client_auth_method` | `client_secret_basic` | `client_secret_basic`, `client_secret_post`, `client_secret_jwt` |
 | `cache.strategy` | `memory` | Token cache: `memory` or `redis` |
@@ -134,7 +134,7 @@ allow {
 |---|---|---|
 | `opa_host` | `localhost` | OPA server hostname |
 | `opa_port` | `8181` | OPA server port |
-| `opa_path` | — | OPA data/rule API path |
+| `opa_path` | - | OPA data/rule API path |
 | `include_consumer_in_opa_input` | `false` | Include Consumer in OPA payload |
 | `include_service_in_opa_input` | `false` | Include Service in OPA payload |
 
