@@ -22,9 +22,7 @@ A partner-ready, end-to-end bootcamp for mastering Kong Gateway - the world's mo
 | 04 | **Traffic Control** | Rate Limiting, Circuit Breaker, ACL groups |
 | 05 | **Transformations** | Request/Response Transformer, Correlation ID |
 | 06 | **Observability** | HTTP Logging, Prometheus + Grafana, OpenTelemetry |
-| 07 | **AI Gateway** | ai-proxy-advanced, Prompt Guard, Semantic Cache, PII Sanitizer |
-| 08 | **Agentic AI & MCP** | ai-mcp-proxy, OAuth2+PKCE, A2A agents |
-| 09 | **Enterprise & CI/CD** | OIDC Auth Code, Developer Portal, decK GitOps, RBAC |
+| 07 | **OIDC & RBAC** | OIDC Auth Code Flow, RBAC Workspaces, Team Isolation |
 
 ## Learning Journey
 
@@ -35,9 +33,7 @@ Security     → Module 03: Authentication Plugins
 Traffic      → Module 04: Rate Limiting & Circuit Breaker
 Transform    → Module 05: Request/Response Transformers
 Observe      → Module 06: Logs, Metrics, Traces
-AI           → Module 07: AI Gateway
-Agents       → Module 08: MCP & Agentic AI
-Enterprise   → Module 09: OIDC, Developer Portal, CI/CD
+Enterprise   → Module 07: OIDC & RBAC
 ```
 
 ## Prerequisites
@@ -45,7 +41,7 @@ Enterprise   → Module 09: OIDC, Developer Portal, CI/CD
 - Basic HTTP knowledge (REST, headers, status codes)
 - Docker Desktop installed
 - Terminal / command line familiarity
-- A free [Kong Konnect account](https://cloud.konghq.com) (required for Module 09)
+- A free [Kong Konnect account](https://cloud.konghq.com) (required for Module 07)
 
 ## Quick Start
 
@@ -132,27 +128,11 @@ api-gateway-bootcamp/
 │       ├── 06-http-logging.md
 │       ├── 06-prometheus.md
 │       └── 06-opentelemetry.md
-├── module-07-ai-gateway/
-│   ├── README.md
-│   └── labs/
-│       ├── 07-ai-proxy.md
-│       ├── 07-prompt-guard.md
-│       ├── 07-semantic-cache.md
-│       ├── 07-prompt-templates.md
-│       └── 07-pii-sanitizer.md
-├── module-08-agentic-mcp/
-│   ├── README.md
-│   └── labs/
-│       ├── 08-mcp-proxy.md
-│       ├── 08-mcp-oauth2.md
-│       └── 08-a2a-agents.md
-└── module-09-enterprise/
+├── module-07-enterprise/
     ├── README.md
     └── labs/
-        ├── 09-oidc-auth-code.md
-        ├── 09-dev-portal.md
-        ├── 09-deck-cicd.md
-        └── 09-rbac-teams.md
+        ├── 07-oidc-auth-code.md
+        └── 07-rbac-teams.md
 ```
 
 ## Resources

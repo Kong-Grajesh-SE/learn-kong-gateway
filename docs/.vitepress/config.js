@@ -4,7 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'Kong API Gateway Bootcamp',
   description:
-    'Kong Partner Enablement - 9 hands-on modules for mastering Kong Gateway. Core → Auth → Traffic → AI → Enterprise.',
+    'Kong Partner Enablement - 7 hands-on modules for mastering Kong Gateway. Core → Auth → Traffic → Transform → Observe → OIDC & RBAC.',
 
   // ── Source & output ─────────────────────────────────────────────────────────
   // srcDir '..' means VitePress reads Markdown from the repo root,
@@ -35,9 +35,7 @@ export default defineConfig({
     'module-04-traffic-control/README.md':    'module-04-traffic-control/index.md',
     'module-05-transformations/README.md':    'module-05-transformations/index.md',
     'module-06-observability/README.md':      'module-06-observability/index.md',
-    'module-07-ai-gateway/README.md':         'module-07-ai-gateway/index.md',
-    'module-08-agentic-mcp/README.md':        'module-08-agentic-mcp/index.md',
-    'module-09-enterprise/README.md':         'module-09-enterprise/index.md',
+    'module-07-enterprise/README.md':         'module-07-enterprise/index.md',
   },
 
   srcExclude: [
@@ -94,9 +92,16 @@ export default defineConfig({
           { text: '🚦 04 - Traffic Control',            link: '/module-04-traffic-control/' },
           { text: '🔧 05 - Transformations',            link: '/module-05-transformations/' },
           { text: '📊 06 - Observability',              link: '/module-06-observability/' },
-          { text: '🤖 07 - AI Gateway',                 link: '/module-07-ai-gateway/' },
-          { text: '🛠️ 08 - Agentic AI & MCP',           link: '/module-08-agentic-mcp/' },
-          { text: '🏢 09 - Enterprise & CI/CD',         link: '/module-09-enterprise/' },
+          { text: '🔐 07 - OIDC & RBAC',               link: '/module-07-enterprise/' },
+        ],
+      },
+      {
+        text: '🚀 Specialist Bootcamps',
+        items: [
+          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-ai-gateway/', target: '_blank' },
+          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-agentic-mcp/', target: '_blank' },
+          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-dev-portal/', target: '_blank' },
+          { text: '🔄 APIOps with decK',       link: 'https://kong-grajesh-se.github.io/learn-apiops/', target: '_blank' },
         ],
       },
       {
@@ -181,36 +186,12 @@ export default defineConfig({
         ],
       },
       {
-        text: '🤖 07 - AI Gateway',
+        text: '🔐 07 - OIDC & RBAC',
         collapsed: true,
         items: [
-          { text: '📋 Overview',                    link: '/module-07-ai-gateway/' },
-          { text: '🧠 Lab: AI Proxy Advanced',      link: '/module-07-ai-gateway/labs/07-ai-proxy' },
-          { text: '🛡️ Lab: Prompt Guard',           link: '/module-07-ai-gateway/labs/07-prompt-guard' },
-          { text: '⚡ Lab: Semantic Cache',          link: '/module-07-ai-gateway/labs/07-semantic-cache' },
-          { text: '📄 Lab: Prompt Templates',       link: '/module-07-ai-gateway/labs/07-prompt-templates' },
-          { text: '🔒 Lab: PII Sanitizer',          link: '/module-07-ai-gateway/labs/07-pii-sanitizer' },
-        ],
-      },
-      {
-        text: '🛠️ 08 - Agentic AI & MCP',
-        collapsed: true,
-        items: [
-          { text: '📋 Overview',               link: '/module-08-agentic-mcp/' },
-          { text: '🔌 Lab: MCP Proxy',         link: '/module-08-agentic-mcp/labs/08-mcp-proxy' },
-          { text: '🔐 Lab: MCP + OAuth2',      link: '/module-08-agentic-mcp/labs/08-mcp-oauth2' },
-          { text: '🤝 Lab: A2A Agents',        link: '/module-08-agentic-mcp/labs/08-a2a-agents' },
-        ],
-      },
-      {
-        text: '🏢 09 - Enterprise & CI/CD',
-        collapsed: true,
-        items: [
-          { text: '📋 Overview',               link: '/module-09-enterprise/' },
-          { text: '🔐 Lab: OIDC Auth Code',    link: '/module-09-enterprise/labs/09-oidc-auth-code' },
-          { text: '🌐 Lab: Developer Portal',  link: '/module-09-enterprise/labs/09-dev-portal' },
-          { text: '🔄 Lab: decK & CI/CD',      link: '/module-09-enterprise/labs/09-deck-cicd' },
-          { text: '👥 Lab: RBAC & Teams',      link: '/module-09-enterprise/labs/09-rbac-teams' },
+          { text: '📋 Overview',               link: '/module-07-enterprise/' },
+          { text: '🔐 Lab: OIDC Auth Code',    link: '/module-07-enterprise/labs/07-oidc-auth-code' },
+          { text: '👥 Lab: RBAC & Teams',      link: '/module-07-enterprise/labs/07-rbac-teams' },
         ],
       },
     ],

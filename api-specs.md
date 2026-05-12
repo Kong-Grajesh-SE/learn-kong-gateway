@@ -401,7 +401,7 @@ components:
 
 ## 2. kong-air API - for Developer Portal only
 
-This spec describes a fictional travel API. **You don't run this server.** It exists so that in [Module 09 - Developer Portal](/module-09-enterprise/labs/09-dev-portal), you have a realistic API spec to publish.
+This spec describes a fictional travel API. **You don't run this server.** It exists so that in the [Developer Portal Bootcamp](https://kong-grajesh-se.github.io/learn-dev-portal/), you have a realistic API spec to publish.
 
 ::: details Full OpenAPI 3.1 Spec - kong-air (Developer Portal upload)
 

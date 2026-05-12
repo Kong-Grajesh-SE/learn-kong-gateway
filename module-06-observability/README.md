@@ -91,4 +91,4 @@ Kong exposes rich metrics at `/metrics` when the Prometheus plugin is enabled:
 
 ---
 
-*Previous: [Module 05](/module-05-transformations/) · Next: [Module 07 - AI Gateway →](/module-07-ai-gateway/)*
+*Previous: [Module 05](/module-05-transformations/) · Next: [Module 07 - OIDC & RBAC →](/module-07-enterprise/)*

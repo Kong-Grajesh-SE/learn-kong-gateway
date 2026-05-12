@@ -205,4 +205,4 @@ curl -s \
 
 ---
 
-*Next: [Module 07 - AI Gateway →](/module-07-ai-gateway/)*
+*Next: [Module 07 - OIDC & RBAC →](/module-07-enterprise/)*

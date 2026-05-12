@@ -4,7 +4,7 @@ layout: home
 hero:
   name: "Kong API Gateway"
   text: "Bootcamp"
-  tagline: "Core → Auth → Traffic → Transform → Observe → AI → Agents → Enterprise. Nine hands-on modules on Konnect with real workloads."
+  tagline: "Core → Auth → Traffic → Transform → Observe → Enterprise. Six hands-on modules on Konnect. Then go deep with our specialist bootcamps."
   image:
     src: /kong-gateway-logo.svg
     alt: Kong Gateway
@@ -59,23 +59,35 @@ features:
     link: /module-06-observability/
     linkText: Observe everything →
 
+  - icon: 🔐
+    title: "07 - OIDC & RBAC"
+    details: "OIDC Authorization Code Flow with Keycloak for enterprise SSO. RBAC workspaces in Kong Manager — teams, roles, and consumer isolation."
+    link: /module-07-enterprise/
+    linkText: Go enterprise →
+
   - icon: 🤖
-    title: "07 - AI Gateway"
-    details: "Route LLM traffic across Ollama and OpenAI. Add semantic caching with Redis, prompt injection guards, PII sanitization, and named templates."
-    link: /module-07-ai-gateway/
-    linkText: Build AI APIs →
+    title: "AI Gateway Bootcamp ↗"
+    details: "Deep-dive: LLM proxy, prompt injection guards, semantic caching, PII sanitization, and prompt templates. Ollama, OpenAI, Azure, Anthropic."
+    link: https://kong-grajesh-se.github.io/learn-ai-gateway/
+    linkText: Go to AI Gateway →
 
   - icon: 🛠️
-    title: "08 - Agentic AI & MCP"
-    details: "Proxy MCP tool calls without touching upstream code. Secure AI agents with OAuth2 + PKCE. Build A2A multi-agent pipelines with OTel tracing."
-    link: /module-08-agentic-mcp/
-    linkText: Enable agents →
+    title: "Agentic AI & MCP Bootcamp ↗"
+    details: "MCP proxy, OAuth2/PKCE for agents, Agent-to-Agent routing. Connect VS Code Copilot and Claude Desktop to Kong-protected MCP servers."
+    link: https://kong-grajesh-se.github.io/learn-agentic-mcp/
+    linkText: Go to Agentic AI →
 
-  - icon: 🏢
-    title: "09 - Enterprise & CI/CD"
-    details: "OIDC auth-code flow, Developer Portal with self-service app registration, decK GitOps pipeline in GitHub Actions, RBAC workspaces."
-    link: /module-09-enterprise/
-    linkText: Go enterprise →
+  - icon: 🌐
+    title: "Developer Portal Bootcamp ↗"
+    details: "Publish APIs to the Konnect Developer Portal. OIDC SSO with Keycloak, self-service app registration, RBAC teams and namespaces."
+    link: https://kong-grajesh-se.github.io/learn-dev-portal/
+    linkText: Go to Dev Portal →
+
+  - icon: 🔄
+    title: "APIOps Bootcamp ↗"
+    details: "GitOps with decK — Git as source of truth. GitHub Actions CI/CD: validate on PR, diff preview, sync to Konnect on merge."
+    link: https://kong-grajesh-se.github.io/learn-apiops/
+    linkText: Go to APIOps →
 ---
 
 <style>

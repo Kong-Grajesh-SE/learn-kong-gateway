@@ -1,4 +1,4 @@
-# Lab 09-D - RBAC & Teams
+# Lab 07-B - RBAC & Teams
 
 > **Goal:** Configure Kong Manager RBAC with roles and workspaces. Create team-based isolation so different teams manage their own services without interfering.
 

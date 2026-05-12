@@ -1,4 +1,4 @@
-# Lab 09-A - OIDC Authorization Code Flow
+# Lab 07-A - OIDC Authorization Code Flow
 
 > **Goal:** Implement the full OIDC Authorization Code flow end-to-end. Browser-based login via Keycloak, server-side token exchange, and session management.
 
@@ -136,4 +136,4 @@ curl -si http://localhost:8000/logout | grep -E "HTTP|Location"
 
 ---
 
-*Next: [Lab 09-B - Developer Portal →](./09-dev-portal)*
+*Next: [Lab 07-B - RBAC & Teams →](./07-rbac-teams)*
