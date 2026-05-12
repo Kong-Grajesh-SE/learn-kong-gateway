@@ -59,6 +59,9 @@ Retry-After: 42    (when limit exceeded → 429)
 | [04-A: Rate Limiting](/module-04-traffic-control/labs/04-rate-limiting) | Apply rate limits by IP, consumer, and with Redis |
 | [04-B: Circuit Breaker](/module-04-traffic-control/labs/04-circuit-breaker) | Upstream health checks, passive circuit breaking |
 | [04-C: ACL Groups](/module-04-traffic-control/labs/04-acl) | Access control lists with consumer groups |
+| [04-D: CORS](/module-04-traffic-control/labs/04-cors) | Allow browser frontends to call Kong-proxied APIs cross-origin |
+| [04-E: IP Restriction](/module-04-traffic-control/labs/04-ip-restriction) | Allow or block client IPs and CIDR ranges |
+| [04-F: Proxy Cache](/module-04-traffic-control/labs/04-proxy-cache) | Cache upstream responses in-memory or via Redis to cut latency |
 
 ## Plugin Quick Reference
 

@@ -37,13 +37,13 @@ features:
 
   - icon: 🔑
     title: "03 - Authentication Plugins"
-    details: "Protect APIs with Key Auth, JWT, and OIDC. Configure consumers with credentials and integrate Keycloak for enterprise identity."
+    details: "Protect APIs with Key Auth, JWT, HMAC, and OIDC. Configure consumers with credentials and integrate Keycloak for enterprise identity."
     link: /module-03-authentication/
     linkText: Secure APIs →
 
   - icon: 🚦
     title: "04 - Traffic Control"
-    details: "Rate limit by consumer tier, IP, or header. Configure ACL groups, circuit breakers, and health-check based routing."
+    details: "Rate limit by consumer tier, IP, or header. Configure ACL groups, circuit breakers, CORS, IP restriction, and proxy caching."
     link: /module-04-traffic-control/
     linkText: Control traffic →
 
@@ -60,8 +60,8 @@ features:
     linkText: Observe everything →
 
   - icon: 🔐
-    title: "07 - OIDC & RBAC"
-    details: "OIDC Authorization Code Flow with Keycloak for enterprise SSO. RBAC workspaces in Kong Manager - teams, roles, and consumer isolation."
+    title: "07 - Enterprise Features"
+    details: "OIDC Auth Code Flow, RBAC workspaces, Upstream OAuth (M2M token injection), OPA policy-based authorization, and Datakit multi-step workflow orchestration."
     link: /module-07-enterprise/
     linkText: Go enterprise →
 

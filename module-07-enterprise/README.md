@@ -32,6 +32,9 @@
 |---|---|
 | [07-A: OIDC Auth Code Flow](/module-07-enterprise/labs/07-oidc-auth-code) | Full browser-based SSO with Keycloak |
 | [07-B: RBAC & Teams](/module-07-enterprise/labs/07-rbac-teams) | Kong Manager RBAC, consumer groups, team isolation |
+| [07-C: Upstream OAuth](/module-07-enterprise/labs/07-upstream-oauth) | M2M token injection - Kong fetches and forwards OAuth tokens to upstreams |
+| [07-D: OPA Authorization](/module-07-enterprise/labs/07-opa) | Policy-based authz with Open Policy Agent and Rego rules |
+| [07-E: Datakit](/module-07-enterprise/labs/07-datakit) | Multi-step workflow orchestration within a single plugin |
 | [Developer Portal Bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-dev-portal/) | Publish APIs, manage teams, customise portal |
 | [APIOps Bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/) | GitHub Actions pipeline with quality gates |
 

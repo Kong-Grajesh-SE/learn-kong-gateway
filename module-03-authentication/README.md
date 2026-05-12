@@ -66,6 +66,7 @@ Auth plugins can be applied at three scopes:
 | [03-A: Key Authentication](/module-03-authentication/labs/03-key-auth) | Protect flights API with API keys, create consumer credentials |
 | [03-B: JWT Auth](/module-03-authentication/labs/03-jwt-auth) | Sign and validate JWTs, manage secrets via decK |
 | [03-C: OIDC / Keycloak](/module-03-authentication/labs/03-oidc-keycloak) | Full OIDC auth code flow with Keycloak, session cookies |
+| [03-D: HMAC Authentication](/module-03-authentication/labs/03-hmac-auth) | Sign requests with HMAC-SHA256, validate signatures and clock skew |
 
 ## Key Concepts
 
