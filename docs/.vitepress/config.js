@@ -14,7 +14,7 @@ export default defineConfig({
   cacheDir: '../.vitepress-cache',
 
   // GitHub Pages base path (repo name)
-  base: '/api-gateway-bootcamp/',
+  base: '/learn-kong-gateway/',
 
   // Default to dark mode (user can still toggle)
   appearance: 'force-dark',
