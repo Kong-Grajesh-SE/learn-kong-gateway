@@ -82,12 +82,106 @@ Kong exposes rich metrics at `/metrics` when the Prometheus plugin is enabled:
 | [06-B: Prometheus](/module-06-observability/labs/06-prometheus) | Expose metrics, configure Grafana dashboard |
 | [06-C: OpenTelemetry](/module-06-observability/labs/06-opentelemetry) | Send distributed traces to a collector |
 
+## Plugin Quick Reference
+
+> Condensed configs for every plugin used in this module. See the [full Plugin Reference](/plugin-reference) for all parameters.
+
+### http-log
+
+```yaml
+plugins:
+  - name: http-log
+    config:
+      http_endpoint: "http://log-receiver:3000/logs"
+      method: POST
+      content_type: application/json
+      timeout: 10000
+      keepalive: 60000
+      flush_timeout: 2
+      queue_size: 1
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `http_endpoint` | — | URL to POST log entries to |
+| `method` | `POST` | HTTP method for log delivery |
+| `content_type` | `application/json` | Payload content type |
+| `timeout` | `10000` | Send timeout in milliseconds |
+| `flush_timeout` | `2` | Max seconds to wait before flushing a partial batch |
+| `queue_size` | `1` | Number of log entries to batch per request |
+| `custom_fields_by_lua` | `{}` | Lua expressions to add custom fields to the log entry |
+
+**Lab:** [06-A: HTTP Logging](/module-06-observability/labs/06-http-logging)
+
+---
+
+### prometheus
+
+```yaml
+plugins:
+  - name: prometheus
+    config:
+      status_code_metrics: true
+      latency_metrics: true
+      bandwidth_metrics: true
+      upstream_health_metrics: true
+      per_consumer: true
+```
+
+**Scrape endpoint:** `http://localhost:8100/metrics` (status port)
+
+| Parameter | Default | Description |
+|---|---|---|
+| `status_code_metrics` | `false` | Expose per-status-code request counters |
+| `latency_metrics` | `false` | Expose request, upstream, and Kong latency histograms |
+| `bandwidth_metrics` | `false` | Expose bytes in/out counters |
+| `upstream_health_metrics` | `false` | Expose upstream target health gauges |
+| `per_consumer` | `false` | Break down metrics by consumer label |
+
+**Lab:** [06-B: Prometheus](/module-06-observability/labs/06-prometheus)
+
+---
+
+### opentelemetry
+
+```yaml
+plugins:
+  - name: opentelemetry
+    config:
+      endpoint: "http://otel-collector:4318/v1/traces"
+      resource_attributes:
+        service.name: kong-gateway
+        deployment.environment: bootcamp
+      propagation:
+        default_format: w3c
+        extract: [w3c, b3]
+        inject: [w3c]
+      batch_span_processor:
+        max_export_batch_size: 200
+        scheduled_delay: 5000
+```
+
+| Parameter | Description |
+|---|---|
+| `endpoint` | OTLP/HTTP collector URL (`/v1/traces`) |
+| `resource_attributes` | Static key-value tags added to every span |
+| `propagation.default_format` | Trace context format: `w3c` (recommended), `b3`, `datadog` |
+| `propagation.extract` | Formats to read from incoming requests |
+| `propagation.inject` | Formats to inject into upstream requests |
+| `batch_span_processor.max_export_batch_size` | Max spans per export batch |
+| `batch_span_processor.scheduled_delay` | Flush interval in milliseconds |
+
+**Lab:** [06-C: OpenTelemetry](/module-06-observability/labs/06-opentelemetry)
+
+---
+
 ## Resources
 
 - [HTTP Log plugin](https://developer.konghq.com/plugins/http-log/)
 - [Prometheus plugin](https://developer.konghq.com/plugins/prometheus/)
 - [OpenTelemetry plugin](https://developer.konghq.com/plugins/opentelemetry/)
 - [Kong analytics overview](https://developer.konghq.com/gateway/analytics/)
+- [Full Plugin Reference →](/plugin-reference)
 
 ---
 

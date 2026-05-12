@@ -109,6 +109,7 @@ export default defineConfig({
         items: [
           { text: '📖 Kong Docs',    link: 'https://developer.konghq.com/gateway/', target: '_blank' },
           { text: '🧩 Plugin Hub',   link: 'https://developer.konghq.com/plugins/', target: '_blank' },
+          { text: '🧩 Plugin Reference', link: '/plugin-reference' },
           { text: '☁️ Konnect',      link: 'https://cloud.konghq.com', target: '_blank' },
           { text: '🎮 Insomnia',     link: 'https://insomnia.rest', target: '_blank' },
         ],
@@ -123,8 +124,7 @@ export default defineConfig({
         items: [
           { text: '✅ Prerequisites',        link: '/prerequisites' },
           { text: '🏗️ Deployment Options',   link: '/deployment-overview' },
-          { text: '📄 OpenAPI Specs',        link: '/api-specs' },
-        ],
+          { text: '📄 OpenAPI Specs',        link: '/api-specs' },          { text: '🧩 Plugin Reference',     link: '/plugin-reference' },        ],
       },
       {
         text: '🧭 01 - Orientation & Setup',

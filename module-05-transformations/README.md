@@ -50,6 +50,107 @@ All transformer plugins support these operations on `headers`, `querystring`, an
 | [05-B: Response Transformer](/module-05-transformations/labs/05-response-transformer) | Add CORS headers, strip internal fields, inject metadata |
 | [05-C: Correlation ID](/module-05-transformations/labs/05-correlation-id) | Trace requests end-to-end with unique IDs |
 
+## Plugin Quick Reference
+
+> Condensed configs for every plugin used in this module. See the [full Plugin Reference](/plugin-reference) for all parameters, template variables, and advanced examples.
+
+### request-transformer-advanced
+
+```yaml
+plugins:
+  - name: request-transformer-advanced
+    config:
+      add:
+        headers:
+          - "X-Kong-Proxied:true"
+          - "X-Consumer-Username:$(consumer.username)"   # template variable
+        querystring: []
+        body: []
+      remove:
+        headers: [X-Internal-Debug, X-Forwarded-Secret]
+        querystring: [debug, trace]
+      replace:
+        headers: ["X-API-Version:v3"]
+      rename:
+        querystring:
+          - "page:offset"      # ?page= → ?offset= upstream
+          - "size:limit"
+```
+
+**Template variables available:**
+
+| Variable | Value |
+|---|---|
+| `$(consumer.username)` | Authenticated consumer username |
+| `$(consumer.id)` | Consumer UUID |
+| `$(route.id)` | Route UUID |
+| `$(service.name)` | Service name |
+| `$(date.timestamp)` | Unix epoch timestamp |
+
+| Operation | Behaviour |
+|---|---|
+| `add` | Add if the field does **not** already exist |
+| `append` | Add even if field exists (creates multi-value) |
+| `remove` | Delete field |
+| `replace` | Overwrite if field exists; no-op if absent |
+| `rename` | Rename the key (value unchanged) |
+| `allow` | Allowlist — all other fields are stripped |
+
+**Lab:** [05-A: Request Transformer](/module-05-transformations/labs/05-request-transformer)
+
+---
+
+### response-transformer-advanced
+
+```yaml
+plugins:
+  - name: response-transformer-advanced
+    config:
+      add:
+        headers: ["X-Powered-By:Kong Gateway"]
+        json: ["metadata.gateway:\"kong\"", "api_version:\"v2\""]
+        json_types: [string, string]
+      remove:
+        headers: [X-Served-By, Via, Server]
+        json: [data.internal_cost, data.provider_id]
+      replace:
+        json: ["status:\"processed\""]
+        json_types: [string]
+```
+
+| Operation | Description |
+|---|---|
+| `add.json` | Add JSON key:value if absent (supports dotted paths) |
+| `remove.json` | Remove JSON field by key or dotted path |
+| `replace.json` | Overwrite JSON field if it exists |
+| `allow.json` | Allowlist — all other JSON fields stripped from response |
+| `transform.functions` | Lua snippets for arbitrary body manipulation |
+
+**Lab:** [05-B: Response Transformer](/module-05-transformations/labs/05-response-transformer)
+
+---
+
+### correlation-id
+
+```yaml
+plugins:
+  - name: correlation-id
+    config:
+      header_name: X-Request-ID
+      generator: uuid#counter     # uuid | uuid#counter | tracker
+      echo_downstream: true       # return the ID in the response
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `header_name` | `Kong-Request-ID` | Header injected into request and response |
+| `generator` | `uuid#counter` | ID format: `uuid`, `uuid#counter`, `tracker` |
+| `echo_downstream` | `false` | Include the ID in the response headers |
+
+**Lab:** [05-C: Correlation ID](/module-05-transformations/labs/05-correlation-id)
+
+---
+
 ## Reference Config from get-started-guide
 
 The mytravel demo uses these plugins on the bookings route:
@@ -64,10 +165,10 @@ plugins:
 
 ## Resources
 
-- [Request Transformer plugin](https://developer.konghq.com/plugins/request-transformer/)
-- [Response Transformer plugin](https://developer.konghq.com/plugins/response-transformer/)
 - [Request Transformer Advanced](https://developer.konghq.com/plugins/request-transformer-advanced/)
+- [Response Transformer plugin](https://developer.konghq.com/plugins/response-transformer/)
 - [Correlation ID plugin](https://developer.konghq.com/plugins/correlation-id/)
+- [Full Plugin Reference →](/plugin-reference)
 
 ---
 

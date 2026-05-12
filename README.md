@@ -6,35 +6,50 @@ A partner-ready, end-to-end bootcamp for mastering Kong Gateway - the world's mo
 
 | | |
 |---|---|
-| **Format** | 9 structured modules |
-| **Flow** | Core → Auth → Traffic → Transform → Observe → AI → Agents → Enterprise |
+| **Format** | 7 structured modules + Plugin Reference |
+| **Flow** | Core → Auth → Traffic → Transform → Observe → Enterprise |
 | **Platform** | macOS · Linux · Docker |
 | **Audience** | Developers, DevOps, Platform teams, Enterprise architects |
 | **Demo repo** | [get-started-guide](https://github.com/Kong-Grajesh-SE/get-started-guide) |
+| **Plugin Reference** | [plugin-reference.md](./plugin-reference.md) — quick configs for all 17 plugins |
 
 ## Bootcamp Modules
 
-| # | Module | Key Topics |
-|---|---|---|
-| 01 | **Orientation & Setup** | Install, architecture, first proxied request, Kong Manager |
-| 02 | **Core Gateway Concepts** | Services, Routes, Upstreams, Consumers, decK |
-| 03 | **Authentication Plugins** | Key Auth, JWT, OIDC / Keycloak |
-| 04 | **Traffic Control** | Rate Limiting, Circuit Breaker, ACL groups |
-| 05 | **Transformations** | Request/Response Transformer, Correlation ID |
-| 06 | **Observability** | HTTP Logging, Prometheus + Grafana, OpenTelemetry |
-| 07 | **OIDC & RBAC** | OIDC Auth Code Flow, RBAC Workspaces, Team Isolation |
+| # | Module | Key Topics | Plugins |
+|---|---|---|---|
+| 01 | **Orientation & Setup** | Install, architecture, first proxied request, Kong Manager | — |
+| 02 | **Core Gateway Concepts** | Services, Routes, Upstreams, Consumers, decK | — |
+| 03 | **Authentication Plugins** | Key Auth, JWT, HMAC Auth, OIDC / Keycloak | `key-auth` `hmac-auth` `jwt` `openid-connect` |
+| 04 | **Traffic Control** | Rate Limiting, Circuit Breaker, ACL, CORS, IP Restriction, Caching | `rate-limiting-advanced` `acl` `cors` `ip-restriction` `proxy-cache` |
+| 05 | **Transformations** | Request/Response Transformer, Correlation ID | `request-transformer-advanced` `response-transformer-advanced` `correlation-id` |
+| 06 | **Observability** | HTTP Logging, Prometheus + Grafana, OpenTelemetry | `http-log` `prometheus` `opentelemetry` |
+| 07 | **OIDC & RBAC** | OIDC Auth Code Flow, RBAC, Upstream OAuth, OPA, Datakit | `openid-connect` `upstream-oauth` `opa` `datakit` |
 
 ## Learning Journey
 
 ```
 Foundation   → Module 01: Orientation & Setup
-Core         → Module 02: Services, Routes, Upstreams
-Security     → Module 03: Authentication Plugins
-Traffic      → Module 04: Rate Limiting & Circuit Breaker
-Transform    → Module 05: Request/Response Transformers
-Observe      → Module 06: Logs, Metrics, Traces
-Enterprise   → Module 07: OIDC & RBAC
+Core         → Module 02: Services, Routes, Upstreams, Consumers
+Security     → Module 03: Key Auth · HMAC Auth · JWT · OIDC
+Traffic      → Module 04: Rate Limiting · ACL · CORS · IP Restriction · Caching
+Transform    → Module 05: Request/Response Transformers · Correlation ID
+Observe      → Module 06: HTTP Logs · Prometheus · OpenTelemetry
+Enterprise   → Module 07: OIDC (Kong Identity) · RBAC · Upstream OAuth · OPA · Datakit
 ```
+
+## Plugins Covered
+
+17 plugins across 6 categories — each with quick config, parameter table, and lab link.
+See the **[Plugin Reference →](./plugin-reference.md)** for the full reference.
+
+| Category | Plugins |
+|---|---|
+| **Authentication** | `key-auth` · `hmac-auth` · `jwt` · `openid-connect` · `upstream-oauth` |
+| **Authorization** | `acl` |
+| **Security** | `cors` · `ip-restriction` · `opa` |
+| **Traffic Control** | `rate-limiting-advanced` · `proxy-cache` · `proxy-cache-advanced` · `datakit` |
+| **Transformation** | `request-transformer-advanced` · `response-transformer-advanced` · `correlation-id` |
+| **Observability** | `http-log` · `prometheus` · `opentelemetry` |
 
 ## Prerequisites
 
@@ -83,6 +98,7 @@ npm run dev:all     # starts frontend (:5173) + backend (:3001)
 api-gateway-bootcamp/
 ├── README.md
 ├── index.md                         ← VitePress home page
+├── plugin-reference.md              ← Quick configs for all 17 plugins
 ├── package.json
 ├── public/
 │   ├── logomark.svg                 ← Kong logomark
@@ -143,6 +159,7 @@ api-gateway-bootcamp/
 | Kong Plugin Hub | https://developer.konghq.com/plugins/ |
 | Kong Konnect | https://cloud.konghq.com |
 | decK docs | https://developer.konghq.com/deck/ |
+| OPA (Open Policy Agent) | https://www.openpolicyagent.org/ |
 | AI Gateway | https://developer.konghq.com/ai-gateway/ |
 | MCP specification | https://modelcontextprotocol.io/ |
 
