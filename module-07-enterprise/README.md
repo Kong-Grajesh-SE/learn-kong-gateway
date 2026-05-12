@@ -32,8 +32,8 @@
 |---|---|
 | [07-A: OIDC Auth Code Flow](/module-07-enterprise/labs/07-oidc-auth-code) | Full browser-based SSO with Keycloak |
 | [07-B: RBAC & Teams](/module-07-enterprise/labs/07-rbac-teams) | Kong Manager RBAC, consumer groups, team isolation |
-| [Developer Portal Bootcamp ↗](https://kong-grajesh-se.github.io/learn-dev-portal/) | Publish APIs, manage teams, customise portal |
-| [APIOps Bootcamp ↗](https://kong-grajesh-se.github.io/learn-apiops/) | GitHub Actions pipeline with quality gates |
+| [Developer Portal Bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-dev-portal/) | Publish APIs, manage teams, customise portal |
+| [APIOps Bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/) | GitHub Actions pipeline with quality gates |
 
 ## Plugin Quick Reference
 

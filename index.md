@@ -68,26 +68,32 @@ features:
   - icon: 🤖
     title: "AI Gateway Bootcamp ↗"
     details: "Deep-dive: LLM proxy, prompt injection guards, semantic caching, PII sanitization, and prompt templates. Ollama, OpenAI, Azure, Anthropic."
-    link: https://kong-grajesh-se.github.io/learn-ai-gateway/
+    link: https://kong-grajesh-se.github.io/learn-kong-ai-gateway/
     linkText: Go to AI Gateway →
 
   - icon: 🛠️
     title: "Agentic AI & MCP Bootcamp ↗"
     details: "MCP proxy, OAuth2/PKCE for agents, Agent-to-Agent routing. Connect VS Code Copilot and Claude Desktop to Kong-protected MCP servers."
-    link: https://kong-grajesh-se.github.io/learn-agentic-mcp/
+    link: https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/
     linkText: Go to Agentic AI →
 
   - icon: 🌐
     title: "Developer Portal Bootcamp ↗"
     details: "Publish APIs to the Konnect Developer Portal. OIDC SSO with Keycloak, self-service app registration, RBAC teams and namespaces."
-    link: https://kong-grajesh-se.github.io/learn-dev-portal/
+    link: https://kong-grajesh-se.github.io/learn-kong-dev-portal/
     linkText: Go to Dev Portal →
 
   - icon: 🔄
     title: "APIOps Bootcamp ↗"
     details: "GitOps with decK — Git as source of truth. GitHub Actions CI/CD: validate on PR, diff preview, sync to Konnect on merge."
-    link: https://kong-grajesh-se.github.io/learn-apiops/
+    link: https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/
     linkText: Go to APIOps →
+
+  - icon: 🎮
+    title: "Insomnia Bootcamp ↗"
+    details: "Master API testing with Insomnia — design, debug, and test REST, GraphQL, and gRPC APIs."
+    link: https://kong-grajesh-se.github.io/learn-insomnia/
+    linkText: Go to Insomnia →
 ---
 
 <style>

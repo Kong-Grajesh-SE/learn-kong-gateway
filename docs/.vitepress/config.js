@@ -98,10 +98,11 @@ export default defineConfig({
       {
         text: '🚀 Specialist Bootcamps',
         items: [
-          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-ai-gateway/', target: '_blank' },
-          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-agentic-mcp/', target: '_blank' },
-          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-dev-portal/', target: '_blank' },
-          { text: '🔄 APIOps with decK',       link: 'https://kong-grajesh-se.github.io/learn-apiops/', target: '_blank' },
+          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-kong-ai-gateway/', target: '_blank' },
+          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/', target: '_blank' },
+          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
+          { text: '🔄 APIOps with decK',       link: 'https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/', target: '_blank' },
+          { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
         ],
       },
       {
