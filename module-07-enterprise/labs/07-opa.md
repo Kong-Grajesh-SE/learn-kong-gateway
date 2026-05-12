@@ -37,7 +37,7 @@ curl -s http://localhost:8181/v1/health | jq .
 
 Create `policy.rego`:
 
-```rego
+```go
 package myapp.authz
 
 default allow = false

@@ -640,7 +640,7 @@ Kong sends the following JSON to OPA:
 
 ### Example Rego Policy
 
-```rego
+```go
 package myapp.authz
 
 default allow = false

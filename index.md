@@ -6,7 +6,7 @@ hero:
   text: "Bootcamp"
   tagline: "Core → Auth → Traffic → Transform → Observe → Enterprise. Six hands-on modules on Konnect. Then go deep with our specialist bootcamps."
   image:
-    src: /image.png
+    src: /kong-logomark-lime.svg
     alt: Kong Gateway
   actions:
     - theme: brand
@@ -98,4 +98,24 @@ features:
 
 <style>
 .VPHome .VPHero + .VPFeatures { padding-top: 48px; }
+.VPHero .image-container {
+  width: 400px !important;
+  height: 400px !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+.VPHero .image-src {
+  max-width: 400px !important;
+  width: 400px !important;
+}
+@media (min-width: 960px) {
+  .VPHero .image-container {
+    width: 480px !important;
+    height: 480px !important;
+  }
+  .VPHero .image-src {
+    max-width: 480px !important;
+    width: 480px !important;
+  }
+}
 </style>

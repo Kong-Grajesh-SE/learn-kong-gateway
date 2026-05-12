@@ -119,7 +119,7 @@ plugins:
 ```
 
 **Example Rego policy:**
-```rego
+```go
 package myapp.authz
 
 default allow = false
