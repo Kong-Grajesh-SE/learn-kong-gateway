@@ -127,7 +127,7 @@ wait
 
 Use these in Grafana or Prometheus UI:
 
-```promql
+```
 # Total requests per second (rate over last 5 minutes)
 rate(kong_http_requests_total[5m])
 
