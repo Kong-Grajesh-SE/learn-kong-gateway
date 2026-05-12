@@ -6,7 +6,7 @@ hero:
   text: "Bootcamp"
   tagline: "Core → Auth → Traffic → Transform → Observe → Enterprise. Six hands-on modules on Konnect. Then go deep with our specialist bootcamps."
   image:
-    src: /kong-gateway-logo.svg
+    src: /image.png
     alt: Kong Gateway
   actions:
     - theme: brand
