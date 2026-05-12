@@ -51,10 +51,11 @@ export default defineConfig({
 
   // ── Head tags ────────────────────────────────────────────────────────────────
   head: [
-    ['link', { rel: 'icon', href: '/api-gateway-bootcamp/favicon.png', type: 'image/png' }],
-    ['meta', { name: 'theme-color', content: '#001408' }],
+    ['link', { rel: 'icon', href: '/learn-kong-gateway/favicon.png', type: 'image/png' }],
+    ['meta', { name: 'theme-color', content: '#000F06' }],
     ['meta', { property: 'og:title', content: 'Kong API Gateway Bootcamp' }],
-    ['meta', { property: 'og:description', content: '9 hands-on modules for mastering Kong Gateway' }],
+    ['meta', { property: 'og:description', content: '9 hands-on modules for mastering Kong Gateway on Konnect' }],
+    ['meta', { property: 'og:image', content: '/learn-kong-gateway/kong-gateway-logo.svg' }],
   ],
 
   // ── Markdown options ─────────────────────────────────────────────────────────
@@ -68,7 +69,7 @@ export default defineConfig({
 
   // ── Theme config ─────────────────────────────────────────────────────────────
   themeConfig: {
-    logo: '/logomark.svg',
+    logo: '/kong-logomark-lime.svg',
     siteTitle: 'API Gateway Bootcamp',
 
     // Top navigation
