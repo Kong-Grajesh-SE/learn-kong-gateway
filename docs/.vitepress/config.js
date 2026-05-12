@@ -92,7 +92,7 @@ export default defineConfig({
           { text: '🚦 04 - Traffic Control',            link: '/module-04-traffic-control/' },
           { text: '🔧 05 - Transformations',            link: '/module-05-transformations/' },
           { text: '📊 06 - Observability',              link: '/module-06-observability/' },
-          { text: '🔐 07 - OIDC & RBAC',               link: '/module-07-enterprise/' },
+          { text: '🔐 07 - Enterprise Features',        link: '/module-07-enterprise/' },
         ],
       },
       {
@@ -154,6 +154,7 @@ export default defineConfig({
           { text: '🗝️ Lab: Key Authentication', link: '/module-03-authentication/labs/03-key-auth' },
           { text: '🎟️ Lab: JWT Auth',           link: '/module-03-authentication/labs/03-jwt-auth' },
           { text: '🔐 Lab: OIDC / Keycloak',   link: '/module-03-authentication/labs/03-oidc-keycloak' },
+          { text: '🔏 Lab: HMAC Auth',          link: '/module-03-authentication/labs/03-hmac-auth' },
         ],
       },
       {
@@ -164,6 +165,9 @@ export default defineConfig({
           { text: '⏱️ Lab: Rate Limiting',    link: '/module-04-traffic-control/labs/04-rate-limiting' },
           { text: '⚡ Lab: Circuit Breaker',  link: '/module-04-traffic-control/labs/04-circuit-breaker' },
           { text: '👥 Lab: ACL Groups',       link: '/module-04-traffic-control/labs/04-acl' },
+          { text: '🌐 Lab: CORS',             link: '/module-04-traffic-control/labs/04-cors' },
+          { text: '🚫 Lab: IP Restriction',   link: '/module-04-traffic-control/labs/04-ip-restriction' },
+          { text: '⚡ Lab: Proxy Cache',      link: '/module-04-traffic-control/labs/04-proxy-cache' },
         ],
       },
       {
@@ -187,12 +191,15 @@ export default defineConfig({
         ],
       },
       {
-        text: '🔐 07 - OIDC & RBAC',
+        text: '🔐 07 - Enterprise Features',
         collapsed: true,
         items: [
-          { text: '📋 Overview',               link: '/module-07-enterprise/' },
-          { text: '🔐 Lab: OIDC Auth Code',    link: '/module-07-enterprise/labs/07-oidc-auth-code' },
-          { text: '👥 Lab: RBAC & Teams',      link: '/module-07-enterprise/labs/07-rbac-teams' },
+          { text: '📋 Overview',                  link: '/module-07-enterprise/' },
+          { text: '🔐 Lab: OIDC Auth Code',       link: '/module-07-enterprise/labs/07-oidc-auth-code' },
+          { text: '👥 Lab: RBAC & Teams',         link: '/module-07-enterprise/labs/07-rbac-teams' },
+          { text: '🔑 Lab: Upstream OAuth',       link: '/module-07-enterprise/labs/07-upstream-oauth' },
+          { text: '⚖️ Lab: OPA Authorization',    link: '/module-07-enterprise/labs/07-opa' },
+          { text: '🛠️ Lab: Datakit',              link: '/module-07-enterprise/labs/07-datakit' },
         ],
       },
     ],
