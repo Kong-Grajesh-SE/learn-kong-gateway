@@ -51,7 +51,9 @@ export default defineConfig({
 
   // ── Head tags ────────────────────────────────────────────────────────────────
   head: [
-    ['link', { rel: 'icon', href: '/learn-kong-gateway/favicon.png', type: 'image/png' }],
+    ['link', { rel: 'icon',           href: '/learn-kong-gateway/favicon.png', type: 'image/png', sizes: '32x32' }],
+    ['link', { rel: 'shortcut icon',  href: '/learn-kong-gateway/favicon.png', type: 'image/png' }],
+    ['link', { rel: 'apple-touch-icon', href: '/learn-kong-gateway/favicon.png' }],
     ['meta', { name: 'theme-color', content: '#000F06' }],
     ['meta', { property: 'og:title', content: 'Kong API Gateway Bootcamp' }],
     ['meta', { property: 'og:description', content: '9 hands-on modules for mastering Kong Gateway on Konnect' }],

@@ -332,3 +332,13 @@ body {
   .VPHero .tagline { font-size: 0.95rem; }
   .kong-deploy-grid { grid-template-columns: 1fr; }
 }
+
+/* ════════ SCROLL OFFSET — prevent headings hiding under sticky nav ══════ */
+/* VitePress nav is 64px tall; add 24px breathing room */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5 {
+  scroll-margin-top: calc(var(--vp-nav-height, 64px) + 24px);
+}
