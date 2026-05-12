@@ -1,0 +1,178 @@
+/* ================================================================
+   Kong Design System — Colors & Type
+   Source of truth for all Kong-branded designs.
+   ================================================================ */
+
+/* ---------- Fonts (self-hosted via npm fontsource) ---------- */
+@import '@fontsource-variable/funnel-sans';
+@import '@fontsource-variable/funnel-sans/wght-italic.css';
+@import '@fontsource/roboto-mono/400.css';
+@import '@fontsource/roboto-mono/700.css';
+
+:root {
+  /* ============================================================
+     BRAND COLORS  — voltage running through the system
+     ============================================================ */
+  --kong-electric-lime: rgb(204, 255, 0);   /* #CCFF00 — primary accent, the voltage */
+  --kong-lime:          var(--kong-electric-lime); /* alias */
+  --kong-dark-green:    rgb(0, 15, 6);       /* #000F06 — Dark theme bg (Pantone Black 3 U) */
+  --kong-black:         rgb(0, 0, 0);        /* #000000 — deepest surface */
+  --kong-bay:           rgb(183, 189, 181);  /* #B7BDB5 — Bay theme bg (Pantone 7527 U) */
+  --kong-white:         rgb(255, 255, 255);  /* #FFFFFF — White theme bg (Pantone White U) */
+
+  /* ============================================================
+     GRAYSCALE — warm desaturated greens
+     ============================================================ */
+  --gray-0:   rgb(255, 255, 255); /* #FFFFFF */
+  --gray-50:  rgb(231, 237, 229); /* #E7EDE5 */
+  --gray-100: rgb(215, 222, 212); /* #D7DED4 */
+  --gray-150: rgb(205, 212, 203); /* #CDD4CB — light theme bg */
+  --gray-200: rgb(186, 193, 184); /* #BAC1B8 */
+  --gray-300: rgb(174, 181, 167); /* #AEB5A7 */
+  --gray-400: rgb(161, 166, 159); /* #A1A69F */
+  --gray-500: rgb(138, 144, 136); /* typical mid */
+  --gray-600: rgb(74, 77, 73);    /* #4A4D49 — borders on dark */
+  --gray-700: rgb(48, 53, 47);    /* #30352F */
+  --gray-800: rgb(36, 37, 41);    /* #242529 */
+  --gray-850: rgb(49, 57, 25);    /* #313919 — olive border on lime bg cards */
+  --gray-900: rgb(13, 16, 5);     /* #0D1005 — near-black surface */
+  --gray-950: rgb(0, 15, 6);      /* #000F06 */
+
+  /* ============================================================
+     SEMANTIC — DARK THEME (default)
+     ============================================================ */
+  --bg-0:   var(--kong-dark-green);  /* page bg */
+  --bg-100: var(--kong-black);       /* elevated surface */
+  --bg-200: var(--gray-900);         /* card surface */
+  --bg-300: var(--gray-700);         /* tertiary surface */
+
+  --fg-0:   var(--gray-0);           /* primary text */
+  --fg-1:   var(--gray-200);         /* body text */
+  --fg-2:   var(--gray-300);         /* muted text */
+  --fg-3:   var(--gray-400);         /* disabled / captions */
+
+  --border-subtle:   var(--gray-850);
+  --border-default:  var(--gray-600);
+  --border-strong:   var(--gray-400);
+
+  --accent:          var(--kong-lime);
+  --accent-fg:       var(--kong-black);       /* text on lime */
+  --accent-soft:     rgba(204, 255, 0, 0.12);
+  --accent-glow:     0 0 94px 0 rgba(204, 255, 0, 0.5);
+
+  /* ============================================================
+     RADIUS — Kong is mostly sharp; pills for CTAs
+     ============================================================ */
+  --radius-none: 0;
+  --radius-xs:   2px;
+  --radius-sm:   5px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-pill: 10000px;
+
+  /* ============================================================
+     SPACING (8pt grid)
+     ============================================================ */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+  --sp-10: 128px;
+
+  /* ============================================================
+     ELEVATION
+     ============================================================ */
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.4);
+  --shadow-md: 0 6px 18px rgba(0,0,0,.5);
+  --shadow-lg: 0 24px 60px rgba(0,0,0,.6);
+  --glow-lime:      0 0 60px rgba(204,255,0,.45);
+  --glow-lime-soft: 0 0 120px rgba(204,255,0,.22);
+
+  /* ============================================================
+     MOTION — "speed" = compressed, fluid
+     ============================================================ */
+  --ease-out-swift: cubic-bezier(.2,.8,.2,1);
+  --ease-in-out:    cubic-bezier(.7,0,.3,1);
+  --dur-xs: 120ms;
+  --dur-sm: 180ms;
+  --dur-md: 260ms;
+  --dur-lg: 420ms;
+
+  /* ============================================================
+     TYPOGRAPHY STACKS
+     ============================================================ */
+  --font-display: "Funnel Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-body:    "Funnel Sans", "Inter", system-ui, -apple-system, sans-serif;
+  --font-ui:      "Funnel Sans", "Inter", system-ui, sans-serif;
+  --font-mono:    "Roboto Mono", "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+
+/* Light theme override */
+[data-theme="light"] {
+  --bg-0:   var(--gray-150);
+  --bg-100: var(--gray-0);
+  --bg-200: var(--gray-50);
+  --bg-300: var(--gray-100);
+
+  --fg-0:   var(--gray-900);
+  --fg-1:   var(--gray-800);
+  --fg-2:   var(--gray-700);
+  --fg-3:   var(--gray-600);
+
+  --border-subtle:  var(--gray-100);
+  --border-default: var(--gray-200);
+  --border-strong:  var(--gray-400);
+
+  --accent-fg: var(--kong-black);
+}
+
+/* ================================================================
+   TYPOGRAPHY SCALE — utility classes
+   ================================================================ */
+
+.type-head-3xl { font-family: var(--font-display); font-weight: 800; font-size: 120px; line-height: 120px; letter-spacing: -0.01em; }
+.type-head-2xl { font-family: var(--font-display); font-weight: 700; font-size: 90px;  line-height: 90px;  letter-spacing: -0.01em; }
+.type-head-xl  { font-family: var(--font-display); font-weight: 700; font-size: 72px;  line-height: 78px;  letter-spacing: -0.01em; }
+.type-head-l   { font-family: var(--font-display); font-weight: 700; font-size: 48px;  line-height: 52px;  letter-spacing: -0.005em; }
+.type-head-m   { font-family: var(--font-display); font-weight: 700; font-size: 32px;  line-height: 38px; }
+.type-head-s   { font-family: var(--font-display); font-weight: 700; font-size: 24px;  line-height: 30px; }
+.type-head-xs  { font-family: var(--font-display); font-weight: 700; font-size: 20px;  line-height: 22px; }
+.type-head-2xs { font-family: var(--font-display); font-weight: 700; font-size: 16px;  line-height: 20px; }
+.type-head-mobile { font-family: var(--font-display); font-weight: 700; font-size: 32px; line-height: 38px; }
+.type-head-italic { font-family: var(--font-display); font-weight: 300; font-style: italic; font-size: 52px; line-height: 58px; letter-spacing: -1.5px; }
+
+.type-body-xl { font-family: var(--font-body); font-weight: 400; font-size: 24px; line-height: 36px; }
+.type-body-l  { font-family: var(--font-body); font-weight: 400; font-size: 20px; line-height: 30px; }
+.type-body-m  { font-family: var(--font-body); font-weight: 400; font-size: 18px; line-height: 26px; }
+.type-body-s  { font-family: var(--font-body); font-weight: 400; font-size: 16px; line-height: 24px; }
+.type-body-xs { font-family: var(--font-body); font-weight: 400; font-size: 14px; line-height: 18px; }
+
+.type-button-l  { font-family: var(--font-ui); font-weight: 700; font-size: 18px; line-height: 24px; }
+.type-button-m  { font-family: var(--font-ui); font-weight: 700; font-size: 16px; line-height: 18px; }
+.type-button-s  { font-family: var(--font-ui); font-weight: 700; font-size: 14px; line-height: 16px; }
+.type-button-xs { font-family: var(--font-ui); font-weight: 700; font-size: 12px; line-height: 14px; }
+
+.type-label-l  { font-family: var(--font-ui); font-weight: 700; font-size: 16px; line-height: 18px; letter-spacing: 0.02em; text-transform: uppercase; }
+.type-label-m  { font-family: var(--font-ui); font-weight: 700; font-size: 14px; line-height: 16px; letter-spacing: 0.04em; text-transform: uppercase; }
+.type-label-s  { font-family: var(--font-ui); font-weight: 700; font-size: 12px; line-height: 14px; letter-spacing: 0.06em; text-transform: uppercase; }
+.type-label-xs { font-family: var(--font-ui); font-weight: 700; font-size: 10px; line-height: 12px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.type-stat-m  { font-family: var(--font-display); font-weight: 700; font-size: 72px; line-height: 78px; letter-spacing: -0.02em; }
+.type-stat-s  { font-family: var(--font-display); font-weight: 700; font-size: 48px; line-height: 52px; letter-spacing: -0.01em; }
+
+.type-quote   { font-family: var(--font-display); font-weight: 600; font-size: 48px; line-height: 48px; letter-spacing: -0.01em; }
+.type-code    { font-family: var(--font-mono); font-weight: 400; font-size: 16px; line-height: 24px; }
+
+/* Base surface helper */
+.kong-surface {
+  background: var(--bg-0);
+  color: var(--fg-0);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}

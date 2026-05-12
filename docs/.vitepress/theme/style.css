@@ -7,10 +7,8 @@
    Theme    : Dark (priority) — dark green bg, electric lime accents
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Google Fonts: Funnel Sans + Roboto Mono + Space Grotesk ─────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Roboto+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
 /* ── Kong 2026 brand tokens ──────────────────────────────────────────────── */
+/* Fonts and design tokens are loaded from kong-design-system.css */
 :root {
   --kong-dark:          #001408;
   --kong-lime:          #CCFF00;
