@@ -19,29 +19,29 @@ description: Understand Kong's deployment topologies - Konnect, Hybrid, Traditio
 
 ```
                 ┌─────────────────────────────────┐
-                │  Konnect (cloud.konghq.com)      │
-                │  ┌──────────────────────────┐    │
-                │  │  Control Plane (CP)       │    │
-                │  │  - Kong Manager UI        │    │
-                │  │  - decK target            │    │
-                │  │  - Plugin management      │    │
-                │  └──────────┬───────────────┘    │
+                │  Konnect (cloud.konghq.com)     │
+                │  ┌──────────────────────────┐   │
+                │  │  Control Plane (CP)      │   │
+                │  │  - Kong Manager UI       │   │
+                │  │  - decK target           │   │
+                │  │  - Plugin management     │   │
+                │  └──────────┬───────────────┘   │
                 └─────────────│───────────────────┘
                               │ mTLS (port 443)
                               │ config push
                 ┌─────────────▼───────────────────┐
-                │  Your laptop (Docker)            │
-                │  ┌──────────────────────────┐    │
-                │  │  Data Plane (DP)          │    │
-                │  │  - Handles live traffic   │    │
-                │  │  - :8000 Proxy HTTP       │    │
-                │  │  - :8443 Proxy HTTPS      │    │
-                │  └──────────┬───────────────┘    │
+                │  Your laptop (Docker)           │
+                │  ┌──────────────────────────┐   │
+                │  │  Data Plane (DP)         │   │
+                │  │  - Handles live traffic  │   │
+                │  │  - :8000 Proxy HTTP      │   │
+                │  │  - :8443 Proxy HTTPS     │   │
+                │  └──────────┬───────────────┘   │
                 └─────────────│───────────────────┘
                               │
                 ┌─────────────▼───────────────────┐
-                │  Upstream Services               │
-                │  httpbin.konghq.com | :3001      │
+                │  Upstream Services              │
+                │  httpbin.konghq.com | :3001     │
                 └─────────────────────────────────┘
 ```
 

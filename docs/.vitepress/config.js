@@ -103,6 +103,7 @@ export default defineConfig({
           { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
           { text: '🔄 APIOps with decK',       link: 'https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/', target: '_blank' },
           { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
+          { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
         ],
       },
       {
