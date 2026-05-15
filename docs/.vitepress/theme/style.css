@@ -1,0 +1,342 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Kong API Gateway Bootcamp - Design System 2026 v1.1
+   Brand: Kong Brand Guidelines 2026 v1.1
+   ─────────────────────────────────────────────────────────────────────────
+   Colors   : Navy #001408 · Electric Lime #CCFF00 · Bay (gray) #CDD4CB
+   Fonts    : Funnel Sans (headings/body) · Roboto Mono (code) · Space Grotesk (buttons)
+   Theme    : Dark (priority) - dark green bg, electric lime accents
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Kong 2026 brand tokens ──────────────────────────────────────────────── */
+/* Fonts and design tokens are loaded from kong-design-system.css */
+:root {
+  --kong-dark:          #001408;
+  --kong-lime:          #CCFF00;
+  --kong-bay:           #CDD4CB;
+  --kong-white:         #FFFFFF;
+  --kong-lime-dim:      #a8d400;
+  --kong-lime-glow:     rgba(204, 255, 0, 0.15);
+  --kong-lime-glow-sm:  rgba(204, 255, 0, 0.08);
+  --kong-gray-50:   #E7EDE5;
+  --kong-gray-100:  #D7DED4;
+  --kong-gray-200:  #CDD4CB;
+  --kong-gray-300:  #B7BDB5;
+  --kong-gray-400:  #A1A69F;
+  --kong-gray-500:  #858983;
+  --kong-gray-600:  #676B66;
+  --kong-gray-700:  #4A4D49;
+  --kong-gray-800:  #2D2E2C;
+  --kong-gray-900:  #101110;
+  --kong-surface:       rgba(255, 255, 255, 0.04);
+  --kong-surface-2:     rgba(255, 255, 255, 0.03);
+  --kong-surface-3:     rgba(255, 255, 255, 0.02);
+  --kong-surface-4:     rgba(255, 255, 255, 0.06);
+  --kong-border:        rgba(49, 57, 25, 0.35);
+  --kong-border-muted:  rgba(49, 57, 25, 0.18);
+  --kong-border-lime:   rgba(204, 255, 0, 0.12);
+  --kong-text-muted:    #A1A69F;
+  --kong-text-dim:      #CDD4CB;
+  --vp-font-family-base: 'Funnel Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --vp-font-family-mono: 'Roboto Mono', 'Fira Code', monospace;
+  --kong-font-button: 'Space Grotesk', 'Funnel Sans', sans-serif;
+}
+
+/* ── VitePress dark-mode overrides ──────────────────────────────────────── */
+.dark {
+  --vp-c-bg:              var(--kong-dark);
+  --vp-c-bg-soft:         rgba(255, 255, 255, 0.04);
+  --vp-c-bg-mute:         rgba(255, 255, 255, 0.03);
+  --vp-c-bg-alt:          rgba(255, 255, 255, 0.02);
+  --vp-c-brand-1:         var(--kong-lime);
+  --vp-c-brand-2:         var(--kong-lime-dim);
+  --vp-c-brand-3:         #99cc00;
+  --vp-c-brand-soft:      var(--kong-lime-glow-sm);
+  --vp-c-text-1:          #ffffff;
+  --vp-c-text-2:          #CDD4CB;
+  --vp-c-text-3:          #A1A69F;
+  --vp-c-divider:         rgba(49, 57, 25, 0.35);
+  --vp-c-border:          rgba(49, 57, 25, 0.35);
+  --vp-c-gutter:          var(--kong-dark);
+  --vp-nav-bg-color:      rgba(0, 20, 8, 0.95);
+  --vp-sidebar-bg-color:  rgba(0, 16, 6, 0.98);
+  --vp-button-brand-bg:         var(--kong-lime);
+  --vp-button-brand-hover-bg:   var(--kong-lime-dim);
+  --vp-button-brand-text:       var(--kong-dark);
+  --vp-button-brand-border:     transparent;
+  --vp-button-brand-hover-border: transparent;
+  --vp-button-alt-bg:           rgba(204, 255, 0, 0.06);
+  --vp-button-alt-hover-bg:     rgba(204, 255, 0, 0.14);
+  --vp-button-alt-text:         var(--kong-lime);
+  --vp-button-alt-border:       rgba(204, 255, 0, 0.35);
+  --vp-button-alt-hover-border: rgba(204, 255, 0, 0.6);
+  --vp-code-block-bg:           rgba(0, 10, 4, 0.8);
+  --vp-code-line-highlight-color: rgba(204, 255, 0, 0.06);
+  --vp-code-copy-code-hover-bg: rgba(204, 255, 0, 0.08);
+  --vp-home-hero-name-color:    transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, var(--kong-lime) 0%, #e6ff70 60%, var(--kong-gray-300) 100%);
+  --vp-home-hero-image-background-image: radial-gradient(ellipse at center, rgba(204, 255, 0, 0.22) 0%, rgba(183, 189, 181, 0.06) 55%, transparent 75%);
+  --vp-home-hero-image-filter:  blur(64px);
+  --vp-c-default-soft:  rgba(204, 255, 0, 0.04);
+  --vp-c-tip-soft:      rgba(204, 255, 0, 0.08);
+  --vp-c-warning-soft:  rgba(255, 166, 0, 0.08);
+  --vp-c-danger-soft:   rgba(255, 80, 80, 0.08);
+  --vp-c-info-soft:     rgba(183, 189, 181, 0.08);
+}
+
+/* ── Light-mode fallback ─────────────────────────────────────────────────── */
+:root:not(.dark) {
+  --vp-c-brand-1:       #4a7c20;
+  --vp-c-brand-2:       #355a16;
+  --vp-c-brand-3:       #233c0e;
+  --vp-c-brand-soft:    rgba(74, 124, 32, 0.10);
+  --vp-button-brand-bg: #4a7c20;
+  --vp-button-brand-hover-bg: #355a16;
+  --vp-button-brand-text: #ffffff;
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(135deg, #4a7c20 0%, var(--kong-gray-500) 100%);
+}
+
+/* ════════ TYPOGRAPHY - Funnel Sans ══════════════════════════════════════ */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.005em;
+}
+.dark .vp-doc h1 {
+  font-family: 'Funnel Sans', sans-serif;
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: #f0f5f1;
+}
+.dark .vp-doc h2 {
+  font-family: 'Funnel Sans', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--kong-lime);
+  border-top: 1px solid var(--kong-border);
+  padding-top: 1.2rem;
+}
+.dark .vp-doc h3 {
+  font-family: 'Funnel Sans', sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: #CDD4CB;
+}
+.dark .vp-doc h4, .dark .vp-doc h5 { color: #B7BDB5; font-weight: 600; }
+.VPButton { font-family: var(--kong-font-button) !important; font-weight: 600 !important; letter-spacing: 0.02em !important; }
+
+/* ════════ NAV BAR ═══════════════════════════════════════════════════════ */
+.dark .VPNav {
+  border-bottom: 1px solid rgba(49, 57, 25, 0.35);
+  background: rgba(0, 20, 8, 0.94);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+}
+.dark .VPNavBarTitle .title {
+  font-family: 'Funnel Sans', sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  background: linear-gradient(90deg, var(--kong-lime) 0%, #e6ff70 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.VPNavBarTitle .logo { height: 28px; width: auto; margin-right: 4px; }
+.dark .VPNavBarMenuLink.active,
+.dark .VPNavBarMenuGroup.active .button { color: var(--kong-lime) !important; }
+.dark .VPNavBarMenuLink:hover,
+.dark .VPNavBarMenuGroup .button:hover { color: var(--kong-lime) !important; }
+
+/* ════════ SIDEBAR ═══════════════════════════════════════════════════════ */
+.dark .VPSidebar { background: rgba(0, 16, 6, 0.98); border-right: 1px solid rgba(49, 57, 25, 0.35); }
+.dark .VPSidebarItem.level-0 > .item .text {
+  font-family: 'Funnel Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--kong-text-muted);
+}
+.dark .VPSidebarItem.is-active > .item .link { color: var(--kong-lime) !important; font-weight: 600; }
+.dark .VPSidebarItem.is-active > .item {
+  border-left: 2px solid var(--kong-lime);
+  padding-left: 10px; margin-left: -2px;
+  background: var(--kong-lime-glow-sm);
+  border-radius: 0 4px 4px 0;
+}
+.dark .VPSidebarItem .link:hover { color: var(--kong-lime) !important; }
+.dark .VPSidebarItem .caret-icon { color: var(--kong-text-muted); }
+
+/* ════════ HOME HERO ═════════════════════════════════════════════════════ */
+.VPHero .name {
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: clamp(2.6rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.VPHero .text {
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.VPHero .tagline {
+  font-family: 'Funnel Sans', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  opacity: 0.78;
+  max-width: 640px;
+  line-height: 1.75;
+}
+
+/* ════════ FEATURE CARDS ═════════════════════════════════════════════════ */
+.dark .VPFeatures { border-top: 1px solid var(--kong-border); padding-top: 56px; }
+.dark .VPFeature {
+  background: rgba(255, 255, 255, 0.04) !important;
+  border: 1px solid rgba(204, 255, 0, 0.12) !important;
+  border-radius: 10px !important;
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+  position: relative;
+}
+.dark .VPFeature::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--kong-lime) 0%, rgba(204, 255, 0, 0) 100%);
+  opacity: 0; transition: opacity 0.2s;
+}
+.dark .VPFeature:hover::before { opacity: 1; }
+.dark .VPFeature:hover {
+  border-color: rgba(204, 255, 0, 0.30) !important;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(204, 255, 0, 0.08), 0 0 0 1px rgba(204, 255, 0, 0.05);
+}
+.dark .VPFeature .icon { font-size: 2rem; line-height: 1; margin-bottom: 0.6rem; }
+.dark .VPFeature .title { font-family: 'Funnel Sans', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.01em; color: var(--kong-lime) !important; }
+.dark .VPFeature .details { font-size: 0.87rem; line-height: 1.7; color: #CDD4CB; }
+.dark .VPFeature .link-text { font-family: 'Space Grotesk', sans-serif; color: var(--kong-bay) !important; font-weight: 600; font-size: 0.82rem; letter-spacing: 0.02em; }
+
+/* ════════ CUSTOM CONTAINERS ═════════════════════════════════════════════ */
+.dark .custom-block { border-radius: 0 8px 8px 0; }
+.dark .custom-block.tip {
+  background: linear-gradient(135deg, rgba(204, 255, 0, 0.06) 0%, rgba(204, 255, 0, 0.02) 100%);
+  border-left: 3px solid var(--kong-lime);
+}
+.dark .custom-block.tip .custom-block-title { color: var(--kong-lime); font-family: 'Funnel Sans', sans-serif; font-weight: 700; }
+.dark .custom-block.info {
+  background: linear-gradient(135deg, rgba(183, 189, 181, 0.07) 0%, rgba(183, 189, 181, 0.02) 100%);
+  border-left: 3px solid var(--kong-bay);
+}
+.dark .custom-block.info .custom-block-title { color: var(--kong-bay); font-family: 'Funnel Sans', sans-serif; font-weight: 700; }
+.dark .custom-block.warning {
+  background: linear-gradient(135deg, rgba(255, 166, 0, 0.07) 0%, rgba(255, 166, 0, 0.02) 100%);
+  border-left: 3px solid #ffa500;
+}
+.dark .custom-block.warning .custom-block-title { color: #ffa500; font-family: 'Funnel Sans', sans-serif; font-weight: 700; }
+.dark .custom-block.danger {
+  background: linear-gradient(135deg, rgba(255, 80, 80, 0.07) 0%, rgba(255, 80, 80, 0.02) 100%);
+  border-left: 3px solid #ff5050;
+}
+.dark .custom-block.danger .custom-block-title { color: #ff5050; font-family: 'Funnel Sans', sans-serif; font-weight: 700; }
+.dark .custom-block.details {
+  background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(49, 57, 25, 0.35); border-radius: 8px; border-left: 3px solid rgba(49, 57, 25, 0.5);
+}
+.dark .custom-block.details summary { cursor: pointer; font-family: 'Funnel Sans', sans-serif; font-weight: 600; color: var(--kong-gray-200); }
+.dark .custom-block.details summary:hover { color: var(--kong-lime); }
+
+/* ════════ CODE BLOCKS - Roboto Mono ════════════════════════════════════ */
+.dark .vp-code-group .tabs { background: #030c04; border-bottom: 1px solid var(--kong-border); border-radius: 8px 8px 0 0; }
+.dark .vp-code-group .tabs label { font-family: 'Roboto Mono', monospace; font-size: 0.76rem; font-weight: 500; color: var(--kong-text-muted); letter-spacing: 0.03em; }
+.dark .vp-code-group .tabs input:checked + label { color: var(--kong-lime); border-bottom-color: var(--kong-lime); }
+.dark div[class*='language-'] { border: 1px solid rgba(49, 57, 25, 0.35); border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+.dark div[class*='language-']::before { font-family: 'Roboto Mono', monospace !important; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--kong-text-muted) !important; }
+.dark .vp-doc code:not(pre code) {
+  background: rgba(204, 255, 0, 0.07); color: #d4ff44;
+  border: 1px solid rgba(204, 255, 0, 0.15); border-radius: 4px;
+  padding: 1px 5px; font-size: 0.86em; font-family: 'Roboto Mono', monospace;
+}
+.dark .line-numbers-wrapper { border-right: 1px solid var(--kong-border) !important; color: var(--kong-border) !important; }
+
+/* ════════ TABLES ════════════════════════════════════════════════════════ */
+.dark .vp-doc table { border-collapse: collapse; width: 100%; border: 1px solid var(--kong-border); border-radius: 8px; overflow: hidden; }
+.dark .vp-doc table thead tr { background: linear-gradient(90deg, #080f09, #050c06); }
+.dark .vp-doc table thead th { font-family: 'Funnel Sans', sans-serif; font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--kong-lime); border-bottom: 1px solid var(--kong-border); padding: 10px 14px; }
+.dark .vp-doc table tbody tr { border-bottom: 1px solid var(--kong-border-muted); transition: background 0.12s; }
+.dark .vp-doc table tbody tr:last-child { border-bottom: none; }
+.dark .vp-doc table tbody tr:hover { background: rgba(204, 255, 0, 0.03); }
+.dark .vp-doc table tbody td { padding: 9px 14px; color: #CDD4CB; font-size: 0.9rem; }
+.dark .vp-doc table tbody tr:nth-child(even) { background: rgba(5, 14, 6, 0.5); }
+
+/* ════════ LINKS ═════════════════════════════════════════════════════════ */
+.dark .vp-doc a { color: var(--kong-lime); text-decoration: none; border-bottom: 1px solid rgba(204, 255, 0, 0.25); transition: color 0.12s, border-color 0.12s; }
+.dark .vp-doc a:hover { color: #ffffff; border-bottom-color: var(--kong-lime); }
+
+/* ════════ BLOCKQUOTES ═══════════════════════════════════════════════════ */
+.dark .vp-doc blockquote {
+  background: rgba(204, 255, 0, 0.04);
+  border-left: 3px solid var(--kong-lime); border-radius: 0 6px 6px 0;
+  padding: 12px 18px; color: #CDD4CB; font-style: normal; font-size: 0.95rem;
+}
+.dark .vp-doc blockquote p { margin: 0; }
+
+/* ════════ BADGES ════════════════════════════════════════════════════════ */
+.kong-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 10px; border-radius: 999px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.70rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap;
+}
+.kong-badge.lime   { background: rgba(204, 255, 0, 0.10);  color: var(--kong-lime); border: 1px solid rgba(204, 255, 0, 0.30); }
+.kong-badge.bay    { background: rgba(205, 212, 203, 0.10); color: var(--kong-bay);  border: 1px solid rgba(205, 212, 203, 0.30); }
+.kong-badge.green  { background: rgba(0, 60, 20, 0.5);     color: #7ddf9f;          border: 1px solid #1a5c32; }
+.kong-badge.orange { background: rgba(255, 140, 0, 0.10);  color: #ffaa44;          border: 1px solid rgba(255, 140, 0, 0.30); }
+.kong-badge.red    { background: rgba(255, 80, 80, 0.10);  color: #ff7070;          border: 1px solid rgba(255, 80, 80, 0.30); }
+
+/* ════════ SCROLLBAR ═════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--kong-dark); }
+::-webkit-scrollbar-thumb { background: var(--kong-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(204, 255, 0, 0.3); }
+
+/* ════════ FOOTER ════════════════════════════════════════════════════════ */
+.dark .VPFooter { border-top: 1px solid var(--kong-border); background: var(--kong-dark); }
+.dark .VPFooter .message, .dark .VPFooter .copyright { font-family: 'Funnel Sans', sans-serif; color: var(--kong-text-muted); font-size: 0.82rem; }
+
+/* ════════ OUTLINE / TOC ═════════════════════════════════════════════════ */
+.dark .VPDocOutlineItem a { color: var(--kong-text-muted); font-size: 0.82rem; }
+.dark .VPDocOutlineItem.active a { color: var(--kong-lime) !important; }
+.dark .VPDocOutlineItem a:hover { color: var(--kong-lime) !important; }
+
+/* ════════ SEARCH ════════════════════════════════════════════════════════ */
+.dark .VPLocalSearchBox { background: var(--kong-surface) !important; border: 1px solid var(--kong-border) !important; }
+.dark .VPLocalSearchBox .result.selected .title { color: var(--kong-lime) !important; }
+
+/* ════════ DEPLOYMENT CARDS ══════════════════════════════════════════════ */
+.kong-deploy-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+.kong-deploy-card { background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(204, 255, 0, 0.12); border-radius: 10px; padding: 20px; transition: border-color 0.2s, box-shadow 0.2s; }
+.kong-deploy-card:hover { border-color: rgba(204, 255, 0, 0.30); box-shadow: 0 6px 24px rgba(204, 255, 0, 0.06); }
+.kong-deploy-card.active { border-color: var(--kong-lime); background: rgba(204, 255, 0, 0.05); }
+.kong-deploy-card .card-title { font-family: 'Funnel Sans', sans-serif; font-weight: 700; color: var(--kong-lime); font-size: 0.95rem; margin-bottom: 6px; }
+.kong-deploy-card .card-desc { font-size: 0.85rem; color: var(--kong-text-muted); line-height: 1.5; }
+
+/* ════════ RESPONSIVE ════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .VPHero .name    { font-size: 2.2rem; }
+  .VPHero .text    { font-size: 1.3rem; }
+  .VPHero .tagline { font-size: 0.95rem; }
+  .kong-deploy-grid { grid-template-columns: 1fr; }
+}
+
+/* ════════ SCROLL OFFSET - prevent headings hiding under sticky nav ══════ */
+/* VitePress nav is 64px tall; add 24px breathing room */
+.vp-doc h1,
+.vp-doc h2,
+.vp-doc h3,
+.vp-doc h4,
+.vp-doc h5 {
+  scroll-margin-top: calc(var(--vp-nav-height, 64px) + 24px);
+}
