@@ -32,7 +32,7 @@ Once your DP is healthy and registered, the Service/Route/traffic steps are iden
 ## Step 1 - Create a Control Plane in Konnect
 
 1. Log in to [cloud.konghq.com](https://cloud.konghq.com)
-2. In the left sidebar, click **Gateway Manager**
+2. In the left sidebar, click **API Gateway** → **Gateways**
 3. Click **+ New Control Plane**
 4. Choose **Kong Gateway** (Self-managed)
 5. Name it: `bootcamp-cp`

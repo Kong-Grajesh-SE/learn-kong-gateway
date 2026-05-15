@@ -13,7 +13,7 @@ Throughout the lab, every step ends with a **✅ Checkpoint** so you know you're
 A **Control Plane (CP)** is the brain that holds your gateway's configuration. Konnect runs it for you.
 
 1. Log in to [cloud.konghq.com](https://cloud.konghq.com).
-2. **Gateway Manager** in the left sidebar → **+ New Control Plane**.
+2. **API Gateway** in the left sidebar → **Gateways** → **+ New Gateway**.
 3. Choose **Kong Gateway (Serverless)**.
 4. Name it: `bootcamp-cp`.
 5. Region: pick the closest to you (US, EU, AU).

@@ -1,0 +1,41 @@
+# module-07-enterprise/keycloak/docker-compose.yml
+#
+# Local Keycloak instance for Lab 07-C (OIDC Authorization Code Flow).
+# Imports the realm from realm-export.json on first start so the bootcamp's
+# users, client, and redirect URIs work without any manual UI setup.
+#
+# Run:
+#   cd module-07-enterprise/keycloak
+#   docker compose up -d
+#   open http://localhost:8080         # Admin: admin / admin
+#   open http://localhost:8080/realms/kong-bootcamp/account   # User: alice / alice-password
+#
+# Stop & wipe:
+#   docker compose down -v
+
+services:
+  keycloak:
+    # Pinned to a Keycloak release contemporary with Kong Gateway 3.14.
+    # Update to a newer 25.x or 26.x patch if you have a CVE concern.
+    image: quay.io/keycloak/keycloak:26.0
+    container_name: kc-bootcamp
+    command:
+      - start-dev
+      - --import-realm
+      - --http-port=8080
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      # The DB defaults to dev-file (H2). For a multi-container setup with
+      # Postgres, see the "Production-style" section in README.md.
+    ports:
+      - "8080:8080"        # Admin Console + token endpoints
+    volumes:
+      - ./realm-export.json:/opt/keycloak/data/import/realm-export.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/8080 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped

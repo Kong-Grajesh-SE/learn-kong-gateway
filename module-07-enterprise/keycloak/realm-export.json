@@ -1,0 +1,154 @@
+{
+  "realm": "kong-bootcamp",
+  "enabled": true,
+  "displayName": "Kong Bootcamp",
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": true,
+  "duplicateEmailsAllowed": false,
+  "rememberMe": false,
+  "verifyEmail": false,
+  "accessTokenLifespan": 900,
+  "accessTokenLifespanForImplicitFlow": 900,
+  "ssoSessionIdleTimeout": 1800,
+  "ssoSessionMaxLifespan": 36000,
+  "roles": {
+    "realm": [
+      {
+        "name": "user",
+        "description": "Standard application user",
+        "composite": false,
+        "clientRole": false
+      },
+      {
+        "name": "admin",
+        "description": "Administrator with elevated access",
+        "composite": false,
+        "clientRole": false
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "platform-engineers",
+      "path": "/platform-engineers",
+      "realmRoles": ["admin"]
+    },
+    {
+      "name": "travel-users",
+      "path": "/travel-users",
+      "realmRoles": ["user"]
+    }
+  ],
+  "users": [
+    {
+      "username": "alice",
+      "email": "alice@kong-bootcamp.local",
+      "firstName": "Alice",
+      "lastName": "Anderson",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "alice-password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["user"],
+      "groups": ["/travel-users"]
+    },
+    {
+      "username": "bob-admin",
+      "email": "bob@kong-bootcamp.local",
+      "firstName": "Bob",
+      "lastName": "Builder",
+      "enabled": true,
+      "emailVerified": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "bob-password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["admin"],
+      "groups": ["/platform-engineers"]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "kong",
+      "name": "Kong OIDC Relying Party",
+      "description": "Server-side OIDC client used by the Kong openid-connect plugin (Auth Code Flow).",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "kong-bootcamp-client-secret-replace-in-prod",
+      "redirectUris": [
+        "http://localhost:8000/*",
+        "http://localhost:8080/*",
+        "https://*.kongcloud.dev/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8000",
+        "http://localhost:8080",
+        "+"
+      ],
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": false,
+      "implicitFlowEnabled": false,
+      "frontchannelLogout": true,
+      "fullScopeAllowed": true,
+      "attributes": {
+        "post.logout.redirect.uris": "+",
+        "backchannel.logout.session.required": "true",
+        "backchannel.logout.revoke.offline.tokens": "false"
+      },
+      "defaultClientScopes": [
+        "web-origins",
+        "profile",
+        "roles",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ]
+    },
+    {
+      "clientId": "kong-m2m",
+      "name": "Kong Upstream OAuth M2M Client",
+      "description": "Used by Lab 07-D (Upstream OAuth) for client_credentials grant. Token issued to Kong itself.",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "kong-m2m-client-secret-replace-in-prod",
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": [],
+      "webOrigins": [],
+      "attributes": {
+        "use.refresh.tokens": "false"
+      }
+    }
+  ],
+  "clientScopes": [],
+  "browserSecurityHeaders": {
+    "contentSecurityPolicyReportOnly": "",
+    "xContentTypeOptions": "nosniff",
+    "xRobotsTag": "none",
+    "xFrameOptions": "SAMEORIGIN",
+    "contentSecurityPolicy": "frame-src 'self'; frame-ancestors 'self'; object-src 'none';",
+    "xXSSProtection": "1; mode=block",
+    "strictTransportSecurity": "max-age=31536000; includeSubDomains"
+  }
+}

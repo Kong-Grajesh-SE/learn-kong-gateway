@@ -140,7 +140,7 @@ You changed something upstream and need to drop the cached copy without waiting 
 
 ```bash
 # List cache entries on the DP (Konnect serverless exposes this in the UI):
-# Konnect → Gateway Manager → CP → Plugins → proxy-cache → … not always available on serverless
+# Konnect → API Gateway → Gateways → your gateway → Plugins → proxy-cache → … not always available on serverless
 
 # On a Konnect Admin API CP you can purge by cache key:
 curl -X DELETE \

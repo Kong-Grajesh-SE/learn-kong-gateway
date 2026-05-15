@@ -83,7 +83,7 @@ After completing the core modules, go deep with these specialist tracks:
 
 ```bash
 # 1. Clone the bootcamp
-git clone https://github.com/Kong-Grajesh-SE/api-gateway-bootcamp
+git clone https://github.com/Kong-Grajesh-SE/learn-kong-gateway
 cd api-gateway-bootcamp
 
 # 2. Install dependencies

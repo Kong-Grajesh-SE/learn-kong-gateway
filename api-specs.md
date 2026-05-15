@@ -416,7 +416,7 @@ info:
     Upload this YAML to the Konnect Developer Portal as API documentation.
   contact:
     name: Kong Bootcamp
-    url: https://github.com/Kong-Grajesh-SE/api-gateway-bootcamp
+    url: https://github.com/Kong-Grajesh-SE/learn-kong-gateway
   license:
     name: Apache 2.0
     url: https://www.apache.org/licenses/LICENSE-2.0

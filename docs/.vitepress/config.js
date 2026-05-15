@@ -210,7 +210,7 @@ export default defineConfig({
 
     // Edit link pointing to GitHub
     editLink: {
-      pattern: 'https://github.com/Kong-Grajesh-SE/api-gateway-bootcamp/edit/main/:path',
+      pattern: 'https://github.com/Kong-Grajesh-SE/learn-kong-gateway/edit/main/:path',
       text: 'Edit this page on GitHub',
     },
 
@@ -222,7 +222,7 @@ export default defineConfig({
 
     // Social links in nav
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/Kong-Grajesh-SE/api-gateway-bootcamp' },
+      { icon: 'github', link: 'https://github.com/Kong-Grajesh-SE/learn-kong-gateway' },
     ],
 
     // Footer
