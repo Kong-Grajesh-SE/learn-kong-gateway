@@ -63,7 +63,8 @@ YAML
 else
   api_write POST "/consumers" \
     "$(jq -n '{username:"web-app", custom_id:"web-001", tags:["module-06"]}')" >/dev/null
-  api_write POST "/consumers/web-app/key-auth" "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
+  web_id=$(resolve_id consumers web-app) || { err "web-app not found"; exit 1; }
+  api_write POST "/consumers/$web_id/key-auth" "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
   api_write POST "/services" \
     "$(jq -n '{name:"flights-svc", url:"https://httpbin.konghq.com", tags:["module-06"]}')" >/dev/null
   SID=$(api_curl GET "/services/flights-svc" | jq -r '.id')

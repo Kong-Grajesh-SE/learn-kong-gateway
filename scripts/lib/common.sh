@@ -334,21 +334,79 @@ pick_cfg_method() {
 # ──────────────────────────────────────────────────────────────────────────────
 # Konnect Admin API helpers
 # ──────────────────────────────────────────────────────────────────────────────
+
+# _verbose_log - pretty-print HTTP call details to stderr when VERBOSE=1.
+# Args: method, path, status, request_body, response_body
+# (request/response bodies are passed-by-content, not by file path.)
+_verbose_log() {
+  [[ "${VERBOSE:-}" != "1" ]] && return 0
+  local method=$1 path=$2 status=$3 req=${4-} resp=${5-}
+  local status_color="$DIM"
+  case "$status" in
+    2*)        status_color="$GRN" ;;
+    3*)        status_color="$CYN" ;;
+    4*|5*|000) status_color="$RED" ;;
+  esac
+  printf '%s  ↪ %s %s%s  %s[HTTP %s]%s\n' \
+    "$DIM" "$method" "$path" "$RST" "$status_color" "$status" "$RST" >&2
+  if [[ -n "$req" ]]; then
+    printf '%s    request:%s\n' "$DIM" "$RST" >&2
+    # Try to pretty-print JSON; fall back to first 5 lines of raw text. Cap at 30 lines.
+    { echo "$req" | jq -C . 2>/dev/null || echo "$req"; } | head -30 | sed 's/^/      /' >&2
+  fi
+  if [[ -n "$resp" ]]; then
+    printf '%s    response:%s\n' "$DIM" "$RST" >&2
+    { echo "$resp" | jq -C . 2>/dev/null || echo "$resp"; } | head -30 | sed 's/^/      /' >&2
+  fi
+}
+
 api_curl() {
   # Read-only helper. Returns body on stdout; HTTP status NOT checked.
+  # Always captures status+body so VERBOSE=1 can log them; never blocks on errors.
   # Usage: api_curl <METHOD> <PATH> [JSON_BODY]
   local method=$1 path=$2 body=${3-}
-  local args=( -sS -X "$method"
+  local tmp; tmp=$(mktemp)
+  local args=( -sS -o "$tmp" -w '%{http_code}'
+               -X "$method"
                -H "Authorization: Bearer $KONNECT_TOKEN"
                -H "Accept: application/json" )
   if [[ -n "$body" ]]; then
     args+=( -H "Content-Type: application/json" --data "$body" )
   fi
-  curl "${args[@]}" "${KONNECT_API_BASE}${path}"
+  local code
+  code=$(curl "${args[@]}" "${KONNECT_API_BASE}${path}" || echo "000")
+  _verbose_log "$method" "$path" "$code" "$body" "$(cat "$tmp")"
+  cat "$tmp"
+  rm -f "$tmp"
+}
+
+wait_with_progress() {
+  # wait_with_progress <seconds> [label]
+  # Sleep with a visible countdown so the user knows the script is alive.
+  local total=$1 label=${2-"Waiting"}
+  local i
+  for (( i = total; i > 0; i-- )); do
+    printf '\r%s  %s %ds remaining…%s ' "$DIM" "$label" "$i" "$RST"
+    sleep 1
+  done
+  printf '\r%s  %s done.                                    %s\n' "$DIM" "$label" "$RST"
+}
+
+resolve_id() {
+  # resolve_id <plural-kind> <name>
+  # Konnect Admin API requires UUIDs in path segments for PATCH/PUT/DELETE and
+  # nested-resource POSTs. GET-by-name does work, so we round-trip name → uuid here.
+  # Echoes the UUID on stdout. Returns non-zero if the entity isn't found.
+  local kind=$1 name=$2
+  local id
+  id=$(api_curl GET "/$kind/$name" 2>/dev/null | jq -r '.id // empty')
+  if [[ -z "$id" || "$id" == "null" ]]; then return 1; fi
+  printf '%s' "$id"
 }
 
 api_write() {
   # Write helper that captures HTTP status and FAILS LOUDLY on non-2xx.
+  # Honors VERBOSE=1 by also logging method/path/status + request/response bodies.
   # api_write <METHOD> <PATH> [JSON_BODY]   → prints response body on stdout, returns 0/1
   local method=$1 path=$2 body=${3-}
   local tmp; tmp=$(mktemp)
@@ -361,6 +419,7 @@ api_write() {
   fi
   local code
   code=$(curl "${args[@]}" "${KONNECT_API_BASE}${path}" || echo "000")
+  _verbose_log "$method" "$path" "$code" "$body" "$(cat "$tmp")"
   if [[ "$code" == 2* ]]; then
     cat "$tmp"; rm -f "$tmp"; return 0
   fi
@@ -414,6 +473,74 @@ wait_for_route() {
   echo
   err "Route did not propagate within ${timeout}s. Last response (HTTP $http):"
   cat /tmp/_verify_wait.txt; echo
+  return 1
+}
+
+wait_for_http_status() {
+  # wait_for_http_status <url> <expected_code> [timeout_seconds] [-- extra_curl_args...]
+  # Polls until the URL returns the expected HTTP status code.
+  # Useful for confirming a plugin has propagated (e.g. wait for 401 after attaching key-auth).
+  local url=$1 expected=$2 timeout=${3:-45} interval=3 elapsed=0 http
+  shift 3 || shift $#
+  info "Waiting up to ${timeout}s for HTTP ${expected} from the DP…"
+  while (( elapsed < timeout )); do
+    http=$(curl -sS -o /dev/null -w '%{http_code}' "$@" "$url" || echo "000")
+    if [[ "$http" == "$expected" ]]; then
+      ok "Plugin active: HTTP ${expected} after ${elapsed}s"
+      return 0
+    fi
+    sleep "$interval"
+    elapsed=$((elapsed + interval))
+    printf '.'
+  done
+  echo
+  err "Plugin did not become active within ${timeout}s. Expected HTTP ${expected}, last got HTTP ${http}."
+  return 1
+}
+
+wait_for_body_jq() {
+  # wait_for_body_jq <url> <jq_expr> [timeout_seconds] [extra_curl_args...]
+  # Polls until a GET response body, parsed with jq, returns a non-empty/non-null value.
+  # Useful for request-transforming plugins whose effect appears in httpbin's echoed headers
+  # (the JSON body) rather than in HTTP response headers.
+  local url=$1 jq_expr=$2 timeout=${3:-60} interval=3 elapsed=0 value
+  shift 3 || shift $#
+  info "Waiting up to ${timeout}s for '$jq_expr' in response body…"
+  while (( elapsed < timeout )); do
+    value=$(curl -s "$@" "$url" | jq -r "${jq_expr} // empty" 2>/dev/null)
+    if [[ -n "$value" && "$value" != "null" ]]; then
+      ok "Plugin active: body value present after ${elapsed}s"
+      return 0
+    fi
+    sleep "$interval"
+    elapsed=$((elapsed + interval))
+    printf '.'
+  done
+  echo
+  err "'$jq_expr' not seen in response body within ${timeout}s - plugin may not have propagated."
+  return 1
+}
+
+wait_for_response_header() {
+  # Polls until the response contains the named header (lowercase match).
+  # Extra curl args (e.g. -H 'X-API-Key: …') are forwarded to every poll request.
+  # Useful for confirming header-injecting plugins have propagated (e.g. correlation-id,
+  # rate-limiting, etc.), optionally scoped to a specific consumer via an API key.
+  local url=$1 header=$2 timeout=${3:-45} interval=3 elapsed=0 value
+  shift 3 || shift $#
+  info "Waiting up to ${timeout}s for '${header}' header in response…"
+  while (( elapsed < timeout )); do
+    value=$(curl -sI "$@" "$url" | awk -F': ' -v h="${header}" 'tolower($1)==h{print $2}' | tr -d '\r\n')
+    if [[ -n "$value" ]]; then
+      ok "Plugin active: '${header}' present after ${elapsed}s"
+      return 0
+    fi
+    sleep "$interval"
+    elapsed=$((elapsed + interval))
+    printf '.'
+  done
+  echo
+  err "Header '${header}' not seen within ${timeout}s - plugin may not have propagated."
   return 1
 }
 
@@ -539,6 +666,19 @@ cleanup_generated_files() {
   fi
 }
 
+reset_cfg_method_in_env() {
+  # Set CFG_METHOD= (null) in the saved .env so the NEXT script run re-prompts
+  # the user to pick decK vs Admin API. The CURRENT shell's CFG_METHOD stays
+  # intact so the rest of the in-flight script continues fine.
+  if [[ -f "$ENV_FILE" ]]; then
+    if grep -q '^CFG_METHOD=' "$ENV_FILE"; then
+      # Portable sed -i (works on both GNU and BSD/macOS sed)
+      sed -i.bak 's/^CFG_METHOD=.*/CFG_METHOD=/' "$ENV_FILE" && rm -f "$ENV_FILE.bak"
+      info "Cleared cached CFG_METHOD in $ENV_FILE - next run will re-ask 'decK vs Admin API'."
+    fi
+  fi
+}
+
 cleanup_everything() {
   # Empties the CP. Both decK and Admin API paths supported.
   if [[ "$CFG_METHOD" == "deck" ]]; then
@@ -559,6 +699,9 @@ cleanup_everything() {
     done
     ok "Admin API delete sweep complete."
   fi
+  # Whenever we wipe the CP, also clear the cached config-method so the next
+  # script run lets the user choose deck vs api fresh.
+  reset_cfg_method_in_env
 }
 
 # ──────────────────────────────────────────────────────────────────────────────

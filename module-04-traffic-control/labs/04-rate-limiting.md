@@ -44,7 +44,7 @@ services:
         plugins:
           - name: key-auth
             config:
-              key_names: [X-API-Key, apikey]
+              key_names: [X-API-Key]
               hide_credentials: true
               anonymous: <PASTE-ANONYMOUS-CONSUMER-UUID>   # see Step 2
 ```

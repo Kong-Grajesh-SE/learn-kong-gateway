@@ -135,6 +135,54 @@ Asked interactively the first time. Both produce the same result; the difference
 | **Skip if missing** | Falls back to Admin API if `deck` isn't installed. | Always works. |
 | **What you'll use in prod** | This one. GitOps. | Useful for one-off scripts and CI. |
 
+## Verbose mode - see every Admin API call
+
+By default the scripts only show high-level `▶ step` / `✓ ok` / `! warn` messages. Set **`VERBOSE=1`** to see **every Admin API request and response** as it happens:
+
+```bash
+VERBOSE=1 ./scripts/verify-module-02.sh serverless
+```
+
+Output looks like:
+
+```
+▶ 1. Create Service + Route via api
+  ↪ POST /services  [HTTP 201]
+    request:
+      {
+        "name": "httpbin-service",
+        "url": "https://httpbin.konghq.com",
+        "tags": ["module-01", "bootcamp"]
+      }
+    response:
+      {
+        "id": "1a939c08-0189-4a8c-9eb2-e20f73b8132b",
+        "name": "httpbin-service",
+        "host": "httpbin.konghq.com",
+        "port": 443,
+        "protocol": "https",
+        ...
+      }
+✓ Service 'httpbin-service' (id=1a939c08-…)
+```
+
+When to use it:
+- **Debugging a 4xx / 5xx** - see the exact request body and Konnect's error response.
+- **Confirming what `decK` synced** - the verbose path doesn't help here; check `deck` mode output instead.
+- **Understanding what the script is doing** - every API call is right there in the terminal.
+
+Token is **never logged** - the helper only prints the path, status, request body, and response body. Long responses are truncated to ~30 lines.
+
+::: tip Stack with the existing flags
+```bash
+# Lock mode AND show every call
+VERBOSE=1 ./scripts/verify-module-02.sh serverless
+
+# Hybrid + verbose
+VERBOSE=1 ./scripts/verify-module-04.sh hybrid
+```
+:::
+
 ## The cleanup gate
 
 Every script (M02–M08) starts with **`cleanup_if_needed`** - an interactive pre-flight that inspects the CP first:

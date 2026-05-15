@@ -49,17 +49,35 @@ services:
         tags: [module-01, bootcamp]
 YAML
   else
-    api_write PUT "/services/$svc_name" \
-      "$(jq -n --arg n "$svc_name" --arg u "$svc_url" \
-            '{name:$n, url:$u, tags:["module-01","bootcamp"]}')" >/dev/null \
-      || { err "Failed to create service $svc_name"; return 1; }
-    local sid; sid=$(api_curl GET "/services/$svc_name" | jq -r '.id // empty')
-    [[ -z "$sid" ]] && { err "Service $svc_name not found after PUT"; return 1; }
+    # Konnect Admin API: PUT requires a UUID in the path, so we POST to create and
+    # GET to resolve the auto-assigned id. If the entity already exists, GET still
+    # returns its id, so the flow is idempotent.
+    local sid
+    sid=$(api_curl GET "/services/$svc_name" 2>/dev/null | jq -r '.id // empty')
+    if [[ -z "$sid" ]]; then
+      api_write POST "/services" \
+        "$(jq -n --arg n "$svc_name" --arg u "$svc_url" \
+              '{name:$n, url:$u, tags:["module-01","bootcamp"]}')" >/dev/null \
+        || { err "Failed to create service $svc_name"; return 1; }
+      sid=$(api_curl GET "/services/$svc_name" | jq -r '.id // empty')
+    else
+      info "Service '$svc_name' already exists (id=$sid) - skipping create"
+    fi
+    [[ -z "$sid" ]] && { err "Service $svc_name not found after POST"; return 1; }
     ok "Service '$svc_name' (id=$sid)"
-    api_write PUT "/routes/$route_name" \
-      "$(jq -n --arg n "$route_name" --arg p "$route_path" --arg sid "$sid" \
-            '{name:$n, paths:[$p], strip_path:true, service:{id:$sid}, tags:["module-01","bootcamp"]}')" >/dev/null \
-      || { err "Failed to create route $route_name"; return 1; }
+
+    local rid
+    rid=$(api_curl GET "/routes/$route_name" 2>/dev/null | jq -r '.id // empty')
+    if [[ -z "$rid" ]]; then
+      api_write POST "/routes" \
+        "$(jq -n --arg n "$route_name" --arg p "$route_path" --arg sid "$sid" \
+              '{name:$n, paths:[$p], strip_path:true, service:{id:$sid}, tags:["module-01","bootcamp"]}')" >/dev/null \
+        || { err "Failed to create route $route_name"; return 1; }
+      rid=$(api_curl GET "/routes/$route_name" | jq -r '.id // empty')
+    else
+      info "Route '$route_name' already exists (id=$rid) - skipping create"
+    fi
+    [[ -z "$rid" ]] && { err "Route $route_name not found after POST"; return 1; }
     ok "Route '$route_name' on $route_path (strip_path=true)"
   fi
 }

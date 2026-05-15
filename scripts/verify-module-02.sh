@@ -69,26 +69,28 @@ YAML
         "$(jq -n --arg n "$SVC" '{name:$n, url:"https://httpbin.konghq.com", tags:["module-02"]}')" >/dev/null \
         || { err "Failed to create service $SVC"; return 1; }
     done
-    # Routes (capture each Service id so we can attach Routes by id)
-    declare -A SVC_IDS
-    for SVC in flights-svc hotels-svc cars-svc; do
-      SVC_IDS[$SVC]=$(api_curl GET "/services/$SVC" | jq -r '.id')
-    done
+    # Routes (capture each Service id so we can attach Routes by id).
+    # Use plain variables instead of associative arrays for bash 3.2 portability (macOS default).
+    local SID_FLIGHTS SID_HOTELS SID_CARS
+    SID_FLIGHTS=$(api_curl GET "/services/flights-svc" | jq -r '.id')
+    SID_HOTELS=$(api_curl GET "/services/hotels-svc"   | jq -r '.id')
+    SID_CARS=$(api_curl GET "/services/cars-svc"       | jq -r '.id')
+
     # /flights → flights-svc
     api_write POST "/routes" \
-      "$(jq -n --arg sid "${SVC_IDS[flights-svc]}" \
+      "$(jq -n --arg sid "$SID_FLIGHTS" \
             '{name:"flights-route", paths:["/flights"], strip_path:true, service:{id:$sid}, tags:["module-02"]}')" >/dev/null
     # /flights/premium POST-only → flights-svc
     api_write POST "/routes" \
-      "$(jq -n --arg sid "${SVC_IDS[flights-svc]}" \
+      "$(jq -n --arg sid "$SID_FLIGHTS" \
             '{name:"flights-premium-route", paths:["/flights/premium"], methods:["POST"], strip_path:true, service:{id:$sid}, tags:["module-02"]}')" >/dev/null
     # /hotels
     api_write POST "/routes" \
-      "$(jq -n --arg sid "${SVC_IDS[hotels-svc]}" \
+      "$(jq -n --arg sid "$SID_HOTELS" \
             '{name:"hotels-route", paths:["/hotels"], strip_path:true, service:{id:$sid}, tags:["module-02"]}')" >/dev/null
     # /cars
     api_write POST "/routes" \
-      "$(jq -n --arg sid "${SVC_IDS[cars-svc]}" \
+      "$(jq -n --arg sid "$SID_CARS" \
             '{name:"cars-route", paths:["/cars"], strip_path:true, service:{id:$sid}, tags:["module-02"]}')" >/dev/null
   fi
 }
@@ -183,21 +185,28 @@ services:
       - { name: cars-route, paths: [/cars], strip_path: true, tags: [module-02] }
 YAML
   else
-    # Create Upstream + targets
+    # Create Upstream + targets. Konnect requires UUIDs (not names) in path
+    # segments for nested resource POSTs and for PATCH - resolve the IDs first.
     api_write POST "/upstreams" \
       "$(jq -n '{name:"flights-pool", algorithm:"round-robin", slots:10000, tags:["module-02"]}')" >/dev/null
-    api_write POST "/upstreams/flights-pool/targets" \
+    local up_id; up_id=$(resolve_id upstreams flights-pool) \
+      || { err "Could not resolve upstream id for flights-pool"; return 1; }
+    api_write POST "/upstreams/$up_id/targets" \
       "$(jq -n '{target:"httpbin.konghq.com:443", weight:100, tags:["module-02"]}')" >/dev/null
-    api_write POST "/upstreams/flights-pool/targets" \
+    api_write POST "/upstreams/$up_id/targets" \
       "$(jq -n '{target:"httpbin.org:443", weight:50, tags:["module-02"]}')" >/dev/null
-    # Patch flights-svc to point at the Upstream
-    api_write PATCH "/services/flights-svc" \
-      "$(jq -n '{host:"flights-pool", port:443, protocol:"https", url:null}')" >/dev/null
+    # Update flights-svc to point at the Upstream. Konnect's Admin API rejects
+    # PATCH on /services/{id} (405); use PUT with a full body instead.
+    local svc_id; svc_id=$(resolve_id services flights-svc) \
+      || { err "Could not resolve service id for flights-svc"; return 1; }
+    api_write PUT "/services/$svc_id" \
+      "$(jq -n '{name:"flights-svc", host:"flights-pool", port:443, protocol:"https", tags:["module-02"]}')" >/dev/null \
+      || { err "Failed to update flights-svc to point at flights-pool"; return 1; }
   fi
 }
 
 step "1. Create Upstream 'flights-pool' with two weighted targets"
-apply_lab_02b_upstream
+apply_lab_02b_upstream || { err "Failed to set up flights-pool upstream"; exit 1; }
 ok "Upstream + 2 targets created. flights-svc now points at the Upstream."
 
 pause_verify "Konnect → Upstreams → flights-pool: confirm 2 targets (httpbin.konghq.com:443 w=100, httpbin.org:443 w=50) both healthy."
@@ -208,7 +217,11 @@ wait_for_route "${KONNECT_PROXY_URL}/flights/get" 30 || exit 1
 step "3. Send 30 requests; expect a ~2:1 split between the two targets"
 TMP=$(mktemp)
 for _ in {1..30}; do
-  curl -s "${KONNECT_PROXY_URL}/flights/get" | jq -r '.headers.Host // "?"' >> "$TMP"
+  # Silent jq fallback - some responses come back as Kong error text (not JSON)
+  # when a target is still warming up; skip those rather than spam parse errors.
+  HOST=$(curl -s "${KONNECT_PROXY_URL}/flights/get" 2>/dev/null \
+    | jq -r '.headers.Host // empty' 2>/dev/null)
+  [[ -n "$HOST" ]] && echo "$HOST" >> "$TMP"
 done
 DISTINCT=$(sort "$TMP" | uniq -c | sort -rn)
 echo "$DISTINCT" | sed 's/^/  /'
@@ -263,8 +276,15 @@ services:
       - { name: cars-route, paths: [/cars], strip_path: true, tags: [module-02] }
 YAML
   else
-    api_write PATCH "/upstreams/flights-pool" \
+    local up_id; up_id=$(resolve_id upstreams flights-pool) \
+      || { err "Could not resolve upstream id for flights-pool"; return 1; }
+    # Konnect rejects PATCH; use PUT with the full upstream definition.
+    api_write PUT "/upstreams/$up_id" \
       "$(jq -n --arg hp "$hc_path" '{
+        name: "flights-pool",
+        algorithm: "round-robin",
+        slots: 10000,
+        tags: ["module-02"],
         healthchecks: {
           active: {
             type: "https",
@@ -275,7 +295,8 @@ YAML
             unhealthy: { interval: 5,  http_failures: 3, tcp_failures: 3, timeouts: 3, http_statuses: [429, 500, 502, 503, 504] }
           }
         }
-      }')" >/dev/null
+      }')" >/dev/null \
+      || { err "Failed to apply healthchecks on flights-pool"; return 1; }
   fi
 }
 apply_healthchecks "/status/200"
@@ -285,23 +306,30 @@ pause_verify "Konnect → Upstreams → flights-pool: wait ~20s, both targets sh
 
 step "5. Force the outage drill - point health check at /status/503"
 apply_healthchecks "/status/503"
-info "Waiting 25s for the unhealthy threshold to be reached…"
-sleep 25
-HTTP=$(curl -s -o /tmp/_verify_outage.txt -w '%{http_code}' "${KONNECT_PROXY_URL}/flights/get")
-BODY=$(cat /tmp/_verify_outage.txt)
-if [[ "$HTTP" == "503" ]] && echo "$BODY" | grep -q "ring-balancer"; then
+info "Health-check probe interval is 5s; needs 3 consecutive failures + DP poll cycle."
+# Poll up to 60s for the outage to materialize, so we don't quit early when the
+# DP is still catching up. Print progress so it doesn't feel hung.
+OUTAGE_REACHED=0
+for ATTEMPT in 1 2 3 4 5 6 7 8 9 10 11 12; do
+  printf '\r%s  Probe %d/12 - waiting 5s then checking…%s ' "$DIM" "$ATTEMPT" "$RST"
+  sleep 5
+  HTTP=$(curl -s -o /tmp/_verify_outage.txt -w '%{http_code}' "${KONNECT_PROXY_URL}/flights/get" 2>/dev/null || echo "000")
+  BODY=$(cat /tmp/_verify_outage.txt 2>/dev/null || true)
+  if [[ "$HTTP" == "503" ]]; then OUTAGE_REACHED=1; break; fi
+done
+printf '\r%s%s\n' "                                                          " ""
+if (( OUTAGE_REACHED == 1 )) && echo "$BODY" | grep -q "ring-balancer"; then
   ok "Outage simulated - Kong reports 'failure to get a peer from the ring-balancer' (HTTP 503)"
-elif [[ "$HTTP" == "503" ]]; then
+elif (( OUTAGE_REACHED == 1 )); then
   ok "HTTP 503 returned (no healthy targets, as expected)"
 else
-  warn "Expected 503 from Kong (no peers), got $HTTP. Targets may still be healthy in DP cache; try again in 10s."
+  warn "Did not see 503 within 60s. Last HTTP=$HTTP. On serverless gateways, active health checks may not fire as aggressively as a local DP - this is expected, not a script bug. Moving on."
 fi
 rm -f /tmp/_verify_outage.txt
 
 step "6. Recover the targets"
 apply_healthchecks "/status/200"
-info "Waiting 20s for targets to recover…"
-sleep 20
+wait_with_progress 30 "Recovering"
 HTTP=$(curl -s -o /dev/null -w '%{http_code}' "${KONNECT_PROXY_URL}/flights/get")
 if [[ "$HTTP" == "200" ]]; then
   ok "Targets recovered - /flights/get → 200"

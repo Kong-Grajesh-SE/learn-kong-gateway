@@ -105,8 +105,8 @@ Subtle but matters: with `add`, a malicious client could send `X-API-Version: v0
       headers:
         - "X-API-Version:v3"
         - "X-Tenant-Type:travel"
-        - "X-Tenant-Id:$(consumer.custom_id)"
-        - "X-Calling-User:$(consumer.username)"
+        - "X-Tenant-Id:$(headers[\"x-consumer-custom-id\"])"
+        - "X-Calling-User:$(headers[\"x-consumer-username\"])"
 ```
 
 Sync. Wait 15s.
@@ -136,13 +136,16 @@ Expected:
 🎯 Same plugin, different values per Consumer. The template runs **after** `key-auth` identifies the Consumer.
 
 ::: info Template variables available
-- `$(consumer.username)`, `$(consumer.custom_id)`, `$(consumer.id)` - after auth
-- `$(headers.x-custom-header)` - any request header
-- `$(query_string.foo)` - any query param
-- `$(uri_captures.foo)` - regex capture groups from the matched route
-- `$(route.name)`, `$(service.name)` - current entity names
+Kong evaluates templates **after** authentication (key-auth runs at priority 1003, request-transformer-advanced at 801, so auth goes first). Consumer context is exposed as request headers that Kong injects:
 
-Variables that don't resolve come back as empty strings - silently. Always test with curl before shipping.
+- `$(headers["x-consumer-username"])` - authenticated consumer's username
+- `$(headers["x-consumer-custom-id"])` - consumer's custom_id
+- `$(headers["x-consumer-id"])` - consumer's internal UUID
+- `$(query_params["foo"])` - any query param
+- `$(uri_captures["foo"])` - regex capture groups from the matched route
+- `$(headers["some-header"])` - any request header
+
+Variables that don't resolve return empty strings - silently. Always test with curl before shipping.
 :::
 
 ---
@@ -202,7 +205,7 @@ Frontends sometimes ship `?debug=true` in dev. You don't want that flag reaching
 Sync. Wait 15s.
 
 ```bash
-curl -s "$KONNECT_PROXY_URL/flights/anything?debug=true&trace=full&legitParam=ok" \
+curl -s "$KONNECT_PROXY_URL/flights/anything?debug=true&trace=full&legit=ok" \
   -H 'X-API-Key: web-app-secret-key-001' \
   -H 'X-Internal-Debug: leaked-sql' \
   | jq '.args, .headers["X-Internal-Debug"]'
@@ -210,7 +213,7 @@ curl -s "$KONNECT_PROXY_URL/flights/anything?debug=true&trace=full&legitParam=ok
 
 Expected:
 ```json
-{ "legitParam": "ok" }          ← debug and trace stripped
+{ "legit": "ok" }               ← debug and trace stripped
 null                            ← X-Internal-Debug stripped
 ```
 
@@ -231,7 +234,6 @@ Sometimes the *client* sets a header you want to **force** to a different value.
     replace:
       headers:
         - "X-Source:kong-gateway"        # always force this
-        - "X-API-Version:v3"             # was in add; replace ensures override
 ```
 
 Sync. Test:
@@ -240,16 +242,15 @@ Sync. Test:
 curl -s $KONNECT_PROXY_URL/flights/anything \
   -H 'X-API-Key: web-app-secret-key-001' \
   -H 'X-Source: malicious-client' \
-  -H 'X-API-Version: v0' \
-  | jq '.headers | {"X-Source", "X-Api-Version"}'
+  | jq '.headers["X-Source"]'
 ```
 
 Expected:
 ```json
-{ "X-Source": "kong-gateway", "X-Api-Version": "v3" }
+"kong-gateway"
 ```
 
-Even though the client tried to inject their own values, Kong's `replace` wins.
+Even though the client tried to inject its own value, Kong's `replace` wins.
 
 ::: info `add` vs `replace`, restated
 | Operation | If header is missing | If header exists |
@@ -270,16 +271,20 @@ For headers you must trust, list under **both** `add` and `replace`. Belt and su
 ```yaml
 append:
   headers:
-    - "Via:1.1 kong-gateway"        # protocol-trace standard
+    - "X-Kong-Via:1.1 kong-gateway"   # custom header travels end-to-end
 ```
+
+::: info Why not the standard `Via` header?
+`Via` is a hop-by-hop reverse-proxy header. Kong terminates the client TCP connection and opens a **new** connection to the upstream - each hop consumes its own `Via` value and strips the client's. Using a custom `X-Kong-Via` header avoids this and lets the upstream echo endpoint confirm both values.
+:::
 
 Test:
 
 ```bash
 curl -s $KONNECT_PROXY_URL/flights/anything \
   -H 'X-API-Key: web-app-secret-key-001' \
-  -H 'Via: 1.0 my-proxy' \
-  | jq '.headers["Via"]'
+  -H 'X-Kong-Via: 1.0 my-proxy' \
+  | jq '.headers["X-Kong-Via"]'
 # "1.0 my-proxy, 1.1 kong-gateway"
 ```
 
@@ -297,7 +302,7 @@ add           if missing                                         "X-API-Version:
 replace       always overwrite                                   "X-Source:kong-gateway"
 remove        delete entirely                                    "querystring: [debug, trace]"
 rename        change the key, keep the value                     "page:offset"
-append        add a value (multi-value header)                   "Via:1.1 kong-gateway"
+append        add a value (multi-value header)                   "X-Kong-Via:1.1 kong-gateway"
 ```
 
 Each works on **headers**, **querystring**, and **body** (where applicable). Template variables let you do per-Consumer / per-Route logic in a single plugin.

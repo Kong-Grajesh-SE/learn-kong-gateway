@@ -79,8 +79,8 @@ curl -s $KONNECT_PROXY_URL/flights/anything \
 
 Expected: `headers` and `origin` are **gone** from the response body. The upstream sent them; Kong stripped them on the way out.
 
-::: tip `remove.json` targets top-level keys
-For nested keys, use JSON-path notation: `remove.json: ["data.user.ssn"]` deletes `body.data.user.ssn`. This is `response-transformer-advanced`-only.
+::: tip `remove.json` and nested keys require `dots_in_keys: false`
+By default (`dots_in_keys: true`) the plugin treats dots as **literal key-name characters**, so `_meta.version` is a flat key `"_meta.version": "v3"` - not a nested object. Set `dots_in_keys: false` to make dot-notation navigate nested objects: `remove.json: ["data.user.ssn"]` then deletes `body.data.user.ssn`.
 :::
 
 ---
@@ -92,10 +92,11 @@ You want every response to carry an envelope: `{ "data": {...}, "_meta": { "vers
 ```yaml
 - name: response-transformer-advanced
   config:
+    dots_in_keys: false   # treat dots as path separators so _meta.version → {_meta:{version:…}}
     add:
       headers: [ … ]
       json:
-        - "_meta.version:v3"            # creates _meta.version
+        - "_meta.version:v3"            # creates nested _meta.version
         - "_meta.served_by:kong"
     remove:
       json: [ … ]
@@ -121,12 +122,13 @@ You only want to add `_meta` to **successful** responses. For 4xx/5xx errors, th
 ```yaml
 - name: response-transformer-advanced
   config:
+    dots_in_keys: false
     add:
-      if_status: ["2XX"]      # ← only apply when upstream returned 2xx
+      if_status: ["200-299"]    # ← only apply when upstream returned 2xx
       headers: [ … ]
       json: [ "_meta.version:v3", "_meta.served_by:kong" ]
     remove:
-      if_status: ["2XX"]
+      if_status: ["200-299"]
       json: [headers, origin]
 ```
 
@@ -149,10 +151,14 @@ curl -s $KONNECT_PROXY_URL/flights/anything | jq
 
 🎯 The same plugin behaves differently based on upstream status.
 
-::: info Status patterns
-- `2XX` - any 200–299
-- `404` - exactly 404
-- `>=500` - any 500+ - useful when you want to mask error bodies
+::: info Status patterns - exact codes and numeric ranges only
+Kong's `if_status` accepts **exact status codes** or **numeric ranges** separated by `-`:
+- `"200-299"` - any 2xx success response
+- `"200"` - exactly 200
+- `"404"` - exactly 404
+- `"500-599"` - any 5xx error response
+
+**Not supported:** `2XX`, `4xx`, `>=500` shorthand patterns.
 :::
 
 ---
@@ -165,12 +171,9 @@ curl -s $KONNECT_PROXY_URL/flights/anything | jq
     add:     { … }
     remove:  { … }
     replace:
-      if_status: ["2XX"]
+      if_status: ["200-299"]
       json:
         - "url:[REDACTED]"          # overwrite the url field
-    rename:
-      json:
-        - "method:http_method"      # rename .method → .http_method
 ```
 
 Sync.
@@ -178,15 +181,15 @@ Sync.
 ```bash
 curl -s $KONNECT_PROXY_URL/flights/anything \
   -H 'X-API-Key: web-app-secret-key-001' \
-  | jq '{url, http_method, method}'
+  | jq '{url}'
 ```
 
 Expected:
 ```json
-{ "url": "[REDACTED]", "http_method": "GET", "method": null }
+{ "url": "[REDACTED]" }
 ```
 
-🎯 Renamed key + value replaced.
+🎯 Value replaced in the response body without touching the upstream.
 
 ---
 
@@ -222,7 +225,7 @@ Combined with `request-transformer-advanced` from 05-A, you can perform a full v
 
 ## Exit ticket - answers
 
-1. **Inject per-Consumer header.** `request-transformer-advanced` plugin, `add.headers` operation, `$(consumer.custom_id)` template variable. Or `replace.headers` if you want to override any client-supplied value.
+1. **Inject per-Consumer header.** `request-transformer-advanced` plugin, `add.headers` operation, `$(headers["x-consumer-custom-id"])` template variable (key-auth injects `X-Consumer-Custom-Id` before the transformer runs). Or `replace.headers` if you want to override any client-supplied value.
 2. **Force upstream to ignore client `Cache-Control`.** `request-transformer-advanced`, `remove.headers: [Cache-Control]`. Removes the header before forwarding.
 3. **Strip `_debug` from response.** `response-transformer-advanced`, `remove.json: [_debug]`. For nested paths use dot notation: `data.user._debug`.
 

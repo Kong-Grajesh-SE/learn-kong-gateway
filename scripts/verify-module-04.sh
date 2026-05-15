@@ -76,8 +76,11 @@ YAML
       fi
       api_write POST "/consumers" "$payload" >/dev/null
     done
-    api_write POST "/consumers/web-app/key-auth"    "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
-    api_write POST "/consumers/mobile-app/key-auth" "$(jq -n '{key:"mobile-app-secret-key-002"}')" >/dev/null
+    local web_id mob_id
+    web_id=$(resolve_id consumers web-app)    || { err "web-app not found"; return 1; }
+    mob_id=$(resolve_id consumers mobile-app) || { err "mobile-app not found"; return 1; }
+    api_write POST "/consumers/$web_id/key-auth" "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
+    api_write POST "/consumers/$mob_id/key-auth" "$(jq -n '{key:"mobile-app-secret-key-002"}')" >/dev/null
     api_write POST "/services" \
       "$(jq -n '{name:"flights-svc", url:"https://httpbin.konghq.com", tags:["module-04"]}')" >/dev/null
     local sid; sid=$(api_curl GET "/services/flights-svc" | jq -r '.id')
@@ -185,13 +188,17 @@ attach_rl "$WEB_CID"  100 "pro"
 attach_rl "$MOB_CID"  300 "internal"
 ok "Three rate-limit plugin instances attached"
 
-wait_for_route "${KONNECT_PROXY_URL}/flights/get" 15 || true
+# Wait for the mobile-app plugin (last created) to propagate before testing any tier.
+# Once the mobile-app limit header is visible, all three plugins are live.
+wait_for_response_header "${KONNECT_PROXY_URL}/flights/get" "x-ratelimit-limit-minute" 60 \
+  -H 'X-API-Key: mobile-app-secret-key-002' || exit 1
 
 step "2. Verify each tier reports the right X-RateLimit-Limit-Minute"
-declare -A EXPECT=( [anonymous]=10 [web-app]=100 [mobile-app]=300 )
-declare -A KEYS=( [anonymous]="" [web-app]="web-app-secret-key-001" [mobile-app]="mobile-app-secret-key-002" )
-for TIER in anonymous web-app mobile-app; do
-  K=${KEYS[$TIER]}
+# Bash 3.2 portable (macOS default): iterate "tier:expected:key" tuples, parse with parameter expansion.
+for ENTRY in 'anonymous:10:' 'web-app:100:web-app-secret-key-001' 'mobile-app:300:mobile-app-secret-key-002'; do
+  TIER=$(echo "$ENTRY" | cut -d: -f1)
+  EXPECTED=$(echo "$ENTRY" | cut -d: -f2)
+  K=$(echo "$ENTRY" | cut -d: -f3-)
   if [[ -n "$K" ]]; then
     LIMIT=$(curl -sI "${KONNECT_PROXY_URL}/flights/get" -H "X-API-Key: $K" \
       | awk -F': ' 'BEGIN{IGNORECASE=1} /^x-ratelimit-limit-minute/{print $2}' | tr -d '\r\n')
@@ -199,10 +206,10 @@ for TIER in anonymous web-app mobile-app; do
     LIMIT=$(curl -sI "${KONNECT_PROXY_URL}/flights/get" \
       | awk -F': ' 'BEGIN{IGNORECASE=1} /^x-ratelimit-limit-minute/{print $2}' | tr -d '\r\n')
   fi
-  if [[ "$LIMIT" == "${EXPECT[$TIER]}" ]]; then
+  if [[ "$LIMIT" == "$EXPECTED" ]]; then
     ok "  $TIER: X-RateLimit-Limit-Minute = $LIMIT"
   else
-    err "  $TIER: expected ${EXPECT[$TIER]}, got '$LIMIT'"; exit 1
+    err "  $TIER: expected $EXPECTED, got '$LIMIT'"; exit 1
   fi
 done
 
@@ -247,11 +254,15 @@ attach_cache() {
 attach_cache
 ok "proxy-cache attached"
 
-wait_for_route "${KONNECT_PROXY_URL}/flights/get" 15 || true
+# Wait for proxy-cache to propagate using a throwaway URL so the /get cache
+# key used in steps 2-3 remains cold for the Miss → Hit sequence.
+wait_for_response_header "${KONNECT_PROXY_URL}/flights/ip" "x-cache-status" 60 \
+  -H 'X-API-Key: web-app-secret-key-001' || exit 1
 
 step "2. First request → X-Cache-Status: Miss (cache cold)"
-# Use the web-app tier (higher rate-limit) so we don't get throttled
-H1=$(curl -sI "${KONNECT_PROXY_URL}/flights/get" -H 'X-API-Key: web-app-secret-key-001' \
+# Use -si (GET + headers in output): HEAD requests (-sI) never write a cache entry
+# because they carry no response body, so the cache would never warm.
+H1=$(curl -si "${KONNECT_PROXY_URL}/flights/get" -H 'X-API-Key: web-app-secret-key-001' \
   | awk -F': ' 'BEGIN{IGNORECASE=1} /^x-cache-status/{print $2}' | tr -d '\r\n')
 if [[ "$H1" == "Miss" ]]; then
   ok "First request was a Miss (correct - cache empty)"
@@ -260,16 +271,24 @@ else
 fi
 
 step "3. Second request → X-Cache-Status: Hit"
-H2=$(curl -sI "${KONNECT_PROXY_URL}/flights/get" -H 'X-API-Key: web-app-secret-key-001' \
-  | awk -F': ' 'BEGIN{IGNORECASE=1} /^x-cache-status/{print $2}' | tr -d '\r\n')
+# In Konnect serverless, multiple DP nodes sit behind a load balancer and each
+# has its own in-memory cache.  A Miss on node A caches the entry only there;
+# the next request may hit node B (cold → another Miss).  Retry up to 15 times
+# so that, regardless of LB policy, we revisit a warm node and confirm a Hit.
+H2=""
+for _i in {1..15}; do
+  H2=$(curl -si "${KONNECT_PROXY_URL}/flights/get" -H 'X-API-Key: web-app-secret-key-001' \
+    | awk -F': ' 'BEGIN{IGNORECASE=1} /^x-cache-status/{print $2}' | tr -d '\r\n')
+  [[ "$H2" == "Hit" ]] && break
+done
 if [[ "$H2" == "Hit" ]]; then
   ok "Second request was a Hit (correct - served from Kong's memory)"
 else
-  err "Expected Hit on second request, got '$H2'"; exit 1
+  err "Expected Hit on second request, got '$H2' after 15 attempts"; exit 1
 fi
 
 step "4. POST should Bypass the cache (request_method whitelist excludes POST)"
-HP=$(curl -sI -X POST "${KONNECT_PROXY_URL}/flights/post" -H 'X-API-Key: web-app-secret-key-001' \
+HP=$(curl -si -X POST "${KONNECT_PROXY_URL}/flights/post" -H 'X-API-Key: web-app-secret-key-001' \
   -H 'Content-Type: application/json' --data '{"x":1}' \
   | awk -F': ' 'BEGIN{IGNORECASE=1} /^x-cache-status/{print $2}' | tr -d '\r\n')
 if [[ "$HP" == "Bypass" ]]; then

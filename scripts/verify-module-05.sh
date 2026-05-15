@@ -69,8 +69,10 @@ else
     api_write POST "/consumers" \
       "$(jq -n --arg u "$USER" --arg c "$CID" '{username:$u, custom_id:$c, tags:["module-05"]}')" >/dev/null
   done
-  api_write POST "/consumers/web-app/key-auth"    "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
-  api_write POST "/consumers/mobile-app/key-auth" "$(jq -n '{key:"mobile-app-secret-key-002"}')" >/dev/null
+  web_id=$(resolve_id consumers web-app)    || { err "web-app not found"; exit 1; }
+  mob_id=$(resolve_id consumers mobile-app) || { err "mobile-app not found"; exit 1; }
+  api_write POST "/consumers/$web_id/key-auth" "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
+  api_write POST "/consumers/$mob_id/key-auth" "$(jq -n '{key:"mobile-app-secret-key-002"}')" >/dev/null
   api_write POST "/services" \
     "$(jq -n '{name:"flights-svc", url:"https://httpbin.konghq.com", tags:["module-05"]}')" >/dev/null
   SID=$(api_curl GET "/services/flights-svc" | jq -r '.id')
@@ -83,7 +85,12 @@ fi
 ok "Baseline applied"
 
 RID=$(api_curl GET "/routes/flights-route" | jq -r '.id')
-wait_for_route "${KONNECT_PROXY_URL}/flights/anything" 30 || true
+# Wait for the route AND key-auth credentials to fully propagate.
+# wait_for_route stops at the first non-404 (a 401 from key-auth), which means
+# consumer credentials may still be in-flight.  We need a 200 with a valid key
+# before attaching plugins that probe the authenticated response body.
+wait_for_http_status "${KONNECT_PROXY_URL}/flights/anything" 200 90 \
+  -H 'X-API-Key: web-app-secret-key-001' || exit 1
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Lab 05-A - request-transformer-advanced
@@ -92,37 +99,46 @@ hdr "Lab 05-A - Request Transformer"
 
 step "1. Attach request-transformer-advanced with add/rename/remove/replace + template variables"
 attach_rta() {
-  api_write POST "/routes/$RID/plugins" "$(jq -n '{
-    name: "request-transformer-advanced",
-    tags: ["module-05"],
-    config: {
-      add: {
-        headers: [
-          "X-API-Version:v3",
-          "X-Tenant-Type:travel",
-          "X-Tenant-Id:$(consumer.custom_id)",
-          "X-Calling-User:$(consumer.username)"
-        ]
-      },
-      replace: {
-        headers: ["X-Source:kong-gateway"]
-      },
-      remove: {
-        querystring: ["debug","trace","_internal"],
-        headers: ["X-Internal-Debug","X-Forwarded-Secret"]
-      },
-      rename: {
-        querystring: ["page:offset","size:limit"]
-      },
-      append: {
-        headers: ["Via:1.1 kong-gateway"]
+  # Template variables reference Kong's injected consumer headers (set by key-auth,
+  # which runs at priority 1003 before request-transformer-advanced at 801).
+  # Valid namespace: $(headers["..."]) - NOT $(consumer.custom_id) which is unsupported.
+  api_write POST "/routes/$RID/plugins" "$(jq -n \
+    --arg tid 'X-Tenant-Id:$(headers["x-consumer-custom-id"])' \
+    --arg usr 'X-Calling-User:$(headers["x-consumer-username"])' \
+    '{
+      name: "request-transformer-advanced",
+      tags: ["module-05"],
+      config: {
+        add: {
+          headers: [
+            "X-API-Version:v3",
+            "X-Tenant-Type:travel",
+            $tid,
+            $usr
+          ]
+        },
+        replace: {
+          headers: ["X-Source:kong-gateway"]
+        },
+        remove: {
+          querystring: ["debug","trace","_internal"],
+          headers: ["X-Internal-Debug","X-Forwarded-Secret"]
+        },
+        rename: {
+          querystring: ["page:offset","size:limit"]
+        },
+        append: {
+          headers: ["X-Kong-Via:1.1 kong-gateway"]
+        }
       }
-    }
-  }')" >/dev/null
+    }')" >/dev/null
 }
 attach_rta
 ok "request-transformer-advanced attached"
-wait_for_route "${KONNECT_PROXY_URL}/flights/anything" 15 || true
+# request-transformer-advanced injects headers into the upstream REQUEST, not the HTTP
+# response - httpbin echoes them in its JSON body.  Poll the body, not response headers.
+wait_for_body_jq "${KONNECT_PROXY_URL}/flights/anything" '.headers["X-Api-Version"]' 60 \
+  -H 'X-API-Key: web-app-secret-key-001' || exit 1
 
 step "2. Static header injection - expect X-API-Version: v3 + X-Tenant-Type: travel upstream"
 BODY=$(curl -s "${KONNECT_PROXY_URL}/flights/anything" -H 'X-API-Key: web-app-secret-key-001')
@@ -144,10 +160,12 @@ fi
 step "4. rename querystring - ?page=2&size=20 → ?offset=2&limit=20"
 ARGS=$(curl -s "${KONNECT_PROXY_URL}/flights/anything?page=2&size=20" -H 'X-API-Key: web-app-secret-key-001' \
   | jq -c '.args')
-if [[ "$ARGS" == '{"limit":"20","offset":"2"}' ]]; then
-  ok "rename worked: upstream saw $ARGS"
+OFFSET=$(echo "$ARGS" | jq -r '.offset // empty')
+LIMIT=$(echo  "$ARGS" | jq -r '.limit  // empty')
+if [[ "$OFFSET" == "2" && "$LIMIT" == "20" ]]; then
+  ok "rename worked: page→offset=$OFFSET, size→limit=$LIMIT"
 else
-  warn "Expected {limit:'20',offset:'2'}, got: $ARGS"
+  warn "rename: expected page→offset=2, size→limit=20, got: $ARGS"
 fi
 
 step "5. remove - ?debug=true&trace=full should be stripped"
@@ -168,13 +186,15 @@ else
   err "replace failed - upstream saw X-Source=$SRC"; exit 1
 fi
 
-step "7. append Via header - both client value + Kong value present"
-VIA=$(curl -s "${KONNECT_PROXY_URL}/flights/anything" -H 'X-API-Key: web-app-secret-key-001' -H 'Via: 1.0 my-proxy' \
-  | jq -r '.headers["Via"]')
+step "7. append X-Kong-Via header - both client value + appended Kong value present"
+# Via is consumed/stripped by Kong's reverse-proxy TCP layer (hop-by-hop semantics).
+# Use a custom X-Kong-Via header so it travels end-to-end to the upstream echo.
+VIA=$(curl -s "${KONNECT_PROXY_URL}/flights/anything" -H 'X-API-Key: web-app-secret-key-001' -H 'X-Kong-Via: 1.0 my-proxy' \
+  | jq -r '.headers["X-Kong-Via"]')
 if echo "$VIA" | grep -q "my-proxy" && echo "$VIA" | grep -q "kong-gateway"; then
-  ok "append works - Via: $VIA"
+  ok "append works - X-Kong-Via: $VIA"
 else
-  warn "Expected both 'my-proxy' and 'kong-gateway' in Via, got: $VIA"
+  warn "Expected both 'my-proxy' and 'kong-gateway' in X-Kong-Via, got: $VIA"
 fi
 
 pause_verify "Konnect → flights-route → Plugins: request-transformer-advanced enabled. Inspect config."
@@ -186,29 +206,36 @@ hdr "Lab 05-B - Response Transformer"
 
 step "1. Attach response-transformer-advanced (add headers + json, remove fields, conditional on 2XX)"
 attach_rtra() {
+  # if_status: Kong requires exact codes ("200") or numeric ranges ("200-299").
+  # "2XX" wildcard notation is NOT supported and returns HTTP 400.
+  # dots_in_keys: false so "top.sub" in json paths navigates nested objects
+  # (default true treats the dot as a literal key-name character).
   api_write POST "/routes/$RID/plugins" "$(jq -n '{
     name: "response-transformer-advanced",
     tags: ["module-05"],
     config: {
+      dots_in_keys: false,
       add: {
-        if_status: ["2XX"],
+        if_status: ["200-299"],
         headers: ["X-Bootcamp-Module:05", "X-Powered-By:Kong"],
         json: ["_meta.version:v3", "_meta.served_by:kong"]
       },
       remove: {
-        if_status: ["2XX"],
+        if_status: ["200-299"],
         json: ["headers","origin"]
       },
       replace: {
-        if_status: ["2XX"],
+        if_status: ["200-299"],
         json: ["url:[REDACTED]"]
       }
     }
   }')" >/dev/null
 }
-attach_rtra
+attach_rtra || { err "response-transformer-advanced failed to attach"; exit 1; }
 ok "response-transformer-advanced attached"
-wait_for_route "${KONNECT_PROXY_URL}/flights/anything" 15 || true
+# Wait for the plugin to propagate: poll until the injected X-Bootcamp-Module header appears.
+wait_for_response_header "${KONNECT_PROXY_URL}/flights/anything" "x-bootcamp-module" 60 \
+  -H 'X-API-Key: web-app-secret-key-001' || exit 1
 
 step "2. Response headers - expect X-Bootcamp-Module: 05"
 BCM=$(curl -sI "${KONNECT_PROXY_URL}/flights/anything" -H 'X-API-Key: web-app-secret-key-001' \

@@ -69,9 +69,12 @@ YAML
           "$(jq -n --arg u "$USER" --arg c "$CID" '{username:$u, custom_id:$c, tags:["module-03"]}')" >/dev/null
       fi
     done
-    # Credentials
-    api_write POST "/consumers/web-app/key-auth"    "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
-    api_write POST "/consumers/mobile-app/key-auth" "$(jq -n '{key:"mobile-app-secret-key-002"}')" >/dev/null
+    # Credentials - Konnect requires UUIDs in path for nested writes
+    local web_id mob_id
+    web_id=$(resolve_id consumers web-app)    || { err "web-app not found"; return 1; }
+    mob_id=$(resolve_id consumers mobile-app) || { err "mobile-app not found"; return 1; }
+    api_write POST "/consumers/$web_id/key-auth" "$(jq -n '{key:"web-app-secret-key-001"}')" >/dev/null
+    api_write POST "/consumers/$mob_id/key-auth" "$(jq -n '{key:"mobile-app-secret-key-002"}')" >/dev/null
     # Service + Route
     api_write POST "/services" \
       "$(jq -n '{name:"flights-svc", url:"https://httpbin.konghq.com", tags:["module-03"]}')" >/dev/null
@@ -157,6 +160,8 @@ attach_keyauth ""    # no anonymous fallback
 ok "key-auth attached (no anonymous)"
 
 wait_for_route "${KONNECT_PROXY_URL}/flights/get" 30 || exit 1
+# key-auth may propagate after the route itself is live; wait for the 401.
+wait_for_http_status "${KONNECT_PROXY_URL}/flights/get" 401 45 || exit 1
 
 step "2. Hit the route WITHOUT a key - expect 401"
 HTTP=$(curl -s -o /dev/null -w '%{http_code}' "${KONNECT_PROXY_URL}/flights/get")
@@ -191,7 +196,7 @@ if [[ "$HTTP" == "401" ]]; then ok "Wrong key → 401"; else err "Expected 401, 
 
 step "6. Anonymous fallback - add anonymous Consumer ID to key-auth config"
 attach_keyauth "$ANON_ID"
-wait_for_route "${KONNECT_PROXY_URL}/flights/get" 30 || true
+wait_for_http_status "${KONNECT_PROXY_URL}/flights/get" 200 45 || true
 
 CONS=$(curl -s "${KONNECT_PROXY_URL}/flights/get" | jq -r '.headers["X-Consumer-Username"] // "missing"')
 if [[ "$CONS" == "anonymous" ]]; then
@@ -283,7 +288,9 @@ YAML
 apply_lab_03b
 ok "cors (global), correlation-id (global), ip-restriction (route → allow $CLIENT_IP) applied"
 
-wait_for_route "${KONNECT_PROXY_URL}/flights/get" 30 || true
+# Route is already live from Lab 03-A.  Wait until the newly-added plugins have
+# propagated by polling for the correlation-id header (last plugin in the chain).
+wait_for_response_header "${KONNECT_PROXY_URL}/flights/get" "x-correlation-id" 60 || exit 1
 
 step "2. CORS - allowed origin should get Access-Control-Allow-Origin"
 ALLOW=$(curl -s -i -X OPTIONS "${KONNECT_PROXY_URL}/flights/get" \
@@ -309,6 +316,7 @@ else
 fi
 
 step "4. correlation-id - Kong should inject one and echo it downstream"
+# Plugin propagation was already confirmed by wait_for_response_header above.
 CORR_DOWN=$(curl -sI "${KONNECT_PROXY_URL}/flights/get" | awk -F': ' '/^x-correlation-id/{print $2}' | tr -d '\r\n')
 if [[ -n "$CORR_DOWN" ]]; then
   ok "X-Correlation-ID present in response: $CORR_DOWN"
@@ -374,10 +382,14 @@ services:
               message: "Your IP is not allowed."
 YAML
   else
+    # Konnect rejects PATCH on /plugins/{id} - DELETE the existing ip-restriction
+    # plugin and POST a fresh one with the deny list instead.
     local rid; rid=$(api_curl GET "/routes/flights-route" | jq -r '.id')
     local pid; pid=$(api_curl GET "/routes/$rid/plugins?name=ip-restriction" | jq -r '.data[0]?.id // empty')
-    [[ -n "$pid" ]] && api_write PATCH "/plugins/$pid" \
-      "$(jq -n --arg ip "$CLIENT_IP" '{config:{allow:null, deny:[$ip], status:403, message:"Your IP is not allowed."}}')" >/dev/null
+    [[ -n "$pid" ]] && api_curl DELETE "/plugins/$pid" >/dev/null
+    api_write POST "/routes/$rid/plugins" \
+      "$(jq -n --arg ip "$CLIENT_IP" '{name:"ip-restriction", config:{deny:[$ip], status:403, message:"Your IP is not allowed."}, tags:["module-03"]}')" >/dev/null \
+      || { err "Failed to re-create ip-restriction with deny list"; return 1; }
   fi
 }
 flip_ip_to_deny

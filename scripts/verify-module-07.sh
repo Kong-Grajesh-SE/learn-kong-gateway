@@ -112,18 +112,25 @@ else
     api_write POST "/consumers" \
       "$(jq -n --arg u "$USER" --arg c "$CID" '{username:$u, custom_id:$c, tags:["module-07"]}')" >/dev/null
   done
+  # Resolve consumer IDs once - Konnect requires UUIDs in path for nested writes
+  PARTNER_ID=$(resolve_id consumers partner-issuer)      || { err "partner-issuer not found"; exit 1; }
+  FEED_ID=$(resolve_id consumers data-feed-client)       || { err "data-feed-client not found"; exit 1; }
+  FREE_ID=$(resolve_id consumers free-user-001)          || { err "free-user-001 not found"; exit 1; }
+  PRO_ID=$(resolve_id consumers pro-user-001)            || { err "pro-user-001 not found"; exit 1; }
+  ENT_ID=$(resolve_id consumers enterprise-user-001)     || { err "enterprise-user-001 not found"; exit 1; }
+
   # Credentials
-  api_write POST "/consumers/partner-issuer/jwt" \
+  api_write POST "/consumers/$PARTNER_ID/jwt" \
     "$(jq -n --arg s "$JWT_SECRET" '{key:"partner-a", algorithm:"HS256", secret:$s}')" >/dev/null
-  api_write POST "/consumers/data-feed-client/hmac-auth" \
+  api_write POST "/consumers/$FEED_ID/hmac-auth" \
     "$(jq -n --arg s "$HMAC_SECRET" '{username:"feed-001", secret:$s}')" >/dev/null
-  api_write POST "/consumers/free-user-001/key-auth"       "$(jq -n '{key:"free-key-001"}')" >/dev/null
-  api_write POST "/consumers/pro-user-001/key-auth"        "$(jq -n '{key:"pro-key-001"}')" >/dev/null
-  api_write POST "/consumers/enterprise-user-001/key-auth" "$(jq -n '{key:"ent-key-001"}')" >/dev/null
+  api_write POST "/consumers/$FREE_ID/key-auth" "$(jq -n '{key:"free-key-001"}')" >/dev/null
+  api_write POST "/consumers/$PRO_ID/key-auth"  "$(jq -n '{key:"pro-key-001"}')" >/dev/null
+  api_write POST "/consumers/$ENT_ID/key-auth"  "$(jq -n '{key:"ent-key-001"}')" >/dev/null
   # Add consumers to groups
-  api_write POST "/consumers/free-user-001/consumer_groups"        "$(jq -n '{group:"free-tier"}')" >/dev/null
-  api_write POST "/consumers/pro-user-001/consumer_groups"         "$(jq -n '{group:"pro-tier"}')" >/dev/null
-  api_write POST "/consumers/enterprise-user-001/consumer_groups"  "$(jq -n '{group:"enterprise-tier"}')" >/dev/null
+  api_write POST "/consumers/$FREE_ID/consumer_groups" "$(jq -n '{group:"free-tier"}')" >/dev/null
+  api_write POST "/consumers/$PRO_ID/consumer_groups"  "$(jq -n '{group:"pro-tier"}')" >/dev/null
+  api_write POST "/consumers/$ENT_ID/consumer_groups"  "$(jq -n '{group:"enterprise-tier"}')" >/dev/null
   # Service + Route
   api_write POST "/services" \
     "$(jq -n '{name:"flights-svc", url:"https://httpbin.konghq.com", tags:["module-07"]}')" >/dev/null
