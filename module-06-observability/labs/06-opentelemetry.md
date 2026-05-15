@@ -1,16 +1,16 @@
-# Lab 06-C — OpenTelemetry
+# Lab 06-C - OpenTelemetry
 
-> **Goal.** In ~35 minutes you'll attach the `opentelemetry` plugin to your gateway, send traces to an OTLP collector (Jaeger), and observe how Kong's spans connect to your upstream's spans — when you have an upstream that emits them.
+> **Goal.** In ~35 minutes you'll attach the `opentelemetry` plugin to your gateway, send traces to an OTLP collector (Jaeger), and observe how Kong's spans connect to your upstream's spans - when you have an upstream that emits them.
 
 OpenTelemetry (OTel) is the open standard for distributed traces. Kong's plugin emits **spans** (work units with start/end timestamps) and propagates **trace context** via the `traceparent` header so downstream services can continue the trace.
 
 ---
 
-## Step 1 — Get an OTLP collector (5 min)
+## Step 1 - Get an OTLP collector (5 min)
 
 You need somewhere to send traces. Three options:
 
-### Option A — Local Jaeger (hybrid Docker setup)
+### Option A - Local Jaeger (hybrid Docker setup)
 
 If you're running hybrid mode, drop this into a docker-compose stack alongside the DP:
 
@@ -21,7 +21,7 @@ services:
     image: jaegertracing/all-in-one:latest
     ports:
       - "16686:16686"     # Jaeger UI
-      - "4318:4318"       # OTLP/HTTP — Kong sends here
+      - "4318:4318"       # OTLP/HTTP - Kong sends here
       - "4317:4317"       # OTLP/gRPC
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
@@ -34,7 +34,7 @@ open http://localhost:16686
 
 Set `OTLP_ENDPOINT=http://host.docker.internal:4318/v1/traces` (the DP container reaches your host via this DNS name).
 
-### Option B — Free cloud OTLP collector (serverless setup)
+### Option B - Free cloud OTLP collector (serverless setup)
 
 Sign up at one of these and copy your OTLP endpoint + auth header:
 - [Honeycomb](https://www.honeycomb.io) (free tier)
@@ -47,13 +47,13 @@ export OTLP_ENDPOINT=https://api.honeycomb.io/v1/traces
 export OTLP_HEADER_KEY='x-honeycomb-team:<your-api-key>'
 ```
 
-### Option C — Skip the visualization, focus on emission
+### Option C - Skip the visualization, focus on emission
 
 If you just want to verify Kong emits OTLP, point at a webhook receiver and inspect the binary payload. Less educational but the simplest.
 
 ---
 
-## Step 2 — Attach the `opentelemetry` plugin (5 min)
+## Step 2 - Attach the `opentelemetry` plugin (5 min)
 
 ```yaml [Append to flights-route plugins, or set globally]
 plugins:
@@ -83,12 +83,12 @@ deck gateway sync kong.yaml \
 ```
 
 ::: tip Sampling rate
-`sampling_rate: 1.0` = 100% — fine for the lab. In production, **head-based sampling at 1-10%** is typical for high-volume routes. Some traces (errors, slow requests) should always be kept — set up tail-based sampling at the collector for that.
+`sampling_rate: 1.0` = 100% - fine for the lab. In production, **head-based sampling at 1-10%** is typical for high-volume routes. Some traces (errors, slow requests) should always be kept - set up tail-based sampling at the collector for that.
 :::
 
 ---
 
-## Step 3 — Generate traffic and inspect a trace (5 min) 🎯
+## Step 3 - Generate traffic and inspect a trace (5 min) 🎯
 
 ```bash
 for i in {1..10}; do
@@ -116,7 +116,7 @@ Search for service: `kong-bootcamp-flights`. Click any trace. You'll see somethi
 
 ---
 
-## Step 4 — Propagate to the upstream (5 min — read, then test)
+## Step 4 - Propagate to the upstream (5 min - read, then test)
 
 Look at what Kong forwarded to httpbin:
 
@@ -134,7 +134,7 @@ Expected:
 }
 ```
 
-🎯 `traceparent` is the **W3C trace context standard**. Your upstream — if it's instrumented with OTel — would:
+🎯 `traceparent` is the **W3C trace context standard**. Your upstream - if it's instrumented with OTel - would:
 1. Read `traceparent` from the incoming request.
 2. Create a **child span** with that trace ID.
 3. Emit its own span(s) to the same collector.
@@ -147,7 +147,7 @@ If your upstream doesn't speak OTel, the trace stops at Kong's "proxy" span. You
 
 ---
 
-## Step 5 — Honour client trace context (5 min) 🧪
+## Step 5 - Honour client trace context (5 min) 🧪
 
 A real client (or another upstream service) sends you a request with its own `traceparent`. Kong should **continue** that trace, not start a new one.
 
@@ -165,13 +165,13 @@ curl -s "$KONNECT_PROXY_URL/flights/anything" \
 
 Expected: a `traceparent` with the **same trace-id** as your input (the first hex blob), but a **different span-id** (Kong created a child span).
 
-In your collector, search for trace ID `0123456789abcdef0123456789abcdef` — you'll find the trace, and Kong's spans will appear as a child of the (imaginary) caller's parent.
+In your collector, search for trace ID `0123456789abcdef0123456789abcdef` - you'll find the trace, and Kong's spans will appear as a child of the (imaginary) caller's parent.
 
-🎯 This is how you trace requests **across organizational boundaries** — your customer's traceparent flows into your gateway, and from there into your own services.
+🎯 This is how you trace requests **across organizational boundaries** - your customer's traceparent flows into your gateway, and from there into your own services.
 
 ---
 
-## Step 6 — What about traces and rate limiting / cache? (3 min — read)
+## Step 6 - What about traces and rate limiting / cache? (3 min - read)
 
 Plugin spans appear in the trace in order. If your request hits the cache plugin and gets a cached response:
 
@@ -191,11 +191,11 @@ If the request gets rate-limited (429):
         └── (no upstream span)
 ```
 
-**You can see the decision in the waterfall.** Tracing makes plugin behaviour visible at the request level — invaluable for "why did this one request behave differently?" debugging.
+**You can see the decision in the waterfall.** Tracing makes plugin behaviour visible at the request level - invaluable for "why did this one request behave differently?" debugging.
 
 ---
 
-## Step 7 — Sampling and cost (3 min — read)
+## Step 7 - Sampling and cost (3 min - read)
 
 OTLP traffic costs money in cloud collectors. Strategies:
 
@@ -203,7 +203,7 @@ OTLP traffic costs money in cloud collectors. Strategies:
 |---|---|
 | **Head-based** at Kong (e.g. `sampling_rate: 0.05` = 5%) | High-volume routes. Cheap. Loses error / slow traces unless you also do… |
 | **Tail-based** at the collector | Keep all traces with errors or `>p99 latency`, drop the rest. More expensive collector setup. |
-| **Probabilistic + always-on for errors** | Honeycomb / Grafana support this via collector rules — best of both worlds. |
+| **Probabilistic + always-on for errors** | Honeycomb / Grafana support this via collector rules - best of both worlds. |
 
 For the bootcamp, `1.0` is fine. For production, start at `0.1` and tune.
 
@@ -212,21 +212,21 @@ For the bootcamp, `1.0` is fine. For production, start at `0.1` and tune.
 ## Recap
 
 - `opentelemetry` plugin emits **spans for every Kong phase** of every request.
-- `traceparent` header propagation lets your upstream **continue** the trace — required for end-to-end distributed tracing.
+- `traceparent` header propagation lets your upstream **continue** the trace - required for end-to-end distributed tracing.
 - Traces capture **per-request behaviour** in a way metrics and logs can't (you see the waterfall, not just totals).
 - Sampling rate matters at production volume; default 1.0 here is for visibility.
 
 ---
 
-## Exit ticket — answers
+## Exit ticket - answers
 
-1. **User reports request `id=abc-123` failed.** Start with **logs** — log entries are searchable by `X-Kong-Request-Id` and contain the full request context including consumer, status, latencies. Logs → trace ID (if logged) → distributed trace. Don't start with metrics — they're aggregates; one user's failure is invisible there.
-2. **Rate-limit per Consumer = fine. Prometheus per Consumer = footgun.** Rate-limiting uses Consumer ID as a counter key in Redis/local memory — bounded. Prometheus per-Consumer creates a unique time series **per Consumer**, multiplied by every other label combination — unbounded. Use logs/traces for per-Consumer detail; metrics for aggregates.
-3. **Upstream 200ms total, Kong says 4ms — where did 196ms go?** `kong_upstream_latency_ms`. The 4ms is `kong_kong_latency_ms` (Kong's own plugin chain). The full request latency = kong + upstream. When the SLO alarm fires, look at upstream latency *first* — that's usually where the time is.
+1. **User reports request `id=abc-123` failed.** Start with **logs** - log entries are searchable by `X-Kong-Request-Id` and contain the full request context including consumer, status, latencies. Logs → trace ID (if logged) → distributed trace. Don't start with metrics - they're aggregates; one user's failure is invisible there.
+2. **Rate-limit per Consumer = fine. Prometheus per Consumer = footgun.** Rate-limiting uses Consumer ID as a counter key in Redis/local memory - bounded. Prometheus per-Consumer creates a unique time series **per Consumer**, multiplied by every other label combination - unbounded. Use logs/traces for per-Consumer detail; metrics for aggregates.
+3. **Upstream 200ms total, Kong says 4ms - where did 196ms go?** `kong_upstream_latency_ms`. The 4ms is `kong_kong_latency_ms` (Kong's own plugin chain). The full request latency = kong + upstream. When the SLO alarm fires, look at upstream latency *first* - that's usually where the time is.
 
 ---
 
-## Cleanup — full M06 wipe
+## Cleanup - full M06 wipe
 
 ```bash
 echo '_format_version: "3.0"' | deck gateway sync - \
@@ -242,4 +242,4 @@ docker compose -f docker-compose.jaeger.yml down
 
 ---
 
-**Next:** [Module 07 — Enterprise & Advanced →](/module-07-enterprise/) — the hardest plugins: JWT, HMAC, ACL with Consumer Groups, OIDC Auth Code Flow, Upstream OAuth (M2M), OPA policy-as-code, Datakit orchestration, RBAC for Kong Manager.
+**Next:** [Module 07 - Enterprise & Advanced →](/module-07-enterprise/) - the hardest plugins: JWT, HMAC, ACL with Consumer Groups, OIDC Auth Code Flow, Upstream OAuth (M2M), OPA policy-as-code, Datakit orchestration, RBAC for Kong Manager.

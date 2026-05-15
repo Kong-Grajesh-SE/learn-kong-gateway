@@ -1,9 +1,9 @@
-# Lab 06-B — Prometheus & Grafana
+# Lab 06-B - Prometheus & Grafana
 
 > **Goal.** In ~30 minutes you'll enable the `prometheus` plugin, learn what each metric means, and build the four **RED metrics** queries (Rate, Errors, Duration) you'll use forever after.
 
 ::: warning Serverless caveat
-Konnect **serverless** gateways don't expose a public `/metrics` endpoint — instead the same metrics flow into Konnect Analytics. You can still complete this lab on serverless conceptually, but the scrape step requires either:
+Konnect **serverless** gateways don't expose a public `/metrics` endpoint - instead the same metrics flow into Konnect Analytics. You can still complete this lab on serverless conceptually, but the scrape step requires either:
 - A **hybrid** Docker DP (which exposes `/metrics` on port 8100), or
 - The Konnect Prometheus federation endpoint (Enterprise feature, see Konnect → Settings → Monitoring).
 
@@ -12,7 +12,7 @@ The plugin config and PromQL queries are identical either way.
 
 ---
 
-## Step 1 — Enable the `prometheus` plugin (3 min)
+## Step 1 - Enable the `prometheus` plugin (3 min)
 
 Apply it **globally** so every Service contributes metrics:
 
@@ -36,12 +36,12 @@ deck gateway sync kong.yaml \
 Wait 15s. Konnect → **Plugins** → `prometheus` should show as a **global** plugin.
 
 ::: warning Why `per_consumer: false`?
-Setting `per_consumer: true` adds a `consumer` label to every metric. If you have 1,000 Consumers × 5 routes × 4 status codes = 20,000 unique label combinations **per metric**. Multiply by 8 metrics = 160K time series. Prometheus storage costs explode. Reserve per-Consumer detail for **logs** and **traces** — not metrics.
+Setting `per_consumer: true` adds a `consumer` label to every metric. If you have 1,000 Consumers × 5 routes × 4 status codes = 20,000 unique label combinations **per metric**. Multiply by 8 metrics = 160K time series. Prometheus storage costs explode. Reserve per-Consumer detail for **logs** and **traces** - not metrics.
 :::
 
 ---
 
-## Step 2 — Scrape `/metrics` (5 min)
+## Step 2 - Scrape `/metrics` (5 min)
 
 ### On a hybrid Docker DP
 
@@ -52,7 +52,7 @@ docker exec kong-dp curl -s http://localhost:8100/metrics | head -40
 
 ### On Konnect serverless
 
-The proxy doesn't expose `/metrics` publicly. Use **Konnect Analytics** (UI) or set up Konnect's Prometheus federation in `Settings → Monitoring`. Both surface the same metrics — they're just delivered to you rather than scraped by you.
+The proxy doesn't expose `/metrics` publicly. Use **Konnect Analytics** (UI) or set up Konnect's Prometheus federation in `Settings → Monitoring`. Both surface the same metrics - they're just delivered to you rather than scraped by you.
 
 Either way, you'll see hundreds of lines like:
 
@@ -73,7 +73,7 @@ kong_kong_latency_ms_count{service="flights-svc",route="flights-route"} 59
 
 ---
 
-## Step 3 — The metrics that matter (5 min — read)
+## Step 3 - The metrics that matter (5 min - read)
 
 Out of dozens of metrics Kong exposes, you'll mostly use these:
 
@@ -88,16 +88,16 @@ Out of dozens of metrics Kong exposes, you'll mostly use these:
 | `kong_upstream_target_health` | Gauge | Health-check status of each Upstream target |
 
 ::: tip Three latencies, again
-- `kong_request_latency_ms` — what the **client** saw.
-- `kong_kong_latency_ms` — what **Kong** added (plugins, balancer).
-- `kong_upstream_latency_ms` — what the **upstream** took.
+- `kong_request_latency_ms` - what the **client** saw.
+- `kong_kong_latency_ms` - what **Kong** added (plugins, balancer).
+- `kong_upstream_latency_ms` - what the **upstream** took.
 
 `request ≈ kong + upstream`. When the SLO alarm fires, your first PromQL question is: "Is `upstream_latency` spiking, or `kong_latency`?"
 :::
 
 ---
 
-## Step 4 — Build the four RED queries (10 min) 🎯
+## Step 4 - Build the four RED queries (10 min) 🎯
 
 RED = **R**ate / **E**rrors / **D**uration. Every API needs these four queries set up before anything else.
 
@@ -138,13 +138,13 @@ histogram_quantile(0.95,
 ::: tip From queries to alerts
 - **Page** when Q2 > 1% for >5 minutes (real users seeing errors).
 - **Warn** when Q3 > your SLO (upstream getting slow).
-- **Investigate** when Q4 starts climbing (plugin chain getting expensive — usually a new plugin).
+- **Investigate** when Q4 starts climbing (plugin chain getting expensive - usually a new plugin).
 - **Ignore** Q1 unless it crosses your capacity threshold.
 :::
 
 ---
 
-## Step 5 — Generate some metric movement (3 min)
+## Step 5 - Generate some metric movement (3 min)
 
 Pump traffic so the dashboards have something to show:
 
@@ -167,7 +167,7 @@ Re-run your queries. You should see real rate, real errors, real latency percent
 
 ---
 
-## Step 6 — What to instrument vs what to NOT (4 min — read)
+## Step 6 - What to instrument vs what to NOT (4 min - read)
 
 The temptation when you have metrics is to track everything. Resist.
 
@@ -175,8 +175,8 @@ The temptation when you have metrics is to track everything. Resist.
 |---|---|
 | ✅ Track rate, errors, duration per **service** and **route** | ❌ Track per **Consumer** (high cardinality, use logs for that) |
 | ✅ Use **histograms** for latency, **counters** for counts | ❌ Use a gauge that you set to "the last latency" (useless after 1s) |
-| ✅ Aggregate before storing — store p50, p95, p99 | ❌ Store raw event durations as labels |
-| ✅ Set **SLO-based alerts** on Q2/Q3 | ❌ Alert on raw thresholds (`> 200ms`) — alert on **error budget burn rate** |
+| ✅ Aggregate before storing - store p50, p95, p99 | ❌ Store raw event durations as labels |
+| ✅ Set **SLO-based alerts** on Q2/Q3 | ❌ Alert on raw thresholds (`> 200ms`) - alert on **error budget burn rate** |
 | ✅ Keep label cardinality < ~1000 per metric | ❌ Add a `user_id` or `request_id` label "just in case" |
 
 ::: warning The cardinality bomb story
@@ -200,4 +200,4 @@ A team added a `user_id` label to a counter "for debugging." With 100K active us
 
 ---
 
-**Next:** [Lab 06-C — OpenTelemetry →](./06-opentelemetry)
+**Next:** [Lab 06-C - OpenTelemetry →](./06-opentelemetry)

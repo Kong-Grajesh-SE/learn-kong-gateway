@@ -1,4 +1,4 @@
-# Lab 07-C — OIDC Authorization Code Flow
+# Lab 07-C - OIDC Authorization Code Flow
 
 > **Goal.** In ~45 minutes you'll implement the full OIDC Auth Code flow end-to-end: browser-based login via Keycloak (or Kong Identity), server-side token exchange, encrypted session cookie. The result is **enterprise SSO** for any API behind Kong.
 >

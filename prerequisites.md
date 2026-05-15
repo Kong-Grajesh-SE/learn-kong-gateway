@@ -10,7 +10,7 @@ description: Everything you need installed before starting the Kong API Gateway 
 ::: warning ⚙️ Kong Gateway 3.14+ required
 This bootcamp targets **Kong Gateway 3.14 or newer**. Some labs rely on 3.14-era plugin schemas (`request-transformer-advanced` `rename` operation, `opentelemetry` plugin config), 3.4+ headers (`X-Forwarded-Path`, `X-Forwarded-Prefix`), and 3.11+ plugins (`datakit`).
 
-- **Konnect** (recommended): Konnect Cloud always runs the latest released Kong version — you're already on 3.14+.
+- **Konnect** (recommended): Konnect Cloud always runs the latest released Kong version - you're already on 3.14+.
 - **Self-hosted hybrid**: pin the Data Plane container to `kong/kong-gateway:3.14` in your `docker-compose.yml` (the hybrid lab in [Module 01](/module-01-orientation/labs/01-hybrid-docker-setup) already does this).
 - **Self-hosted Kong OSS**: not supported for the Enterprise plugins in M07 (`opa`, `datakit`, `upstream-oauth`, `request-transformer-advanced`).
 :::
@@ -19,7 +19,7 @@ This bootcamp targets **Kong Gateway 3.14 or newer**. Some labs rely on 3.14-era
 
 | Tool | Purpose | Min Version | Install |
 |---|---|---|---|
-| **Kong Gateway** | The gateway itself | **3.14+** | Konnect cloud (free tier) — or Docker image `kong/kong-gateway:3.14` for hybrid |
+| **Kong Gateway** | The gateway itself | **3.14+** | Konnect cloud (free tier) - or Docker image `kong/kong-gateway:3.14` for hybrid |
 | **Konnect account** | Hosts the Control Plane | Free tier | [cloud.konghq.com](https://cloud.konghq.com) |
 | **Docker Desktop** | Run hybrid Data Plane locally (optional) | 4.x | [docker.com/get-started](https://www.docker.com/get-started) |
 | **Docker Compose** | Multi-container orchestration | v2.x | Bundled with Docker Desktop |
@@ -211,10 +211,10 @@ if docker ps --format '{{.Image}}' 2>/dev/null | grep -q 'kong/kong-gateway'; th
   KONG_VER=$(docker ps --format '{{.Image}}' | grep 'kong/kong-gateway' | head -1 | sed 's/.*://')
   case "$KONG_VER" in
     3.14*|3.15*|3.16*|3.2*|3.3*|3.4*)  echo "  ✅  Kong Gateway version $KONG_VER (≥ 3.14)" ;;
-    *)                                  echo "  ❌  Kong Gateway version $KONG_VER — bootcamp requires 3.14+. Update your image tag." ;;
+    *)                                  echo "  ❌  Kong Gateway version $KONG_VER - bootcamp requires 3.14+. Update your image tag." ;;
   esac
 else
-  echo "  ℹ️   No local Kong DP detected — assuming you're using Konnect serverless (always 3.14+)."
+  echo "  ℹ️   No local Kong DP detected - assuming you're using Konnect serverless (always 3.14+)."
 fi
 ```
 

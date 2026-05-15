@@ -1,4 +1,4 @@
-# Lab 01 — Your First Gateway (Quick Start)
+# Lab 01 - Your First Gateway (Quick Start)
 
 > **Goal.** In ~45 minutes, create a serverless gateway on Konnect, define a Service + Route, and send your first proxied request through it.
 >
@@ -8,7 +8,7 @@ Throughout the lab, every step ends with a **✅ Checkpoint** so you know you're
 
 ---
 
-## Step 1 — Create a Control Plane (5 min)
+## Step 1 - Create a Control Plane (5 min)
 
 A **Control Plane (CP)** is the brain that holds your gateway's configuration. Konnect runs it for you.
 
@@ -37,12 +37,12 @@ export KONNECT_CP_NAME=bootcamp-cp
 
 ---
 
-## Step 2 — Get a Personal Access Token (2 min)
+## Step 2 - Get a Personal Access Token (2 min)
 
 A **PAT** authorizes your API calls and decK commands.
 
 1. Top-right avatar → **Personal Access Tokens**.
-2. **+ Generate Token**. Name: `bootcamp`. Copy it — it's shown only once.
+2. **+ Generate Token**. Name: `bootcamp`. Copy it - it's shown only once.
 
 ```bash
 export KONNECT_TOKEN=kpat_xxxxxxxxxxx
@@ -56,11 +56,11 @@ curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
   | jq '{id, name, config}'
 ```
 
-You should see your CP's name and config. If you get `403`, your token region doesn't match your CP region — regenerate the token while logged into the right region's Konnect tenant.
+You should see your CP's name and config. If you get `403`, your token region doesn't match your CP region - regenerate the token while logged into the right region's Konnect tenant.
 
 ---
 
-## Step 3 — Verify the gateway is alive (2 min)
+## Step 3 - Verify the gateway is alive (2 min)
 
 The gateway is running but has no Services yet. Hitting it should return Kong's default 404:
 
@@ -78,18 +78,18 @@ Expected:
 ```
 
 ::: info Why this is a good thing
-That JSON is Kong itself answering — not your code, not httpbin, not Konnect. The proxy URL points at a real Kong gateway. No Route matches `/` because we haven't created one. The `request_id` is the trace ID Kong assigns to every request.
+That JSON is Kong itself answering - not your code, not httpbin, not Konnect. The proxy URL points at a real Kong gateway. No Route matches `/` because we haven't created one. The `request_id` is the trace ID Kong assigns to every request.
 :::
 
-**✅ Checkpoint.** You got the JSON above (HTTP 404 is correct — that's the right kind of 404).
+**✅ Checkpoint.** You got the JSON above (HTTP 404 is correct - that's the right kind of 404).
 
 ---
 
-## Step 4 — Create a Service (5 min)
+## Step 4 - Create a Service (5 min)
 
-A **Service** names the upstream API Kong will forward to. We'll use `httpbin.konghq.com` — Kong's own httpbin echo service.
+A **Service** names the upstream API Kong will forward to. We'll use `httpbin.konghq.com` - Kong's own httpbin echo service.
 
-You can configure Kong two ways: the **Konnect Admin API** (imperative — "do this now") or **decK** (declarative — "here's the final state, make it match"). decK is what you'll use in production for GitOps. For this lab, either works — pick one.
+You can configure Kong two ways: the **Konnect Admin API** (imperative - "do this now") or **decK** (declarative - "here's the final state, make it match"). decK is what you'll use in production for GitOps. For this lab, either works - pick one.
 
 ::: code-group
 
@@ -122,7 +122,7 @@ deck gateway sync kong.yaml \
 
 :::
 
-::: tip Admin API vs decK — when to use which
+::: tip Admin API vs decK - when to use which
 - **Admin API** is great for one-off explorations and scripting. State lives only in Konnect.
 - **decK** treats Konnect config as code: review YAML in PRs, `deck diff` before applying, `deck dump` to back up. Use this in production.
 :::
@@ -135,7 +135,7 @@ If you typed `host: httpbin.konghq.com` instead of `url: https://httpbin.konghq.
 
 ---
 
-## Step 5 — Create a Route (5 min)
+## Step 5 - Create a Route (5 min)
 
 A **Route** matches incoming requests and sends them to a Service. We'll match path `/demo`.
 
@@ -155,7 +155,7 @@ curl -X POST \
   }' | jq
 ```
 
-```yaml [decK YAML — append to kong.yaml]
+```yaml [decK YAML - append to kong.yaml]
 _format_version: '3.0'
 services:
   - name: httpbin-service
@@ -182,7 +182,7 @@ deck gateway sync kong.yaml \
 
 ---
 
-## Step 6 — Send your first proxied request (3 min)
+## Step 6 - Send your first proxied request (3 min)
 
 Wait ~15 seconds for the route to propagate to the serverless Data Plane (it polls Konnect roughly every 10s). Then:
 
@@ -190,7 +190,7 @@ Wait ~15 seconds for the route to propagate to the serverless Data Plane (it pol
 curl -s $KONNECT_PROXY_URL/demo/get | jq
 ```
 
-If you get `no Route matched`, wait another 15s and retry. **Don't panic — this is normal on a fresh serverless DP.**
+If you get `no Route matched`, wait another 15s and retry. **Don't panic - this is normal on a fresh serverless DP.**
 
 Expected response (abbreviated):
 
@@ -218,12 +218,12 @@ Expected response (abbreviated):
 | Tagged the request for tracing | `X-Kong-Request-Id: 828e6d71...` |
 
 ::: info Why does `url` show your gateway hostname, not httpbin's?
-httpbin reconstructs the URL using `X-Forwarded-Host`, so it reflects what the *client* saw, not what httpbin saw on its own socket. This is normal — and useful when debugging which gateway a request came through.
+httpbin reconstructs the URL using `X-Forwarded-Host`, so it reflects what the *client* saw, not what httpbin saw on its own socket. This is normal - and useful when debugging which gateway a request came through.
 :::
 
 ---
 
-## Step 7 — POST a body (3 min)
+## Step 7 - POST a body (3 min)
 
 ```bash
 curl -s -X POST $KONNECT_PROXY_URL/demo/post \
@@ -238,11 +238,11 @@ Expected:
 { "booking": "NYC-LON", "seats": 2 }
 ```
 
-httpbin echoes back the body you sent. Kong didn't modify it — it forwarded the bytes as-is. (Modifying request bodies is what Transformer plugins are for. We'll get there.)
+httpbin echoes back the body you sent. Kong didn't modify it - it forwarded the bytes as-is. (Modifying request bodies is what Transformer plugins are for. We'll get there.)
 
 ---
 
-## Step 8 — Test failure modes (3 min)
+## Step 8 - Test failure modes (3 min)
 
 Pretend the upstream is broken. httpbin can simulate any status code:
 
@@ -259,7 +259,7 @@ curl -i $KONNECT_PROXY_URL/no-such-path
 # {"message":"no Route matched with those values","request_id":"..."}
 ```
 
-That `404` comes from **Kong**, not the upstream. (Kong never even tried to forward — no Route matched.)
+That `404` comes from **Kong**, not the upstream. (Kong never even tried to forward - no Route matched.)
 
 ::: tip Why this distinction matters
 Later, when something breaks in production, your first triage question will be: "Did Kong reject this, or did the upstream?" The presence of `X-Kong-Request-Id` and Kong-shaped error JSON tells you it was Kong. A status code with the upstream's body shape tells you it was the upstream.
@@ -267,17 +267,17 @@ Later, when something breaks in production, your first triage question will be: 
 
 ---
 
-## Step 9 — See your traffic in Konnect Analytics (2 min)
+## Step 9 - See your traffic in Konnect Analytics (2 min)
 
 Konnect → **Analytics**. Within ~1 minute, you should see your requests by status code, latency, and Service/Route.
 
-Filter by Service: `httpbin-service`. You'll see all the requests you just sent — including the 503 and 404.
+Filter by Service: `httpbin-service`. You'll see all the requests you just sent - including the 503 and 404.
 
 **✅ Checkpoint.** You can see at least 5–10 of your requests in Analytics.
 
 ---
 
-## Recap — what you just built
+## Recap - what you just built
 
 ```
 You              Kong Gateway                 httpbin.konghq.com
@@ -293,18 +293,18 @@ You              Kong Gateway                 httpbin.konghq.com
 ```
 
 You created:
-- A **Service** (`httpbin-service`) — names an upstream API.
-- A **Route** (`httpbin-route` at `/demo`) — maps client URLs to that Service.
+- A **Service** (`httpbin-service`) - names an upstream API.
+- A **Route** (`httpbin-route` at `/demo`) - maps client URLs to that Service.
 - A real proxied request that Kong handled end-to-end.
 
 No plugins. Just routing. Module 02 layers on multiple Services, smarter Route matching, and load-balanced **Upstreams**.
 
 ---
 
-## Exit ticket — answers
+## Exit ticket - answers
 
 1. **Service vs Route?** A Service names *where* requests go (the upstream). A Route names *which* requests qualify (path/host/method matching). One Service can have many Routes.
-2. **`strip_path: true`?** Kong removes the matched path prefix before forwarding. `/demo/get` → `/get`. With `false`, the upstream would see `/demo/get` as-is — useful if your upstream expects the full path.
+2. **`strip_path: true`?** Kong removes the matched path prefix before forwarding. `/demo/get` → `/get`. With `false`, the upstream would see `/demo/get` as-is - useful if your upstream expects the full path.
 3. **`X-Kong-Request-Id`?** Every request gets a unique ID Kong threads through its logs, your upstream's logs (if you forward the header), and Konnect Analytics. When something breaks, you join three datasets on this one ID.
 
 ---
@@ -315,7 +315,7 @@ Before Module 02, remove what you created so the next module starts clean:
 
 ::: code-group
 
-```bash [decK — wipe the CP]
+```bash [decK - wipe the CP]
 echo '_format_version: "3.0"' | deck gateway sync - \
   --konnect-token $KONNECT_TOKEN \
   --konnect-control-plane-name $KONNECT_CP_NAME
@@ -331,9 +331,9 @@ curl -X DELETE -H "Authorization: Bearer $KONNECT_TOKEN" \
 :::
 
 ::: tip Verify with the bootcamp script
-Run `./scripts/verify-module-01.sh serverless` from the repo root — it walks every step above automatically, including the cleanup.
+Run `./scripts/verify-module-01.sh serverless` from the repo root - it walks every step above automatically, including the cleanup.
 :::
 
 ---
 
-**Next:** [Module 02 — Routing & Topology →](/module-02-core-gateway/)
+**Next:** [Module 02 - Routing & Topology →](/module-02-core-gateway/)

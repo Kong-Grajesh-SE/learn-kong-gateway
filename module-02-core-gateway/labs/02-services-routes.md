@@ -1,9 +1,9 @@
-# Lab 02-A — Multi-Service Routing
+# Lab 02-A - Multi-Service Routing
 
 > **Goal.** In ~40 minutes you'll register **three Services**, route them by **path and method**, and learn what happens when routes overlap or conflict. We'll deliberately break things so you can see Kong's matching priority in action.
 
 ::: tip Picking up from M01
-This lab assumes the same Konnect Control Plane and env vars from [Module 01](/module-01-orientation/). If you ran the cleanup at the end of M01, your CP is empty — exactly what we want.
+This lab assumes the same Konnect Control Plane and env vars from [Module 01](/module-01-orientation/). If you ran the cleanup at the end of M01, your CP is empty - exactly what we want.
 
 ```bash
 echo "Token: ${KONNECT_TOKEN:0:8}…  CP: $KONNECT_CP_NAME  Proxy: $KONNECT_PROXY_URL"
@@ -12,13 +12,13 @@ echo "Token: ${KONNECT_TOKEN:0:8}…  CP: $KONNECT_CP_NAME  Proxy: $KONNECT_PROX
 
 ---
 
-## Step 1 — Register three Services (5 min)
+## Step 1 - Register three Services (5 min)
 
 Three Services, all backed by `httpbin.konghq.com` (we're focused on routing today, not real backends):
 
 ::: code-group
 
-```yaml [kong.yaml — decK]
+```yaml [kong.yaml - decK]
 _format_version: '3.0'
 services:
   - name: flights-svc
@@ -54,12 +54,12 @@ done
 **✅ Checkpoint.** Konnect → **Gateway Services** → all three Services exist, each pointing at `httpbin.konghq.com:443`.
 
 ::: info Why three Services backed by the same upstream?
-Real APIs would have three different upstream hostnames. We use the same one so this lab works on a serverless gateway without you running anything locally. The Service is just a *name* — what matters here is how Routes select between them.
+Real APIs would have three different upstream hostnames. We use the same one so this lab works on a serverless gateway without you running anything locally. The Service is just a *name* - what matters here is how Routes select between them.
 :::
 
 ---
 
-## Step 2 — Route each Service by path (5 min)
+## Step 2 - Route each Service by path (5 min)
 
 We want:
 - `GET /flights/*` → `flights-svc`
@@ -118,15 +118,15 @@ hotels  → https://<your-gateway>/get
 cars    → https://<your-gateway>/get
 ```
 
-(Same httpbin upstream — but the *Route* selected is different. You'll see this split in Konnect Analytics when you filter by Route.)
+(Same httpbin upstream - but the *Route* selected is different. You'll see this split in Konnect Analytics when you filter by Route.)
 
 **✅ Checkpoint.** All three paths return 200, and Konnect Analytics shows traffic across three Routes.
 
 ---
 
-## Step 3 — Deliberately overlap two routes (10 min) 🧪
+## Step 3 - Deliberately overlap two routes (10 min) 🧪
 
-Real APIs constantly have overlapping paths — `/flights` and `/flights/premium` are both valid. Let's see how Kong decides.
+Real APIs constantly have overlapping paths - `/flights` and `/flights/premium` are both valid. Let's see how Kong decides.
 
 Add a more specific route for premium flights:
 
@@ -163,9 +163,9 @@ Kong doesn't return the matched Route name as a header by default. Open Konnect 
 
 ---
 
-## Step 4 — Now overlap by method (10 min) 🧪
+## Step 4 - Now overlap by method (10 min) 🧪
 
-Routes can also be filtered by HTTP method. Restrict the premium route to `POST` only — for booking premium flights:
+Routes can also be filtered by HTTP method. Restrict the premium route to `POST` only - for booking premium flights:
 
 ```yaml
 - name: flights-svc
@@ -192,22 +192,22 @@ curl -s -o /dev/null -w 'POST premium → %{http_code}\n' -X POST \
   $KONNECT_PROXY_URL/flights/premium/post
 ```
 
-Both return 200 — but they hit **different Routes**. Verify in Konnect Analytics.
+Both return 200 - but they hit **different Routes**. Verify in Konnect Analytics.
 
-::: info Route matching priority — the actual order
+::: info Route matching priority - the actual order
 Kong evaluates routes in this order (highest wins):
 1. **Longer path prefix** ✓ (Step 3)
 2. **Path = regex** outranks plain prefix
-3. **More specific method** ✓ (this step) — a route restricted to `[POST]` outranks one accepting any method
-4. **Header match** — a route requiring `Header: value` outranks one without
-5. **Host match** — a route requiring a specific Host outranks a host-less one
+3. **More specific method** ✓ (this step) - a route restricted to `[POST]` outranks one accepting any method
+4. **Header match** - a route requiring `Header: value` outranks one without
+5. **Host match** - a route requiring a specific Host outranks a host-less one
 :::
 
 **✅ Checkpoint.** You can predict which Route wins given two overlapping definitions.
 
 ---
 
-## Step 5 — Test with the wrong method (3 min)
+## Step 5 - Test with the wrong method (3 min)
 
 A booking should be `POST`. What if a client mistakenly sends `DELETE`?
 
@@ -218,14 +218,14 @@ curl -s -i -X DELETE $KONNECT_PROXY_URL/flights/premium/delete | head -3
 What did Kong do?
 
 ::: details Answer
-Kong sees `DELETE /flights/premium/delete`. The premium route requires `methods: [POST]` — no match. Kong falls back to `flights-route` (no method restriction → accepts any). The request reaches httpbin, which returns the DELETE response.
+Kong sees `DELETE /flights/premium/delete`. The premium route requires `methods: [POST]` - no match. Kong falls back to `flights-route` (no method restriction → accepts any). The request reaches httpbin, which returns the DELETE response.
 
 The fix for production: pin **every** Route to the methods it actually expects, so Kong returns a clean 404 (or you add the `request-termination` plugin to deny). Try adding `methods: [GET]` to `flights-route` and re-running.
 :::
 
 ---
 
-## Step 6 — Path stripping revisited (3 min)
+## Step 6 - Path stripping revisited (3 min)
 
 You set `strip_path: true` on every Route. That's why `/flights/get` becomes `/get` upstream. What if the upstream actually expects the full prefix?
 
@@ -248,7 +248,7 @@ curl -s $KONNECT_PROXY_URL/flights/get | jq -r '.url, .status'
 This is the most common production bug: `strip_path` mismatch between gateway and upstream expectations.
 
 ::: tip Default decision
-For *most* upstreams, `strip_path: true` is correct — Kong handles the routing prefix, the upstream stays unaware. Set it to `false` only when the upstream genuinely expects the prefix (e.g. when forwarding to another API gateway).
+For *most* upstreams, `strip_path: true` is correct - Kong handles the routing prefix, the upstream stays unaware. Set it to `false` only when the upstream genuinely expects the prefix (e.g. when forwarding to another API gateway).
 :::
 
 Revert to `strip_path: true` so the rest of the lab keeps working:
@@ -261,25 +261,25 @@ Revert to `strip_path: true` so the rest of the lab keeps working:
 
 ---
 
-## Step 7 — Inspect via Konnect UI (2 min)
+## Step 7 - Inspect via Konnect UI (2 min)
 
 Konnect → **Gateway Services** → click `flights-svc` → **Routes** tab.
 
 You should see both `flights-route` and `flights-premium-route` with their paths, methods, and `strip_path` settings.
 
-::: tip Konnect UI vs decK — pick one source of truth
+::: tip Konnect UI vs decK - pick one source of truth
 Editing routes in the UI works fine for one-off experiments. But the moment you `deck gateway sync` again, your UI edits get overwritten by whatever is in `kong.yaml`. In production, the YAML is the source of truth; in Konnect dev environments, the UI is fine.
 :::
 
 ---
 
-## Recap — what you just built
+## Recap - what you just built
 
 ```
 GET  /hotels/*           → hotels-svc       (single route)
 GET  /cars/*             → cars-svc         (single route)
 GET  /flights/*          → flights-svc      (catch-all for flights)
-POST /flights/premium/*  → flights-svc      (more specific — wins for POST)
+POST /flights/premium/*  → flights-svc      (more specific - wins for POST)
 ```
 
 You learned Kong's route matching obeys a strict precedence:
@@ -287,7 +287,7 @@ You learned Kong's route matching obeys a strict precedence:
 - **Method-restricted > any method**
 - **With header/host filter > without**
 
-This becomes critical in Module 03+ when plugins attach to *specific* routes. Attaching `key-auth` to `flights-premium-route` but not `flights-route` would mean only POST-to-premium needs an API key — exactly the kind of pattern real APIs need.
+This becomes critical in Module 03+ when plugins attach to *specific* routes. Attaching `key-auth` to `flights-premium-route` but not `flights-route` would mean only POST-to-premium needs an API key - exactly the kind of pattern real APIs need.
 
 ---
 
@@ -297,4 +297,4 @@ This becomes critical in Module 03+ when plugins attach to *specific* routes. At
 
 ---
 
-**Next:** [Lab 02-B — Upstreams & Health Checks →](./02-upstreams)
+**Next:** [Lab 02-B - Upstreams & Health Checks →](./02-upstreams)

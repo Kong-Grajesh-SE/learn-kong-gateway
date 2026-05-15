@@ -1,11 +1,11 @@
-# Module 01 — Your First Gateway
+# Module 01 - Your First Gateway
 
-> **The scenario.** You're a developer at a travel startup. Your team built an API. It works — but:
+> **The scenario.** You're a developer at a travel startup. Your team built an API. It works - but:
 > - You have no idea who's calling it.
 > - There's no way to throttle abusive clients.
 > - When the backend hiccups, callers get raw 502s.
 >
-> In the next ~60 minutes you'll put one piece in front of your API — **Kong Gateway** — and route your first real request through it. No prior Kong knowledge needed.
+> In the next ~60 minutes you'll put one piece in front of your API - **Kong Gateway** - and route your first real request through it. No prior Kong knowledge needed.
 
 ## What you'll have at the end
 
@@ -39,7 +39,7 @@ One gateway, one Service, one Route, one real proxied request. Every later modul
 | `jq` | Pretty-print JSON | `jq --version` · macOS: `brew install jq` |
 | `decK` (optional) | Manage config as YAML files | `deck version` · macOS: `brew install kong/tap/deck` |
 
-No Docker. No certs. No local services. (If you'd rather run the gateway on your laptop in Docker — see the optional [hybrid Docker setup](./labs/01-hybrid-docker-setup) at the end.)
+No Docker. No certs. No local services. (If you'd rather run the gateway on your laptop in Docker - see the optional [hybrid Docker setup](./labs/01-hybrid-docker-setup) at the end.)
 
 ## Three concepts you need today
 
@@ -56,7 +56,7 @@ Client → Kong Gateway (/demo/get) → httpbin.konghq.com (/get)
                                   ← response with X-Kong-* headers
 ```
 
-Everything else Kong does — authentication, rate limiting, transformations, logging — is a **plugin** you attach to a Service, Route, or Consumer. We'll cover plugins from Module 03 onwards. **No plugins today.**
+Everything else Kong does - authentication, rate limiting, transformations, logging - is a **plugin** you attach to a Service, Route, or Consumer. We'll cover plugins from Module 03 onwards. **No plugins today.**
 
 ## Lab
 
@@ -79,15 +79,15 @@ After the lab, can you answer these without looking? (Answers at the bottom of t
 
 | Symptom | Likely cause |
 |---|---|
-| `no Route matched with those values` after creating a Route | Route hasn't propagated yet — serverless Data Planes poll every ~10s. Wait 30s and retry. |
+| `no Route matched with those values` after creating a Route | Route hasn't propagated yet - serverless Data Planes poll every ~10s. Wait 30s and retry. |
 | Konnect API returns `403 Forbidden` | Your PAT is for a different region than your Control Plane (e.g. EU token, US endpoint). |
 | `decK can't find the control plane` | You used the **UUID** instead of the **name**, or vice versa. `decK` uses the name. |
 | Service appears with `port=80` even though you said `https://...` | You set `host: httpbin.konghq.com` instead of `url: https://httpbin.konghq.com`. The `url` field is parsed; the `host` field isn't. |
 
 ## What's next
 
-In **[Module 02 — Routing & Topology](/module-02-core-gateway/)** you'll go beyond a single Service: handle multiple endpoints, understand how Kong picks a Route when several could match, and load-balance across multiple backends with **Upstreams**.
+In **[Module 02 - Routing & Topology](/module-02-core-gateway/)** you'll go beyond a single Service: handle multiple endpoints, understand how Kong picks a Route when several could match, and load-balance across multiple backends with **Upstreams**.
 
 ---
 
-*Up next: [Module 02 — Routing & Topology →](/module-02-core-gateway/)*
+*Up next: [Module 02 - Routing & Topology →](/module-02-core-gateway/)*

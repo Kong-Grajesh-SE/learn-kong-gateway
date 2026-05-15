@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# verify-module-01.sh — Verify Module 01 (Orientation) against a Konnect Serverless Gateway.
+# verify-module-01.sh - Verify Module 01 (Orientation) against a Konnect Serverless Gateway.
 #
 # Covers:
 #   Lab 01-A  Verify gateway reachability (DP setup is N/A for serverless)
@@ -76,7 +76,7 @@ if [[ -f "$ENV_FILE" ]]; then
   set -a; source "$ENV_FILE"; set +a
 fi
 
-hdr "Kong Bootcamp — Module 01 Verification (Konnect)"
+hdr "Kong Bootcamp - Module 01 Verification (Konnect)"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Collect inputs
@@ -84,7 +84,7 @@ hdr "Kong Bootcamp — Module 01 Verification (Konnect)"
 require_cmd curl
 require_cmd jq
 
-# Deployment mode — chosen ONCE for the entire run.
+# Deployment mode - chosen ONCE for the entire run.
 #   serverless = Konnect-hosted DP (proxy URL *.kongcloud.dev)
 #   hybrid     = Konnect CP + local Docker DP (proxy URL http://localhost:8000)
 # Precedence: CLI arg ($1)  >  DEPLOY_MODE env var / .env  >  interactive prompt
@@ -99,7 +99,7 @@ Usage: $(basename "$0") [serverless|hybrid]
   hybrid       Run all checks against a local Docker Data Plane + Konnect CP
 
 If omitted, the script uses \$DEPLOY_MODE (from env or scripts/.env), or asks interactively.
-The chosen mode applies to the ENTIRE script run — proxy URL, DP checks, portal-verify prompts.
+The chosen mode applies to the ENTIRE script run - proxy URL, DP checks, portal-verify prompts.
 USAGE
     exit 0 ;;
   serverless|hybrid) DEPLOY_MODE=$CLI_MODE_LC ;;
@@ -110,8 +110,8 @@ esac
 if [[ -z "${DEPLOY_MODE:-}" ]]; then
   echo
   echo "${BOLD}Deployment mode${RST} ${DIM}(applies to the entire script run)${RST}"
-  echo "  1) serverless  — Konnect runs the Data Plane (proxy URL is *.kongcloud.dev)"
-  echo "  2) hybrid      — Konnect CP + local Docker Data Plane (proxy URL is http://localhost:8000)"
+  echo "  1) serverless  - Konnect runs the Data Plane (proxy URL is *.kongcloud.dev)"
+  echo "  2) hybrid      - Konnect CP + local Docker Data Plane (proxy URL is http://localhost:8000)"
   printf 'Choose [1/2]: '
   read -r MODE_CHOICE
   case "${MODE_CHOICE:-1}" in
@@ -147,7 +147,7 @@ KONNECT_API_BASE="https://${KONNECT_REGION}.api.konghq.com/v2/control-planes/${K
 
 # Persist for re-runs
 cat > "$ENV_FILE" <<EOF
-# Auto-saved by verify-module-01.sh — safe to edit/delete
+# Auto-saved by verify-module-01.sh - safe to edit/delete
 DEPLOY_MODE=$DEPLOY_MODE
 KONNECT_TOKEN=$KONNECT_TOKEN
 KONNECT_REGION=$KONNECT_REGION
@@ -175,7 +175,7 @@ esac
 ok "Using ${BOLD}${CFG_METHOD}${RST}${GRN} for configuration${RST}"
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Helpers — both backends expose the same verbs
+# Helpers - both backends expose the same verbs
 # ──────────────────────────────────────────────────────────────────────────────
 api_curl() {
   # Read-only GET helper. Returns body on stdout; HTTP status NOT checked.
@@ -256,7 +256,7 @@ YAML
     # Verify and get the service ID so the route reference is unambiguous.
     svc_id=$(api_curl GET "/services/$svc_name" | jq -r '.id // empty')
     if [[ -z "$svc_id" ]]; then
-      err "Service '$svc_name' missing after PUT — Konnect did not persist it."; return 1
+      err "Service '$svc_name' missing after PUT - Konnect did not persist it."; return 1
     fi
     ok "Service '$svc_name' present (id=$svc_id)"
 
@@ -268,7 +268,7 @@ YAML
     local route_id
     route_id=$(api_curl GET "/routes/$route_name" | jq -r '.id // empty')
     if [[ -z "$route_id" ]]; then
-      err "Route '$route_name' missing after PUT — Konnect did not persist it."; return 1
+      err "Route '$route_name' missing after PUT - Konnect did not persist it."; return 1
     fi
     ok "Route '$route_name' present (id=$route_id)"
   fi
@@ -311,7 +311,7 @@ wait_for_route() {
 }
 
 list_services() {
-  # Read-only, identical for both methods — uses Konnect Admin API.
+  # Read-only, identical for both methods - uses Konnect Admin API.
   api_curl GET "/services" \
     | jq -r '.data[]? | "  - " + .name + " → " + .protocol + "://" + .host + ":" + (.port|tostring)'
 }
@@ -322,13 +322,13 @@ list_routes() {
 }
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Lab 01-A — Verify gateway reachability
+# Lab 01-A - Verify gateway reachability
 # ──────────────────────────────────────────────────────────────────────────────
 if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
-  hdr "Lab 01-A — Verify hybrid Data Plane (local Docker)"
+  hdr "Lab 01-A - Verify hybrid Data Plane (local Docker)"
 else
-  hdr "Lab 01-A — Verify serverless gateway reachability"
-  info "(DP container setup from the lab does not apply — Konnect runs the DP for you.)"
+  hdr "Lab 01-A - Verify serverless gateway reachability"
+  info "(DP container setup from the lab does not apply - Konnect runs the DP for you.)"
 fi
 
 step "1. Ping Konnect Admin API"
@@ -349,7 +349,7 @@ if [[ "$CFG_METHOD" == "deck" ]]; then
        --konnect-control-plane-name "$KONNECT_CP_NAME"; then
     ok "decK can reach the CP"
   else
-    err "decK ping failed — check CP NAME / token"; exit 1
+    err "decK ping failed - check CP NAME / token"; exit 1
   fi
 fi
 
@@ -374,7 +374,7 @@ if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
   if docker logs --tail 500 "$KONG_DP_CONTAINER" 2>&1 | grep -q "\[clustering\].*[Dd]ata plane connected"; then
     ok "DP is connected to the Konnect control plane"
   else
-    warn "Could not find 'Data plane connected' in recent logs. The DP may still be starting — check 'docker logs -f $KONG_DP_CONTAINER'."
+    warn "Could not find 'Data plane connected' in recent logs. The DP may still be starting - check 'docker logs -f $KONG_DP_CONTAINER'."
   fi
 
   step "Hybrid: confirm CP sees this DP as a registered node"
@@ -389,7 +389,7 @@ if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
   fi
 fi
 
-step "Proxy reachability — expect 404 'no Route matched' (no routes yet)"
+step "Proxy reachability - expect 404 'no Route matched' (no routes yet)"
 PROXY_BODY=$(curl -sS -o /tmp/m01_proxy.txt -w '%{http_code}' "$KONNECT_PROXY_URL/" || true)
 if grep -q "no Route matched" /tmp/m01_proxy.txt 2>/dev/null; then
   ok "Proxy reachable (HTTP $PROXY_BODY, default Kong response)"
@@ -406,9 +406,9 @@ else
 fi
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Lab 01-B — Service, Route, traffic
+# Lab 01-B - Service, Route, traffic
 # ──────────────────────────────────────────────────────────────────────────────
-hdr "Lab 01-B — First API call through Kong"
+hdr "Lab 01-B - First API call through Kong"
 
 SVC_NAME="httpbin-service"
 ROUTE_NAME="httpbin-route"
@@ -424,7 +424,7 @@ if [[ "$UP_HTTP" == "200" ]]; then
   ok "Upstream $UPSTREAM_URL is reachable (HTTP 200)"
   echo "$UP_BODY" | jq '{url, origin}'
 else
-  err "Upstream returned HTTP $UP_HTTP — cannot verify Kong end-to-end. Aborting."
+  err "Upstream returned HTTP $UP_HTTP - cannot verify Kong end-to-end. Aborting."
   exit 1
 fi
 
@@ -448,13 +448,13 @@ else
 fi
 if ! wait_for_route "${KONNECT_PROXY_URL}${ROUTE_PATH}/get" "$PROP_TIMEOUT"; then
   err "Route never went live. Possible causes:"
-  err "  • Wrong PROXY URL ($KONNECT_PROXY_URL) — does this CP own that proxy?"
-  err "  • Wrong CP — decK/API hit a different CP than the proxy URL"
-  err "  • Serverless DP suspended (free tier) — re-deploy from Konnect"
+  err "  • Wrong PROXY URL ($KONNECT_PROXY_URL) - does this CP own that proxy?"
+  err "  • Wrong CP - decK/API hit a different CP than the proxy URL"
+  err "  • Serverless DP suspended (free tier) - re-deploy from Konnect"
   exit 1
 fi
 
-step "2. GET ${KONNECT_PROXY_URL}${ROUTE_PATH}/get — basic proxied request"
+step "2. GET ${KONNECT_PROXY_URL}${ROUTE_PATH}/get - basic proxied request"
 RESP=$(curl -sS -w '\n__HTTP__%{http_code}' "${KONNECT_PROXY_URL}${ROUTE_PATH}/get")
 HTTP=$(printf '%s' "$RESP" | sed -n 's/.*__HTTP__//p')
 BODY=$(printf '%s' "$RESP" | sed 's/__HTTP__.*//')
@@ -474,7 +474,7 @@ echo "$FWD_HEADERS" | jq .
 
 # Required for any deployment mode: a request-id + a forwarded host record.
 REQUIRED=( "X-Kong-Request-Id" "X-Forwarded-Host" )
-# Optional, mode-dependent — Konnect's edge proxy strips X-Forwarded-For/Port/Proto
+# Optional, mode-dependent - Konnect's edge proxy strips X-Forwarded-For/Port/Proto
 # before reaching the upstream, while a self-hosted DP forwards them as-is.
 if [[ "$DEPLOY_MODE" == "serverless" ]]; then
   EXPECTED_EXTRA=( "X-Forwarded-Path" "X-Forwarded-Prefix" )
@@ -504,10 +504,10 @@ else
   warn "Missing ${DEPLOY_MODE}-specific headers: ${MISSING_EXTRA[*]} (Kong/Konnect version may differ)"
 fi
 if [[ "$DEPLOY_MODE" == "serverless" ]]; then
-  info "Note: Konnect's edge proxy strips X-Forwarded-For/Port/Proto before the upstream — expected in serverless."
+  info "Note: Konnect's edge proxy strips X-Forwarded-For/Port/Proto before the upstream - expected in serverless."
 fi
 
-step "4. POST ${ROUTE_PATH}/post — verify body forwarding"
+step "4. POST ${ROUTE_PATH}/post - verify body forwarding"
 POST_BODY='{"booking":"NYC-LON","seats":2}'
 POST_RESP=$(curl -sS -X POST "${KONNECT_PROXY_URL}${ROUTE_PATH}/post" \
   -H "Content-Type: application/json" -d "$POST_BODY")
@@ -537,16 +537,16 @@ else
   warn "/delay/1 returned in ${ELAPSED}s (unexpectedly fast)"
 fi
 
-step "6. strip_path verification — /demo is removed before upstream sees it"
+step "6. strip_path verification - /demo is removed before upstream sees it"
 # Note: httpbin.konghq.com reconstructs .url from X-Forwarded-Host, so the host
 # portion will be the proxy host (serverless edge or localhost), NOT httpbin's.
-# The reliable strip_path indicator is the PATH component — it must be /get, not /demo/get.
+# The reliable strip_path indicator is the PATH component - it must be /get, not /demo/get.
 URL_SEEN_BY_UPSTREAM=$(curl -sS "${KONNECT_PROXY_URL}${ROUTE_PATH}/get" | jq -r '.url')
 PATH_SEEN=$(printf '%s' "$URL_SEEN_BY_UPSTREAM" | sed -E 's|^[a-zA-Z]+://[^/]+||; s|\?.*$||')
 if [[ "$PATH_SEEN" == "/get" ]]; then
-  ok "strip_path works — upstream saw path '$PATH_SEEN' (full url: $URL_SEEN_BY_UPSTREAM)"
+  ok "strip_path works - upstream saw path '$PATH_SEEN' (full url: $URL_SEEN_BY_UPSTREAM)"
 elif [[ "$PATH_SEEN" == /demo/* ]]; then
-  err "strip_path NOT working — upstream still sees '/demo' prefix: $PATH_SEEN"
+  err "strip_path NOT working - upstream still sees '/demo' prefix: $PATH_SEEN"
   err "Full url: $URL_SEEN_BY_UPSTREAM"; exit 1
 else
   warn "Unexpected upstream path: '$PATH_SEEN' (full url: $URL_SEEN_BY_UPSTREAM)"
@@ -555,7 +555,7 @@ fi
 pause_verify "Konnect → Analytics (or your CP Overview): confirm you see request activity for '$SVC_NAME'. The traffic counter may take ~1 minute to update."
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Lab 01-B Step 6 — Optional kong-air service (hybrid only; serverless cannot
+# Lab 01-B Step 6 - Optional kong-air service (hybrid only; serverless cannot
 # reach host.docker.internal:3001).
 # ──────────────────────────────────────────────────────────────────────────────
 if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
@@ -573,19 +573,19 @@ if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
         warn "kong-air route is live but upstream returned HTTP $KA_HTTP (is kong-air running locally on :3001?)"
       fi
     else
-      warn "kong-air route never went live — skipping."
+      warn "kong-air route never went live - skipping."
     fi
   else
     info "Skipping kong-air."
   fi
 else
-  info "Skipping Lab 01-B Step 6 (kong-air) — serverless DP cannot reach a backend on your laptop."
+  info "Skipping Lab 01-B Step 6 (kong-air) - serverless DP cannot reach a backend on your laptop."
 fi
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Lab 01-B Step 7 — Export current Konnect config (deck dump / API listing)
+# Lab 01-B Step 7 - Export current Konnect config (deck dump / API listing)
 # ──────────────────────────────────────────────────────────────────────────────
-hdr "Lab 01-B Step 7 — Export current configuration"
+hdr "Lab 01-B Step 7 - Export current configuration"
 DUMP_FILE="$SCRIPT_DIR/module-01-config-dump.yaml"
 if [[ "$CFG_METHOD" == "deck" ]]; then
   if deck gateway dump \
@@ -606,7 +606,7 @@ fi
 # ──────────────────────────────────────────────────────────────────────────────
 # Cleanup
 # ──────────────────────────────────────────────────────────────────────────────
-hdr "Cleanup — remove Module 01 entities before Module 02"
+hdr "Cleanup - remove Module 01 entities before Module 02"
 info "Module 01 has no plugins to disable. We delete the Service + Route so Module 02 starts clean."
 
 printf 'Delete %s and %s now? [Y/n]: ' "$SVC_NAME" "$ROUTE_NAME"
@@ -627,7 +627,7 @@ case "${CLEAN_CHOICE:-Y}" in
     sleep 1
     REMAINING=$(api_curl GET "/services" | jq -r '[.data[]? | select(.name=="'"$SVC_NAME"'" or .name=="kong-air")] | length')
     if [[ "$REMAINING" == "0" ]]; then
-      ok "Cleanup complete — Module 01 services removed."
+      ok "Cleanup complete - Module 01 services removed."
     else
       warn "Some services still present (count=$REMAINING). Delete manually in Konnect if needed."
     fi

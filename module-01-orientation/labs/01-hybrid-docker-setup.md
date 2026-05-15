@@ -1,8 +1,8 @@
-# Lab 01 (alternative) — Hybrid Docker Setup
+# Lab 01 (alternative) - Hybrid Docker Setup
 
-> **Optional path.** Pick this lab if you want to see all the moving parts of a Kong deployment — running a Data Plane locally in Docker connected to a Konnect Control Plane over mTLS. Everything you do in [01-quick-start](./01-quick-start) works here too; the only difference is where the proxy runs.
+> **Optional path.** Pick this lab if you want to see all the moving parts of a Kong deployment - running a Data Plane locally in Docker connected to a Konnect Control Plane over mTLS. Everything you do in [01-quick-start](./01-quick-start) works here too; the only difference is where the proxy runs.
 >
-> **Skip this lab if** you just want to learn Kong's concepts — go to [01-quick-start (serverless)](./01-quick-start) instead. You can always come back.
+> **Skip this lab if** you just want to learn Kong's concepts - go to [01-quick-start (serverless)](./01-quick-start) instead. You can always come back.
 
 ::: info Hybrid Architecture
 **Control Plane (CP)** → Konnect cloud. Holds all configuration.
@@ -17,7 +17,7 @@ Client (you) → DP on localhost:8000 → upstream API
 :::
 
 ::: tip After setup
-Once your DP is healthy and registered, the Service/Route/traffic steps are identical to [01-quick-start](./01-quick-start) — just substitute `http://localhost:8000` for the serverless proxy URL. Skip to "Step 7" there once you've completed Step 6 below.
+Once your DP is healthy and registered, the Service/Route/traffic steps are identical to [01-quick-start](./01-quick-start) - just substitute `http://localhost:8000` for the serverless proxy URL. Skip to "Step 7" there once you've completed Step 6 below.
 :::
 
 ## Prerequisites
@@ -218,4 +218,4 @@ In Hybrid mode, the DP has no local Admin API (`:8001`). All config goes through
 
 ---
 
-**Next:** Continue with [Lab 01 — Quick Start](./01-quick-start) from Step 4 (Create a Service). The Service/Route/traffic flow is identical — just substitute `http://localhost:8000` for the serverless proxy URL.
+**Next:** Continue with [Lab 01 - Quick Start](./01-quick-start) from Step 4 (Create a Service). The Service/Route/traffic flow is identical - just substitute `http://localhost:8000` for the serverless proxy URL.

@@ -1,8 +1,8 @@
-# Module 06 — Observability
+# Module 06 - Observability
 
-> **The scenario.** A user complains: "I just booked a flight and it failed silently — no error, no confirmation." You have nothing to investigate with. Your gateway has no logs, no metrics, no traces. You're guessing.
+> **The scenario.** A user complains: "I just booked a flight and it failed silently - no error, no confirmation." You have nothing to investigate with. Your gateway has no logs, no metrics, no traces. You're guessing.
 >
-> In the next ~90 minutes you'll wire up the **three pillars of observability** — **logs**, **metrics**, **traces** — one plugin per pillar. After this module, the next "silent failure" report comes with a request ID you can trace end-to-end.
+> In the next ~90 minutes you'll wire up the **three pillars of observability** - **logs**, **metrics**, **traces** - one plugin per pillar. After this module, the next "silent failure" report comes with a request ID you can trace end-to-end.
 
 ## What you'll have at the end
 
@@ -21,7 +21,7 @@ You'll be able to:
 
 ## Who this module is for
 
-You finished M01–M03 (M04 and M05 are helpful but not required for observability to work). Plugins from M03 are still useful — `correlation-id` headers will flow into both logs and traces.
+You finished M01–M03 (M04 and M05 are helpful but not required for observability to work). Plugins from M03 are still useful - `correlation-id` headers will flow into both logs and traces.
 
 ## Three concepts you need today
 
@@ -29,7 +29,7 @@ You finished M01–M03 (M04 and M05 are helpful but not required for observabili
 |---|---|---|
 | **The three pillars** | **Logs** = "what happened" (event records). **Metrics** = "how many, how fast" (aggregated numbers). **Traces** = "where the time went" (per-request waterfall). | Each pillar answers a different question. One isn't enough. |
 | **Push vs pull** | Logs and traces **push** to a destination on each request. Metrics are **pulled** by a scraper (Prometheus). | Push = good for cloud egress / fan-out. Pull = better for high-volume rates because the scraper controls frequency. |
-| **Cardinality** | The number of distinct label combinations a metric has. High-cardinality labels (per-Consumer, per-request-id) explode storage. | Never put `consumer_id` or `request_id` in Prometheus labels — use traces/logs for that. |
+| **Cardinality** | The number of distinct label combinations a metric has. High-cardinality labels (per-Consumer, per-request-id) explode storage. | Never put `consumer_id` or `request_id` in Prometheus labels - use traces/logs for that. |
 
 Plugin chain shape:
 
@@ -59,16 +59,16 @@ Client → Kong ──┬─ http-log:        POST every request log line to htt
 
 | Symptom | Likely cause |
 |---|---|
-| `http-log` POSTs aren't reaching your receiver | TLS issue — Kong sends real HTTPS requests. Check the cert. Or your receiver is rejecting bulk JSON arrays — switch `flush_timeout` / `queue_size`. |
-| Prometheus `/metrics` returns 404 | On Konnect serverless the `/metrics` endpoint isn't exposed externally — metrics flow into Konnect Analytics instead. Hybrid DP exposes `/metrics` on port 8100 by default. |
-| OpenTelemetry collector receives nothing | Header propagation off — make sure `header_type: w3c` matches what your collector expects. Also: confirm your collector accepts OTLP/HTTP (port 4318), not just OTLP/gRPC (4317). |
-| Metrics labels keep growing | Default `kong_http_requests_total` labels are fine (service, route, code). If you added Consumer labels you've created a cardinality bomb — disable. |
+| `http-log` POSTs aren't reaching your receiver | TLS issue - Kong sends real HTTPS requests. Check the cert. Or your receiver is rejecting bulk JSON arrays - switch `flush_timeout` / `queue_size`. |
+| Prometheus `/metrics` returns 404 | On Konnect serverless the `/metrics` endpoint isn't exposed externally - metrics flow into Konnect Analytics instead. Hybrid DP exposes `/metrics` on port 8100 by default. |
+| OpenTelemetry collector receives nothing | Header propagation off - make sure `header_type: w3c` matches what your collector expects. Also: confirm your collector accepts OTLP/HTTP (port 4318), not just OTLP/gRPC (4317). |
+| Metrics labels keep growing | Default `kong_http_requests_total` labels are fine (service, route, code). If you added Consumer labels you've created a cardinality bomb - disable. |
 | Traces in Jaeger show no upstream span | The plugin only traces Kong's own work unless your upstream **continues** the trace by reading `traceparent` and emitting child spans. Not Kong's job; upstream needs OpenTelemetry too. |
 
 ## What's next
 
-**[Module 07 — Enterprise & Advanced](/module-07-enterprise/)** brings the harder plugins: JWT, HMAC, ACL with Consumer Groups, OIDC Auth Code Flow, Upstream OAuth (M2M), OPA policy-as-code, Datakit orchestration, RBAC. The signals you wire up today will be invaluable when something breaks in M07.
+**[Module 07 - Enterprise & Advanced](/module-07-enterprise/)** brings the harder plugins: JWT, HMAC, ACL with Consumer Groups, OIDC Auth Code Flow, Upstream OAuth (M2M), OPA policy-as-code, Datakit orchestration, RBAC. The signals you wire up today will be invaluable when something breaks in M07.
 
 ---
 
-*Previous: [Module 05 — Transformations](/module-05-transformations/) · Next: [Module 07 — Enterprise & Advanced →](/module-07-enterprise/)*
+*Previous: [Module 05 - Transformations](/module-05-transformations/) · Next: [Module 07 - Enterprise & Advanced →](/module-07-enterprise/)*

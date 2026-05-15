@@ -1,24 +1,24 @@
-# Lab 08 — Capstone: Production Gateway
+# Lab 08 - Capstone: Production Gateway
 
-> **Goal.** In ~2.5–3 hours, build a single Kong gateway that satisfies the **15-step acceptance script** at the end. Eleven-plus plugins, three Consumer tiers, two auth methods, full observability. **No more step-by-step.** You'll get a brief, hints, and an acceptance test — *how* you implement it is up to you.
+> **Goal.** In ~2.5–3 hours, build a single Kong gateway that satisfies the **15-step acceptance script** at the end. Eleven-plus plugins, three Consumer tiers, two auth methods, full observability. **No more step-by-step.** You'll get a brief, hints, and an acceptance test - *how* you implement it is up to you.
 
 ::: tip How to use this lab
 Read **Stage 0** all the way through before you type anything. Sketch your `kong.yaml` on paper or in a scratch file. Then start executing.
 
-You'll be tempted to copy/paste from earlier labs. **Don't, yet.** Sketch first. The plugin chain order matters — copying from M03 and M04 and M07 without thinking will produce a config that *almost* works.
+You'll be tempted to copy/paste from earlier labs. **Don't, yet.** Sketch first. The plugin chain order matters - copying from M03 and M04 and M07 without thinking will produce a config that *almost* works.
 :::
 
 ---
 
-## Stage 0 — The brief, the constraints, the contract (15 min read)
+## Stage 0 - The brief, the constraints, the contract (15 min read)
 
 ### The brief
 
-Your travel platform launches Monday. One backend (`httpbin.konghq.com` — pretend it's your real API). Three audiences:
+Your travel platform launches Monday. One backend (`httpbin.konghq.com` - pretend it's your real API). Three audiences:
 
-- **Free users** — anonymous-ish web visitors. API key only. Read-only.
-- **Partners** — third-party booking sites. JWT, signed by partner IdPs. Read + write to flights & bookings.
-- **Internal services** — your own microservices. API key + must come from your office IP range. Full access including `/admin`.
+- **Free users** - anonymous-ish web visitors. API key only. Read-only.
+- **Partners** - third-party booking sites. JWT, signed by partner IdPs. Read + write to flights & bookings.
+- **Internal services** - your own microservices. API key + must come from your office IP range. Full access including `/admin`.
 
 ### The contract (memorize)
 
@@ -39,17 +39,17 @@ Your travel platform launches Monday. One backend (`httpbin.konghq.com` — pret
 
 ### Decisions you need to make
 
-1. **Scope of `cors`** — global or per-route? (Hint: think about preflight.)
-2. **Scope of `prometheus`, `correlation-id`** — global or per-route?
+1. **Scope of `cors`** - global or per-route? (Hint: think about preflight.)
+2. **Scope of `prometheus`, `correlation-id`** - global or per-route?
 3. **One `rate-limiting` plugin or three?** (Hint: per-Consumer-Group scope is your friend.)
-4. **Plugin priority for `key-auth` vs `cors`** — what runs first on a preflight?
+4. **Plugin priority for `key-auth` vs `cors`** - what runs first on a preflight?
 5. **Where does `proxy-cache` sit relative to `rate-limiting`?** Cached responses count against the limit. Is that what you want?
 
 Sketch your plugin chain. Don't read on until you've drawn it.
 
 ---
 
-## Stage 1 — Reset and bootstrap (10 min)
+## Stage 1 - Reset and bootstrap (10 min)
 
 Empty your Konnect CP first:
 
@@ -68,11 +68,11 @@ echo "Your apparent IP (the one you'll allow-list for internal): $ANON_IP"
 
 ---
 
-## Stage 2 — Topology and identity (30 min)
+## Stage 2 - Topology and identity (30 min)
 
-Build the baseline. **Reveal the YAML one section at a time** — sketch yours first, then check.
+Build the baseline. **Reveal the YAML one section at a time** - sketch yours first, then check.
 
-::: details Stage 2 hint — Services, Routes, Consumer Groups, Consumers
+::: details Stage 2 hint - Services, Routes, Consumer Groups, Consumers
 ```yaml
 _format_version: '3.0'
 
@@ -115,7 +115,7 @@ services:
 ```
 :::
 
-Sync. Wait ~15s. **Smoke test** — should all return 200 (no plugins yet):
+Sync. Wait ~15s. **Smoke test** - should all return 200 (no plugins yet):
 
 ```bash
 curl -sI $KONNECT_PROXY_URL/v3/flights/get   | head -1
@@ -125,16 +125,16 @@ curl -sI $KONNECT_PROXY_URL/v3/admin/get     | head -1
 
 ---
 
-## Stage 3 — Auth + Authorization (40 min)
+## Stage 3 - Auth + Authorization (40 min)
 
 Each tier authenticates differently. **`acl` enforces the route allowlist per tier.**
 
-::: details Stage 3 hint — auth + ACL configuration
-**Flights and bookings (partner-accessible) use the JWT plugin OR key-auth.** Multiple auth plugins on one route compose with OR — Kong accepts any of them. Use `anonymous` fallback to allow keyless requests but mark them as the anonymous consumer (then ACL denies).
+::: details Stage 3 hint - auth + ACL configuration
+**Flights and bookings (partner-accessible) use the JWT plugin OR key-auth.** Multiple auth plugins on one route compose with OR - Kong accepts any of them. Use `anonymous` fallback to allow keyless requests but mark them as the anonymous consumer (then ACL denies).
 
 ```yaml
 plugins:
-  # Auth — JWT first (partner tokens)
+  # Auth - JWT first (partner tokens)
   - name: jwt
     route: flights-route
     config:
@@ -149,14 +149,14 @@ plugins:
       hide_credentials: true
       anonymous: <PASTE-ANONYMOUS-CONSUMER-ID>
 
-  # ACL — only allow these groups on flights
+  # ACL - only allow these groups on flights
   - name: acl
     route: flights-route
     config:
       allow: [free, partner, internal]
       hide_groups_header: true
 
-  # bookings-route — partner + internal only
+  # bookings-route - partner + internal only
   - name: jwt
     route: bookings-route
     config: { key_claim_name: iss, claims_to_verify: [exp] }
@@ -167,7 +167,7 @@ plugins:
     route: bookings-route
     config: { allow: [partner, internal], hide_groups_header: true }
 
-  # admin-route — internal only
+  # admin-route - internal only
   - name: key-auth
     route: admin-route
     config: { key_names: [X-API-Key], hide_credentials: true }
@@ -182,7 +182,7 @@ plugins:
       message: "Internal-only endpoint"
 ```
 
-You'll need to create an `anonymous` Consumer first (no credentials, just a username) and paste its ID into the `anonymous:` fields. That's how you allow keyless requests to land *somewhere* — then ACL denies anonymous from the route.
+You'll need to create an `anonymous` Consumer first (no credentials, just a username) and paste its ID into the `anonymous:` fields. That's how you allow keyless requests to land *somewhere* - then ACL denies anonymous from the route.
 :::
 
 Test each tier hits exactly the right routes:
@@ -197,7 +197,7 @@ curl -s -o /dev/null -w '%{http_code}\n' $KONNECT_PROXY_URL/v3/admin/get   -H 'X
 
 ---
 
-## Stage 4 — Per-tier rate limits (20 min)
+## Stage 4 - Per-tier rate limits (20 min)
 
 Three `rate-limiting` plugin instances, each scoped to a Consumer Group:
 
@@ -213,7 +213,7 @@ Verify each tier reports the right limit in `X-RateLimit-Limit-Minute`.
 
 ---
 
-## Stage 5 — Edge security & shape (30 min)
+## Stage 5 - Edge security & shape (30 min)
 
 Now the cross-cutting stuff: CORS, transformers, cache, correlation.
 
@@ -230,7 +230,7 @@ Now the cross-cutting stuff: CORS, transformers, cache, correlation.
 - name: correlation-id
   config: { header_name: X-Correlation-ID, generator: uuid#counter, echo_downstream: true }
 
-# Route-scoped — rewrite v3 → v2 for the upstream
+# Route-scoped - rewrite v3 → v2 for the upstream
 - name: request-transformer-advanced
   route: flights-route
   config:
@@ -266,9 +266,9 @@ Now the cross-cutting stuff: CORS, transformers, cache, correlation.
 
 ---
 
-## Stage 6 — Observability (25 min)
+## Stage 6 - Observability (25 min)
 
-Three global plugins. None of them should be route-scoped — you want visibility into *everything*.
+Three global plugins. None of them should be route-scoped - you want visibility into *everything*.
 
 ::: details Stage 6 hint
 ```yaml
@@ -309,7 +309,7 @@ Once observability is wired up, send 20 requests, then check:
 
 ---
 
-## Stage 7 — The 15-step Acceptance Test (20 min) 🎯
+## Stage 7 - The 15-step Acceptance Test (20 min) 🎯
 
 This is the moment of truth. **All 15 should pass.** Each tests a different piece of your work.
 
@@ -345,7 +345,7 @@ check "5.  partner → /bookings" "200" "$(curl -s -o /dev/null -w '%{http_code}
 # 6. Internal reaches /admin (200)
 check "6.  internal → /admin"   "200" "$(curl -s -o /dev/null -w '%{http_code}' $PROXY/v3/admin/get -H "X-API-Key: $INT_KEY")"
 # 7. Internal from wrong IP blocked from /admin
-# (can't simulate without proxying — manual check: from another IP it should be 403)
+# (can't simulate without proxying - manual check: from another IP it should be 403)
 echo "  ~ 7.  internal → /admin from non-office IP: MANUAL CHECK (use a different network)"
 # 8. CORS preflight succeeds for app.mytravel.com
 ALLOW=$(curl -s -i -X OPTIONS $PROXY/v3/flights/get \
@@ -373,7 +373,7 @@ check "13. _meta.version = v3"   "v3"    "$META_VER"
 curl -s -o /dev/null $PROXY/v3/flights/popular -H "X-API-Key: $INT_KEY" # warm
 STATUS=$(curl -sI $PROXY/v3/flights/popular -H "X-API-Key: $INT_KEY" | awk -F': ' '/^x-cache-status/{print $2}' | tr -d '\r\n')
 check "14. proxy-cache Hit"      "Hit"   "$STATUS"
-# 15. No API key leaks to upstream (httpbin echoes request — verify it's stripped)
+# 15. No API key leaks to upstream (httpbin echoes request - verify it's stripped)
 HAS_KEY=$(curl -s $PROXY/v3/flights/get -H "X-API-Key: $FREE_KEY" | jq -r '.headers["X-Api-Key"] // "absent"')
 check "15. API key hidden from upstream" "absent" "$HAS_KEY"
 
@@ -408,15 +408,15 @@ echo '_format_version: "3.0"' | deck gateway sync - \
 
 ## You completed the bootcamp
 
-If you got 15/15 — congratulations. You can design and operate Kong gateways now.
+If you got 15/15 - congratulations. You can design and operate Kong gateways now.
 
 **What to do next:**
 - Specialist bootcamps (AI Gateway, Agentic AI & MCP, Dev Portal, APIOps) for deeper niches.
-- Take the verify-script approach in your own team's repo — automated acceptance tests for every PR that touches gateway config.
+- Take the verify-script approach in your own team's repo - automated acceptance tests for every PR that touches gateway config.
 - The Capstone YAML you just wrote is a reasonable starting point for a real `kong.yaml` in production. Strip the lab tags, add your real upstreams and IdP URLs, and you have something to deploy.
 
 Thanks for working through the bootcamp.
 
 ---
 
-*Previous: [Module 07 — Enterprise & Advanced](/module-07-enterprise/) · Home: [Bootcamp index](/)*
+*Previous: [Module 07 - Enterprise & Advanced](/module-07-enterprise/) · Home: [Bootcamp index](/)*

@@ -1,6 +1,6 @@
-# Lab 07-B — Consumer Groups & ACL
+# Lab 07-B - Consumer Groups & ACL
 
-> **Goal.** In ~30 minutes you'll organize Consumers into **groups** (`free`, `pro`, `enterprise`), then use `acl` to allow/deny by group — without listing individual Consumers. This is the standard pattern for tier-based access control.
+> **Goal.** In ~30 minutes you'll organize Consumers into **groups** (`free`, `pro`, `enterprise`), then use `acl` to allow/deny by group - without listing individual Consumers. This is the standard pattern for tier-based access control.
 
 After this lab you'll be able to:
 - Add a Consumer to a Consumer Group with one API call.
@@ -9,9 +9,9 @@ After this lab you'll be able to:
 
 ---
 
-## Step 1 — Baseline (3 min)
+## Step 1 - Baseline (3 min)
 
-We continue from Lab 07-A — `flights-svc` + `flights-route` + the Consumers `partner-api-client` and `data-feed-client` exist.
+We continue from Lab 07-A - `flights-svc` + `flights-route` + the Consumers `partner-api-client` and `data-feed-client` exist.
 
 For this lab we need a few more Consumers, with simpler `key-auth` (HMAC and JWT have already been demonstrated):
 
@@ -60,7 +60,7 @@ deck gateway sync kong.yaml \
 
 ---
 
-## Step 2 — Create three Consumer Groups (5 min)
+## Step 2 - Create three Consumer Groups (5 min)
 
 Consumer Groups are created via the Konnect Admin API. decK supports them too:
 
@@ -91,11 +91,11 @@ done
 
 ---
 
-## Step 3 — Assign Consumers to groups (3 min)
+## Step 3 - Assign Consumers to groups (3 min)
 
 Each Consumer joins exactly one tier:
 
-```yaml [decK — append `groups:` to each Consumer]
+```yaml [decK - append `groups:` to each Consumer]
 consumers:
   - username: free-user-001
     groups: [free-tier]
@@ -125,7 +125,7 @@ Sync.
 
 ---
 
-## Step 4 — Attach `acl` to restrict by group (5 min) 🎯
+## Step 4 - Attach `acl` to restrict by group (5 min) 🎯
 
 You want **only `pro-tier` and `enterprise-tier` users** to access `flights-route`. Free users should get 403.
 
@@ -174,7 +174,7 @@ HTTP/2 200
 
 🎯 The free-tier consumer was identified (`key-auth` passed → 200 was possible) but **authorized** out by `acl` → 403.
 
-::: tip 401 vs 403 — see the pattern emerge
+::: tip 401 vs 403 - see the pattern emerge
 - `key-auth` returns **401** when it doesn't know who you are.
 - `acl` returns **403** when it knows who you are but won't let you in.
 
@@ -183,7 +183,7 @@ If you add `acl` before `key-auth` runs, `acl` doesn't yet know the Consumer →
 
 ---
 
-## Step 5 — Combine ACL with per-group rate limiting (8 min) 🎯
+## Step 5 - Combine ACL with per-group rate limiting (8 min) 🎯
 
 Free tier should get 10 req/min, pro 100, enterprise 1000. Per-Consumer-Group rate limiting is a Konnect Enterprise feature using `rate-limiting-advanced`:
 
@@ -245,7 +245,7 @@ ratelimit-limit: 100
 ratelimit-limit: 1000
 ```
 
-🎯 The same plugin, three different configs, applied by Consumer Group membership. **This is the canonical tier-based-SLO pattern** — one place to change the contract per tier.
+🎯 The same plugin, three different configs, applied by Consumer Group membership. **This is the canonical tier-based-SLO pattern** - one place to change the contract per tier.
 
 ::: tip Authoritative source of group membership
 For most teams, *which group* a Consumer belongs to should be driven by your billing system (or your IdP via OIDC claim mapping), **not** by manual Konnect edits. Use the Admin API in a CI pipeline that syncs from your billing DB nightly.
@@ -253,7 +253,7 @@ For most teams, *which group* a Consumer belongs to should be driven by your bil
 
 ---
 
-## Step 6 — Group-aware ACL with `deny:` (3 min) 🧪
+## Step 6 - Group-aware ACL with `deny:` (3 min) 🧪
 
 Sometimes it's easier to denylist abusers than allowlist everyone. Create a `blocked` group, add a Consumer to it:
 
@@ -285,7 +285,7 @@ Update ACL to a `deny` list:
 Sync. Test that `free-user-001` is now 403 (member of `blocked`), but other users still 200.
 
 ::: warning Don't mix `allow` and `deny` in one plugin instance
-Pick one. Mixing them produces "guess which one wins" surprises — `allow` does. Use two plugin instances if you really need both, but it's a smell.
+Pick one. Mixing them produces "guess which one wins" surprises - `allow` does. Use two plugin instances if you really need both, but it's a smell.
 :::
 
 ---
@@ -294,11 +294,11 @@ Pick one. Mixing them produces "guess which one wins" surprises — `allow` does
 
 You now have:
 - **Three tier groups** (`free`, `pro`, `enterprise`) + a `blocked` group.
-- An **`acl`** plugin enforcing group-level access — 403 if not in an allowed group.
+- An **`acl`** plugin enforcing group-level access - 403 if not in an allowed group.
 - **Three `rate-limiting-advanced` plugin instances** scoped to each group, producing differentiated SLOs from one Route.
 - A `deny:` example showing how to denylist abusers without rewriting allowlists.
 
-**This pattern scales to thousands of Consumers** because group membership changes don't require gateway config changes — only the membership record itself.
+**This pattern scales to thousands of Consumers** because group membership changes don't require gateway config changes - only the membership record itself.
 
 ---
 
@@ -308,4 +308,4 @@ We continue with the same Service in 07-C (OIDC). **Don't clean up yet.**
 
 ---
 
-**Next:** [Lab 07-C — OIDC Authorization Code Flow →](./07-oidc-auth-code)
+**Next:** [Lab 07-C - OIDC Authorization Code Flow →](./07-oidc-auth-code)

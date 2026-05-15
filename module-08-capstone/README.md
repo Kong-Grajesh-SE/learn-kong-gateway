@@ -1,6 +1,6 @@
-# Module 08 — Capstone
+# Module 08 - Capstone
 
-> **The scenario.** It's launch week. Your travel platform — `mytravel.com` — is going public on Monday. You're the platform engineer. The gateway has to be ready. You've spent seven modules learning every plugin you'll need. **Today you design and build the production gateway end-to-end.** No more hand-holding.
+> **The scenario.** It's launch week. Your travel platform - `mytravel.com` - is going public on Monday. You're the platform engineer. The gateway has to be ready. You've spent seven modules learning every plugin you'll need. **Today you design and build the production gateway end-to-end.** No more hand-holding.
 >
 > This is the only module where you make **architectural decisions** before you start typing. Read the brief, pick your plugins, sketch your config, then execute.
 
@@ -10,7 +10,7 @@ A single Konnect gateway in front of one mock backend, fronted by **at least 11 
 
 | Layer | Plugins | Why |
 |---|---|---|
-| Identity | `key-auth`, `jwt` | Two auth methods — partners use JWT, internal apps use keys |
+| Identity | `key-auth`, `jwt` | Two auth methods - partners use JWT, internal apps use keys |
 | Authorization | `acl` | Tier-based access by Consumer Group |
 | Throughput | `rate-limiting` | Per-tier limits with `Retry-After` |
 | Edge | `cors`, `ip-restriction` | Browser allow-list + IP allow-list for internal endpoints |
@@ -19,7 +19,7 @@ A single Konnect gateway in front of one mock backend, fronted by **at least 11 
 | Tracing | `correlation-id` | One ID, end-to-end |
 | Observability | `prometheus`, `opentelemetry`, `http-log` | Metrics + traces + logs |
 
-By the end you'll be able to pass a 15-step **acceptance test script** — each step proves a different plugin is doing its job correctly.
+By the end you'll be able to pass a 15-step **acceptance test script** - each step proves a different plugin is doing its job correctly.
 
 ## Who this module is for
 
@@ -29,10 +29,10 @@ You completed M01–M07 (or know the equivalent material cold). You have:
 - Comfort reading the Konnect dashboard.
 
 ::: tip This is the **first** module where you'll have to make a wrong call
-The earlier modules guide you to the right answer at each step. The capstone deliberately presents trade-offs without telling you which choice is "right". The 15-step acceptance script tells you whether you got it right — not the prose. Resist the urge to peek ahead.
+The earlier modules guide you to the right answer at each step. The capstone deliberately presents trade-offs without telling you which choice is "right". The 15-step acceptance script tells you whether you got it right - not the prose. Resist the urge to peek ahead.
 :::
 
-## The platform contract — read carefully
+## The platform contract - read carefully
 
 Your travel API has **three Consumer tiers**:
 
@@ -55,9 +55,9 @@ Your travel API has **three Consumer tiers**:
 
 | Concept | What it is | Why it matters today |
 |---|---|---|
-| **Plugin chain order** | Kong runs plugins in fixed phase order (cert → auth → rewrites → access → balancer → response). Multiple plugins in the same phase run by priority (higher first). | If `cors` runs *after* `key-auth`, browser preflight gets 401. Order matters — get this wrong and you'll be debugging for an hour. |
+| **Plugin chain order** | Kong runs plugins in fixed phase order (cert → auth → rewrites → access → balancer → response). Multiple plugins in the same phase run by priority (higher first). | If `cors` runs *after* `key-auth`, browser preflight gets 401. Order matters - get this wrong and you'll be debugging for an hour. |
 | **Scope precedence** | More specific scope wins: Consumer-Route > Route > Service > Global. | You want one rate limit per-tier; you'll attach 3 plugins scoped to `consumer_group`, *not* one global plugin. |
-| **State carry-over** | Plugins set headers (`X-Consumer-*`, `traceparent`, `X-RateLimit-*`). Later plugins and the upstream **read** them. | `request-transformer-advanced` reads `$(consumer.custom_id)` — that variable only resolves after `key-auth` or `jwt` ran. Order = read order. |
+| **State carry-over** | Plugins set headers (`X-Consumer-*`, `traceparent`, `X-RateLimit-*`). Later plugins and the upstream **read** them. | `request-transformer-advanced` reads `$(consumer.custom_id)` - that variable only resolves after `key-auth` or `jwt` ran. Order = read order. |
 
 ## Lab
 
@@ -65,7 +65,7 @@ Your travel API has **three Consumer tiers**:
 |---|---|---|---|
 | 08 | [Capstone: Production Gateway](./labs/08-capstone) | ~2.5–3 hours | Design, build, and prove out the full production gateway end-to-end. 15-step acceptance test at the end. |
 
-There's only one lab — but it's the longest in the bootcamp. Block out a real session for it.
+There's only one lab - but it's the longest in the bootcamp. Block out a real session for it.
 
 ## How to know you're done
 
@@ -75,26 +75,26 @@ Run the 15-step acceptance script at the end of the lab. **Every step must pass.
 
 | Symptom | Likely cause |
 |---|---|
-| `cors` preflight returns 401 | `cors` plugin priority is *lower* than `key-auth` — flip the order, or attach `cors` globally so it runs *before* per-route auth |
-| Partner JWT validates but `X-Consumer-Username` is wrong | The `key_claim_name` in the JWT plugin doesn't match the `key` in the Consumer's `jwt_secrets` — same JWT, different mapping |
-| Rate limits "fight" across tiers | You attached one plugin route-scoped *and* per-Consumer-Group — the route-scoped one wins for everyone. Remove it. |
-| `proxy-cache` HIT counts against the rate limit | Working as designed — `rate-limiting` runs *before* `proxy-cache`. Cached requests still count. (Usually what you want — abusers shouldn't get free traffic from your cache.) |
+| `cors` preflight returns 401 | `cors` plugin priority is *lower* than `key-auth` - flip the order, or attach `cors` globally so it runs *before* per-route auth |
+| Partner JWT validates but `X-Consumer-Username` is wrong | The `key_claim_name` in the JWT plugin doesn't match the `key` in the Consumer's `jwt_secrets` - same JWT, different mapping |
+| Rate limits "fight" across tiers | You attached one plugin route-scoped *and* per-Consumer-Group - the route-scoped one wins for everyone. Remove it. |
+| `proxy-cache` HIT counts against the rate limit | Working as designed - `rate-limiting` runs *before* `proxy-cache`. Cached requests still count. (Usually what you want - abusers shouldn't get free traffic from your cache.) |
 | `$(consumer.custom_id)` in a transformer resolves to empty | The transformer is set up before `key-auth` ran. Re-check phase order. |
 | Internal route is reachable from a non-office IP | `ip-restriction` was scoped to the wrong Route. Check the `route:` field on the plugin. |
-| Observability plugins are scoped per-route — only one route emits metrics | Promote `prometheus`, `correlation-id`, `opentelemetry` to **global** scope. |
+| Observability plugins are scoped per-route - only one route emits metrics | Promote `prometheus`, `correlation-id`, `opentelemetry` to **global** scope. |
 
 ## What's next
 
 This is the final module of the core bootcamp. From here:
 
 - Run the verification script (coming soon).
-- Tackle a **specialist bootcamp** — AI Gateway, Agentic AI & MCP, Developer Portal, APIOps.
+- Tackle a **specialist bootcamp** - AI Gateway, Agentic AI & MCP, Developer Portal, APIOps.
 - Take what you've built into your real team's environment.
 
 ::: tip If you got 15/15
-You're now competent enough to **design** a Kong deployment, not just follow one. The next time someone asks "how would you put Kong in front of X?" — you have a defensible answer.
+You're now competent enough to **design** a Kong deployment, not just follow one. The next time someone asks "how would you put Kong in front of X?" - you have a defensible answer.
 :::
 
 ---
 
-*Previous: [Module 07 — Enterprise & Advanced](/module-07-enterprise/) · Home: [Bootcamp index](/)*
+*Previous: [Module 07 - Enterprise & Advanced](/module-07-enterprise/) · Home: [Bootcamp index](/)*

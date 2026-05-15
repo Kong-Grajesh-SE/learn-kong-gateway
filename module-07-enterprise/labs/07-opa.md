@@ -1,8 +1,8 @@
-# Lab 07-E — OPA Policy-as-Code
+# Lab 07-E - OPA Policy-as-Code
 
 > **Goal.** In ~45 minutes you'll set up Open Policy Agent (OPA) alongside Kong, write a Rego policy that says "only Consumers with `tier=enterprise` can `POST /flights/premium`", and watch Kong defer the allow/deny decision to OPA on every request.
 >
-> **Why OPA instead of `acl`?** ACL is a static allowlist by group. OPA is a **policy engine** — it can read request headers, body, time-of-day, even external HTTP data, then return allow/deny. The security team can change policies without re-deploying gateway config.
+> **Why OPA instead of `acl`?** ACL is a static allowlist by group. OPA is a **policy engine** - it can read request headers, body, time-of-day, even external HTTP data, then return allow/deny. The security team can change policies without re-deploying gateway config.
 
 ::: warning Enterprise plugin
 `opa` requires **Kong Gateway Enterprise** or **Konnect**. We're on Kong 3.14, so this works.

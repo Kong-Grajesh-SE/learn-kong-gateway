@@ -24,50 +24,50 @@ hero:
 
 features:
   - icon: 🧭
-    title: "01 — Your First Gateway"
-    details: "Create a serverless Kong gateway on Konnect. Build a Service + Route and proxy your first real request to httpbin.konghq.com. No Docker or prior Kong knowledge required — ~60 min."
+    title: "01 - Your First Gateway"
+    details: "Create a serverless Kong gateway on Konnect. Build a Service + Route and proxy your first real request to httpbin.konghq.com. No Docker or prior Kong knowledge required - ~60 min."
     link: /module-01-orientation/
     linkText: Start here →
 
   - icon: 🔀
-    title: "02 — Routing & Topology"
-    details: "Three Services routed by path and method. Load-balance across two backend targets with weighted round-robin, then add active + passive health checks for auto-failover. No plugins yet — just routing primitives."
+    title: "02 - Routing & Topology"
+    details: "Three Services routed by path and method. Load-balance across two backend targets with weighted round-robin, then add active + passive health checks for auto-failover. No plugins yet - just routing primitives."
     link: /module-02-core-gateway/
     linkText: Build a real topology →
 
   - icon: 🔑
-    title: "03 — Easy Wins"
+    title: "03 - Easy Wins"
     details: "Four Tier-1 plugins, one config block each: key-auth (with Consumers), cors, ip-restriction, correlation-id. Big payoff for low effort. This is also where Consumers get a real job."
     link: /module-03-authentication/
     linkText: Get quick wins →
 
   - icon: 🚦
-    title: "04 — Traffic & Resilience"
+    title: "04 - Traffic & Resilience"
     details: "Per-Consumer rate limits with X-RateLimit headers + Retry-After contract. Then cache GETs in Kong's memory and watch latency drop from 200ms to <10ms. Two plugins, ~60 min."
     link: /module-04-traffic-control/
     linkText: Add guardrails →
 
   - icon: 🔧
-    title: "05 — Transformations"
+    title: "05 - Transformations"
     details: "Rewrite requests and responses on the fly. Inject per-Consumer headers via templates, rename query params for v2→v3 migrations, strip sensitive fields, conditional transforms by status code."
     link: /module-05-transformations/
     linkText: Reshape traffic →
 
   - icon: 📊
-    title: "06 — Observability"
+    title: "06 - Observability"
     details: "Three pillars wired up: http-log (push), prometheus (pull), opentelemetry (push). The four RED queries (rate, errors, p95 upstream, p95 Kong). Why per-Consumer labels are a cardinality bomb."
     link: /module-06-observability/
     linkText: See your traffic →
 
   - icon: 🔐
-    title: "07 — Enterprise & Advanced"
+    title: "07 - Enterprise & Advanced"
     details: "Seven advanced plugins/features: JWT, HMAC, ACL with Consumer Groups, OIDC Auth Code Flow, Upstream OAuth (M2M), OPA policy-as-code, Datakit orchestration, Kong Manager RBAC. ~3.5h, à la carte."
     link: /module-07-enterprise/
     linkText: Go advanced →
 
   - icon: 🏁
-    title: "08 — Capstone"
-    details: "Design and build the full production gateway. 11+ plugins working together, three Consumer tiers, two auth methods, full observability — proved by a 15-step acceptance test. ~3 hours. No more hand-holding."
+    title: "08 - Capstone"
+    details: "Design and build the full production gateway. 11+ plugins working together, three Consumer tiers, two auth methods, full observability - proved by a 15-step acceptance test. ~3 hours. No more hand-holding."
     link: /module-08-capstone/
     linkText: Take the capstone →
 
@@ -104,15 +104,15 @@ features:
 ## What makes this different
 
 ::: tip Every concept is a curl you can run
-No slides. No theory dumps. Each module gives you a real Konnect gateway, real upstream APIs (httpbin.konghq.com + httpbin.org), and real `curl` you paste into a terminal. The "you" in every lab is *you* — typing, watching, fixing.
+No slides. No theory dumps. Each module gives you a real Konnect gateway, real upstream APIs (httpbin.konghq.com + httpbin.org), and real `curl` you paste into a terminal. The "you" in every lab is *you* - typing, watching, fixing.
 :::
 
 ::: tip Built around problems, not features
-Each module opens with a scenario — "your API just got hammered by a scraper," "the frontend can't call your gateway from a browser," "a user reports a silent failure." Plugins arrive as the *fix*, not as a feature list to memorize. You leave knowing **when** to reach for each plugin, not just **how**.
+Each module opens with a scenario - "your API just got hammered by a scraper," "the frontend can't call your gateway from a browser," "a user reports a silent failure." Plugins arrive as the *fix*, not as a feature list to memorize. You leave knowing **when** to reach for each plugin, not just **how**.
 :::
 
 ::: tip Difficulty ramps deliberately
-M01-M02 introduce zero plugins — just routing. M03 gives you four "easy wins" (Tier 1: one config block each). M04-M06 raise the bar. M07 is dense, advanced, à la carte. M08 is a capstone that **only passes if your acceptance script is green** — no other signal that you've got it right.
+M01-M02 introduce zero plugins - just routing. M03 gives you four "easy wins" (Tier 1: one config block each). M04-M06 raise the bar. M07 is dense, advanced, à la carte. M08 is a capstone that **only passes if your acceptance script is green** - no other signal that you've got it right.
 :::
 
 ---
@@ -143,7 +143,7 @@ Pick the path that matches you:
   <a class="kong-path" href="/plugin-reference">
     <div class="kong-path-emoji">🧩</div>
     <div class="kong-path-title">Just need a plugin config</div>
-    <div class="kong-path-body">The <strong>Plugin Reference</strong> has condensed configs for every plugin in the bootcamp — searchable, with a link back to the lab that introduces it.</div>
+    <div class="kong-path-body">The <strong>Plugin Reference</strong> has condensed configs for every plugin in the bootcamp - searchable, with a link back to the lab that introduces it.</div>
     <div class="kong-path-cta">Open the reference →</div>
   </a>
 </div>
@@ -173,7 +173,7 @@ After the core bootcamp, go deep on the use cases you actually ship:
   <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/" target="_blank" rel="noopener">
     <div class="kong-specialist-emoji">🔄</div>
     <div class="kong-specialist-title">APIOps with decK</div>
-    <div class="kong-specialist-body">GitOps for Kong config — GitHub Actions, quality gates, drift detection.</div>
+    <div class="kong-specialist-body">GitOps for Kong config - GitHub Actions, quality gates, drift detection.</div>
   </a>
   <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-insomnia/" target="_blank" rel="noopener">
     <div class="kong-specialist-emoji">🎮</div>
@@ -189,7 +189,7 @@ After the core bootcamp, go deep on the use cases you actually ship:
 
 <style>
 /* ───────────────────────────────────────────────────────────────────────────
-   Home page — extensions to the Kong Design System.
+   Home page - extensions to the Kong Design System.
    Uses tokens defined in docs/.vitepress/theme/style.css; no new hex codes.
    ─────────────────────────────────────────────────────────────────────────── */
 

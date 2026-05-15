@@ -1,4 +1,4 @@
-# Lab 07-A — Advanced Auth: JWT + HMAC
+# Lab 07-A - Advanced Auth: JWT + HMAC
 
 > **Goal.** In ~45 minutes you'll set up two **stateless** auth plugins: `jwt` (any JWS-signed token) and `hmac-auth` (signed request bodies + headers, replay-protected). You'll mint tokens / signatures locally and watch Kong validate them at the edge.
 
@@ -8,9 +8,9 @@ Both plugins validate a signature using a shared secret on the Consumer. There's
 
 ---
 
-## Part 1 — JWT (Bearer tokens, ~20 min)
+## Part 1 - JWT (Bearer tokens, ~20 min)
 
-### Step 1.1 — Baseline + a Consumer (3 min)
+### Step 1.1 - Baseline + a Consumer (3 min)
 
 ```yaml [kong.yaml]
 _format_version: '3.0'
@@ -36,7 +36,7 @@ deck gateway sync kong.yaml \
   --konnect-control-plane-name $KONNECT_CP_NAME
 ```
 
-### Step 1.2 — Attach `jwt` plugin to the Route (3 min)
+### Step 1.2 - Attach `jwt` plugin to the Route (3 min)
 
 ```yaml [Append plugin to flights-route]
 plugins:
@@ -53,10 +53,10 @@ plugins:
 Sync.
 
 ::: info `key_claim_name` and how Kong knows the Consumer
-JWT contains a claim — by convention `iss` (issuer). The plugin reads that claim from the incoming token, then looks up the Consumer that has a `jwt_secrets[].key` matching it. That's how Kong maps a token to a Consumer.
+JWT contains a claim - by convention `iss` (issuer). The plugin reads that claim from the incoming token, then looks up the Consumer that has a `jwt_secrets[].key` matching it. That's how Kong maps a token to a Consumer.
 :::
 
-### Step 1.3 — Create a JWT secret for the Consumer (3 min)
+### Step 1.3 - Create a JWT secret for the Consumer (3 min)
 
 ```yaml [Append to the Consumer]
 consumers:
@@ -70,7 +70,7 @@ consumers:
 
 Sync.
 
-### Step 1.4 — Mint a token, then call (5 min) 🎯
+### Step 1.4 - Mint a token, then call (5 min) 🎯
 
 Easiest local way to create a JWT: use [jwt.io](https://jwt.io) in your browser.
 
@@ -103,9 +103,9 @@ Expected:
 }
 ```
 
-🎯 Kong validated the token, identified the Consumer via `iss`, and forwarded the request. (The `Authorization` header is still present — by default JWT doesn't strip it, unlike `key-auth`'s `hide_credentials`.)
+🎯 Kong validated the token, identified the Consumer via `iss`, and forwarded the request. (The `Authorization` header is still present - by default JWT doesn't strip it, unlike `key-auth`'s `hide_credentials`.)
 
-### Step 1.5 — Test failure modes (3 min) 🧪
+### Step 1.5 - Test failure modes (3 min) 🧪
 
 ```bash
 # No token
@@ -117,26 +117,26 @@ BAD_TOKEN="${TOKEN:0:-5}XXXXX"
 curl -i $KONNECT_PROXY_URL/flights/anything -H "Authorization: Bearer $BAD_TOKEN" | head -3
 # HTTP/2 401  {"message":"Invalid signature"}
 
-# Expired token (mint one with exp: 1000000000 — way in the past)
+# Expired token (mint one with exp: 1000000000 - way in the past)
 # Then call:
 curl -i $KONNECT_PROXY_URL/flights/anything -H "Authorization: Bearer $EXPIRED" | head -3
 # HTTP/2 401  {"message":"Token expired"}
 ```
 
 ::: tip JWT signing algorithms
-- **HS256** — symmetric, one shared secret. Simple. Used in this lab.
-- **RS256 / ES256** — asymmetric, your IdP signs with a private key, Kong verifies with the public key. Production default.
+- **HS256** - symmetric, one shared secret. Simple. Used in this lab.
+- **RS256 / ES256** - asymmetric, your IdP signs with a private key, Kong verifies with the public key. Production default.
 
 For RS256, the Consumer's `jwt_secrets[].rsa_public_key` holds the public PEM and Kong validates against it.
 :::
 
 ---
 
-## Part 2 — HMAC (Signed requests, ~20 min)
+## Part 2 - HMAC (Signed requests, ~20 min)
 
 HMAC-auth is different from JWT: the client doesn't carry a token. Instead, **every request is individually signed** using a shared secret. The signature covers headers (and optionally body) so any tampering is detected.
 
-### Step 2.1 — Add HMAC credentials to a Consumer (3 min)
+### Step 2.1 - Add HMAC credentials to a Consumer (3 min)
 
 ```yaml [Add hmac_auth Consumer + credentials]
 consumers:
@@ -149,9 +149,9 @@ consumers:
 
 Sync.
 
-### Step 2.2 — Attach `hmac-auth` to a Route (3 min)
+### Step 2.2 - Attach `hmac-auth` to a Route (3 min)
 
-We'll re-purpose `flights-route` — but first remove the `jwt` plugin so we test HMAC cleanly:
+We'll re-purpose `flights-route` - but first remove the `jwt` plugin so we test HMAC cleanly:
 
 ```yaml [Replace jwt with hmac-auth on flights-route]
 - name: flights-route
@@ -169,9 +169,9 @@ We'll re-purpose `flights-route` — but first remove the `jwt` plugin so we tes
 
 Sync.
 
-### Step 2.3 — Build a signed request (8 min) 🎯
+### Step 2.3 - Build a signed request (8 min) 🎯
 
-Signing manually is fiddly — let's do it. Here's the algorithm:
+Signing manually is fiddly - let's do it. Here's the algorithm:
 
 1. Compute `md5sum` of the request body → base64 encode → that's `Content-MD5`.
 2. Build the "signing string": `date: <now>\nrequest-line: POST /flights/post HTTP/2\ncontent-md5: <md5>`.
@@ -208,7 +208,7 @@ Expected: HTTP 200 + httpbin echoes back your body.
 2. Computed the expected signature for the request as Kong received it.
 3. Compared. If equal → forward. If not → 401.
 
-### Step 2.4 — Why HMAC is for high-security (3 min — read)
+### Step 2.4 - Why HMAC is for high-security (3 min - read)
 
 | Property | HMAC | JWT | key-auth |
 |---|---|---|---|
@@ -219,14 +219,14 @@ Expected: HTTP 200 + httpbin echoes back your body.
 
 Use HMAC when the data is sensitive enough to merit the client-side complexity (financial feeds, healthcare, government).
 
-### Step 2.5 — Failure modes (3 min) 🧪
+### Step 2.5 - Failure modes (3 min) 🧪
 
 ```bash
 # Replay the same request 6+ minutes later (clock skew exceeded)
 sleep 360
-# … re-run the same curl — should now return 401 "HMAC clock skew exceeded"
+# … re-run the same curl - should now return 401 "HMAC clock skew exceeded"
 
-# Tamper with the body — change one character
+# Tamper with the body - change one character
 curl -i -X POST "$KONNECT_PROXY_URL/flights/post" \
   -H "Date: $DATE" -H "Content-MD5: $CONTENT_MD5" \
   -H "Authorization: hmac ..."  \
@@ -236,7 +236,7 @@ curl -i -X POST "$KONNECT_PROXY_URL/flights/post" \
 
 ---
 
-## Recap — when to use which auth plugin
+## Recap - when to use which auth plugin
 
 | Plugin | Use when |
 |---|---|
@@ -255,4 +255,4 @@ We continue with the Service in 07-B (Consumer Groups + ACL). **Don't clean up y
 
 ---
 
-**Next:** [Lab 07-B — Consumer Groups & ACL →](./07-consumer-groups-acl)
+**Next:** [Lab 07-B - Consumer Groups & ACL →](./07-consumer-groups-acl)

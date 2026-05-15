@@ -6,7 +6,7 @@
 
 > ⚙️ **Requires Kong Gateway 3.14 or newer**, deployed on Konnect (free tier works) or self-hosted. Plugin schemas, header behavior (`X-Forwarded-Path`, `X-Forwarded-Prefix`), and decK syntax assume 3.14+. Older Kong releases will fail several labs.
 
-A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structured modules, fully hands-on — from your first proxied request to a 15-step production capstone — plus specialist deep-dives.
+A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structured modules, fully hands-on - from your first proxied request to a 15-step production capstone - plus specialist deep-dives.
 
 ## Overview
 
@@ -18,14 +18,14 @@ A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structure
 | **Platform** | macOS · Linux · Docker (Konnect serverless works without Docker) |
 | **Audience** | Developers, DevOps, Platform teams, Enterprise architects |
 | **Demo repo** | [get-started-guide](https://github.com/Kong-Grajesh-SE/get-started-guide) |
-| **Plugin Reference** | [plugin-reference.md](./plugin-reference.md) — quick configs for every plugin |
+| **Plugin Reference** | [plugin-reference.md](./plugin-reference.md) - quick configs for every plugin |
 
 ## Bootcamp Modules
 
 | # | Module | Key Topics | Plugins |
 |---|---|---|---|
-| 01 | **Your First Gateway** | Konnect serverless, Service + Route, first proxied request, decK vs Admin API | — |
-| 02 | **Routing & Topology** | Multiple Services, route-matching priority, Upstreams, active/passive health checks | — |
+| 01 | **Your First Gateway** | Konnect serverless, Service + Route, first proxied request, decK vs Admin API | - |
+| 02 | **Routing & Topology** | Multiple Services, route-matching priority, Upstreams, active/passive health checks | - |
 | 03 | **Easy Wins** | Consumers, key-auth, CORS, IP restriction, correlation-id | `key-auth` `cors` `ip-restriction` `correlation-id` |
 | 04 | **Traffic & Resilience** | Per-Consumer rate limits, Retry-After, proxy-cache, cache invalidation | `rate-limiting` `proxy-cache` |
 | 05 | **Transformations** | Request/response rewriting, template variables, rename for migrations, conditional transforms | `request-transformer-advanced` `response-transformer-advanced` |
@@ -142,7 +142,7 @@ api-gateway-bootcamp/
 │   └── labs/
 │       ├── 02-services-routes.md    ← multi-service routing
 │       └── 02-upstreams.md          ← upstreams + health checks
-├── module-03-authentication/         ← "Easy Wins" — Tier-1 plugins
+├── module-03-authentication/         ← "Easy Wins" - Tier-1 plugins
 │   ├── README.md
 │   └── labs/
 │       ├── 03-key-auth.md            ← Consumers + key-auth deep dive

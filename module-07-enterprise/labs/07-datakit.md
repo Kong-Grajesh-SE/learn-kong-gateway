@@ -1,11 +1,11 @@
-# Lab 07-F — Datakit Orchestration
+# Lab 07-F - Datakit Orchestration
 
 > **Goal.** In ~30 minutes you'll use `datakit` to compose a multi-step pipeline at the gateway: fetch a token from one API, transform it with jq, then inject the result into the upstream request. **One plugin, one config block, no upstream code changes.**
 >
-> **When you'd reach for Datakit.** The upstream needs work the upstream itself can't (or shouldn't) do — calling another service, reshaping data, evaluating conditional logic. Without Datakit you'd chain several Kong plugins or write a microservice; with Datakit it's a single DAG declared inline.
+> **When you'd reach for Datakit.** The upstream needs work the upstream itself can't (or shouldn't) do - calling another service, reshaping data, evaluating conditional logic. Without Datakit you'd chain several Kong plugins or write a microservice; with Datakit it's a single DAG declared inline.
 
 ::: warning Enterprise plugin
-`datakit` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.11 — we're on 3.14, so this works.
+`datakit` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.11 - we're on 3.14, so this works.
 :::
 
 ## How Datakit Works

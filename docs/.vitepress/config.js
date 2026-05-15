@@ -22,7 +22,7 @@ export default defineConfig({
   cleanUrls: true,
 
   // Dead-link checker doesn't understand the README.md → index.md rewrite combined
-  // with cleanUrls — it resolves /module-NN-foo/ to /module-NN-foo/index and fails to
+  // with cleanUrls - it resolves /module-NN-foo/ to /module-NN-foo/index and fails to
   // find the file even though the page renders fine at runtime. Disabling the check.
   ignoreDeadLinks: true,
 

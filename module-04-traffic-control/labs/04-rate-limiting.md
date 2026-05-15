@@ -1,4 +1,4 @@
-# Lab 04-A — Rate Limiting
+# Lab 04-A - Rate Limiting
 
 > **Goal.** In ~35 minutes you'll attach `rate-limiting` to `flights-route`, watch counters update in the response headers, deliberately exceed the limit (HTTP 429), and learn how to set **different limits for different Consumers**.
 
@@ -12,7 +12,7 @@ echo "Token: ${KONNECT_TOKEN:0:8}…  CP: $KONNECT_CP_NAME  Proxy: $KONNECT_PROX
 
 ---
 
-## Step 1 — Rebuild the baseline (3 min)
+## Step 1 - Rebuild the baseline (3 min)
 
 Same shape as M03: Service + Route + three Consumers (one anonymous, two with API keys) + `key-auth` on the route.
 
@@ -49,7 +49,7 @@ services:
               anonymous: <PASTE-ANONYMOUS-CONSUMER-UUID>   # see Step 2
 ```
 
-Sync, but **don't run yet** — we'll fix the anonymous UUID first.
+Sync, but **don't run yet** - we'll fix the anonymous UUID first.
 
 ```bash
 deck gateway sync kong.yaml \
@@ -57,7 +57,7 @@ deck gateway sync kong.yaml \
   --konnect-control-plane-name $KONNECT_CP_NAME
 ```
 
-### Step 1.1 — Get the anonymous Consumer's UUID
+### Step 1.1 - Get the anonymous Consumer's UUID
 
 ```bash
 ANON_ID=$(curl -s -H "Authorization: Bearer $KONNECT_TOKEN" \
@@ -74,7 +74,7 @@ deck gateway sync kong.yaml \
 
 ---
 
-## Step 2 — Attach a basic rate-limit (5 min)
+## Step 2 - Attach a basic rate-limit (5 min)
 
 10 requests per minute, identifier = consumer (each Consumer has its own bucket).
 
@@ -97,9 +97,9 @@ deck gateway sync kong.yaml \
 Sync, wait 15s.
 
 ::: tip `policy` values, briefly
-- **`local`** — counters in node memory. Fastest. Each DP counts independently. Good for single-DP deployments.
-- **`cluster`** — counters in Kong's DB. Shared across all DPs. Slower (DB round-trip). Not available in DB-less mode.
-- **`redis`** — counters in a shared Redis. Best for production multi-DP. Needs a Redis instance.
+- **`local`** - counters in node memory. Fastest. Each DP counts independently. Good for single-DP deployments.
+- **`cluster`** - counters in Kong's DB. Shared across all DPs. Slower (DB round-trip). Not available in DB-less mode.
+- **`redis`** - counters in a shared Redis. Best for production multi-DP. Needs a Redis instance.
 
 For a serverless Konnect gateway you'll typically use `redis` once you're at scale; for this lab `local` is fine.
 :::
@@ -108,7 +108,7 @@ For a serverless Konnect gateway you'll typically use `redis` once you're at sca
 
 ---
 
-## Step 3 — Watch the headers (3 min)
+## Step 3 - Watch the headers (3 min)
 
 ```bash
 curl -sI $KONNECT_PROXY_URL/flights/get -H 'X-API-Key: web-app-secret-key-001' \
@@ -126,14 +126,14 @@ ratelimit-reset: 47
 ```
 
 🎯 Kong returned **two flavors** of the same headers:
-- `X-RateLimit-*` — Kong's historical format.
-- `RateLimit-*` (no prefix) — the IETF draft standard adopted in Kong 3.x.
+- `X-RateLimit-*` - Kong's historical format.
+- `RateLimit-*` (no prefix) - the IETF draft standard adopted in Kong 3.x.
 
-Send a few more in quick succession — `remaining` ticks down.
+Send a few more in quick succession - `remaining` ticks down.
 
 ---
 
-## Step 4 — Trip the limit (5 min) 🧪
+## Step 4 - Trip the limit (5 min) 🧪
 
 Smash the route 12 times in a row (above the 10/min limit):
 
@@ -160,18 +160,18 @@ curl -i $KONNECT_PROXY_URL/flights/get -H 'X-API-Key: web-app-secret-key-001' | 
 ```
 
 ::: info `Retry-After` is a contract
-A well-behaved client sees `429` + `Retry-After: 31` and **waits 31 seconds** before trying again. A badly-behaved client retries immediately, burns its bucket again, and gets stuck. Build clients that honour `Retry-After` — it's the difference between a brownout and an outage.
+A well-behaved client sees `429` + `Retry-After: 31` and **waits 31 seconds** before trying again. A badly-behaved client retries immediately, burns its bucket again, and gets stuck. Build clients that honour `Retry-After` - it's the difference between a brownout and an outage.
 :::
 
 **✅ Checkpoint.** You triggered a 429, observed `Retry-After`, and the next-minute traffic flows again.
 
 ---
 
-## Step 5 — Per-Consumer limits (10 min) 🧪
+## Step 5 - Per-Consumer limits (10 min) 🧪
 
 `web-app` should get 100/min. `mobile-app` should get 300/min. Anonymous stays at 10/min.
 
-Kong doesn't support per-Consumer limits in *one* plugin instance — instead you attach separate `rate-limiting` instances scoped to each Consumer.
+Kong doesn't support per-Consumer limits in *one* plugin instance - instead you attach separate `rate-limiting` instances scoped to each Consumer.
 
 ```yaml [Append Consumer-scoped plugins]
 plugins:
@@ -202,7 +202,7 @@ plugins:
 ```
 
 ::: warning Move the old route-scoped plugin out
-You had a single `rate-limiting` under `flights-route`'s `plugins:` block. Remove it — the three Consumer-scoped instances above replace it. Two overlapping rate-limit plugins on the same request produce confusing maths.
+You had a single `rate-limiting` under `flights-route`'s `plugins:` block. Remove it - the three Consumer-scoped instances above replace it. Two overlapping rate-limit plugins on the same request produce confusing maths.
 :::
 
 Sync. Wait 15s. Verify each Consumer's limit:
@@ -238,9 +238,9 @@ Without `route:`, the plugin would limit that Consumer **globally** (all routes)
 
 ---
 
-## Step 6 — Switch the identifier from consumer to IP (5 min) 🧪
+## Step 6 - Switch the identifier from consumer to IP (5 min) 🧪
 
-Sometimes you want to throttle by source IP regardless of who's authenticated. Drop the anonymous-scoped plugin and replace it with an IP-based one — useful when you want **anyone hammering you from a single IP to share one bucket**, even if they're rotating Consumer credentials.
+Sometimes you want to throttle by source IP regardless of who's authenticated. Drop the anonymous-scoped plugin and replace it with an IP-based one - useful when you want **anyone hammering you from a single IP to share one bucket**, even if they're rotating Consumer credentials.
 
 ```yaml
 - name: rate-limiting
@@ -263,7 +263,7 @@ for KEY in '' 'web-app-secret-key-001' 'mobile-app-secret-key-002'; do
 done
 ```
 
-Notice **`remaining` keeps decreasing across keys** — same IP, one bucket.
+Notice **`remaining` keeps decreasing across keys** - same IP, one bucket.
 
 Revert to `limit_by: consumer` before the next lab.
 
@@ -282,11 +282,11 @@ Revert to `limit_by: consumer` before the next lab.
 ## Recap
 
 - `rate-limiting` is one plugin, multiple instances. Attach scoped to Route + Consumer for per-tier limits.
-- Plugin returns `429` + `Retry-After` — well-behaved clients respect both.
+- Plugin returns `429` + `Retry-After` - well-behaved clients respect both.
 - `limit_by: ip` and `limit_by: consumer` answer different questions. Pick deliberately.
 - `policy: local` is per-DP; use `redis` for cross-DP accuracy.
 
-**`rate-limiting-advanced`** (sliding windows, Redis, namespacing for shared limits across Services) is a Konnect Enterprise plugin — covered in M07.
+**`rate-limiting-advanced`** (sliding windows, Redis, namespacing for shared limits across Services) is a Konnect Enterprise plugin - covered in M07.
 
 ---
 
@@ -296,4 +296,4 @@ Revert to `limit_by: consumer` before the next lab.
 
 ---
 
-**Next:** [Lab 04-B — Proxy Cache →](./04-proxy-cache)
+**Next:** [Lab 04-B - Proxy Cache →](./04-proxy-cache)

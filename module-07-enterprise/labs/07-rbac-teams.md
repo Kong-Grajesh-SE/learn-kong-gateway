@@ -1,8 +1,8 @@
-# Lab 07-G — Kong Manager RBAC
+# Lab 07-G - Kong Manager RBAC
 
 > **Goal.** In ~20 minutes you'll set up **workspace isolation** in Kong Manager so the payments team can't accidentally edit the bookings team's gateway config. You'll create roles, scope them to workspaces, assign users.
 >
-> **Scope.** This lab is for **self-hosted Kong Gateway Enterprise** (with Kong Manager). On Konnect, equivalent multi-tenant isolation is handled via [Konnect Teams](https://docs.konghq.com/konnect/teams-and-roles/) at the org level — same concept, different UI. The Konnect equivalent is much simpler — see the linked docs.
+> **Scope.** This lab is for **self-hosted Kong Gateway Enterprise** (with Kong Manager). On Konnect, equivalent multi-tenant isolation is handled via [Konnect Teams](https://docs.konghq.com/konnect/teams-and-roles/) at the org level - same concept, different UI. The Konnect equivalent is much simpler - see the linked docs.
 
 ## Kong RBAC Architecture
 

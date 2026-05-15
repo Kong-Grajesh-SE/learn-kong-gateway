@@ -1,6 +1,6 @@
-# Module 05 — Transformations
+# Module 05 - Transformations
 
-> **The scenario.** Your travel platform is evolving fast. The frontend team wants the new `/v3` shape: `flightId` renamed from `id`, no internal `_debug` fields. The backend can't be changed — it's a vendor product. And every outbound request must carry an `X-API-Version: v3` header so analytics can tell new clients from old.
+> **The scenario.** Your travel platform is evolving fast. The frontend team wants the new `/v3` shape: `flightId` renamed from `id`, no internal `_debug` fields. The backend can't be changed - it's a vendor product. And every outbound request must carry an `X-API-Version: v3` header so analytics can tell new clients from old.
 >
 > In the next ~60 minutes you'll **rewrite requests and responses in flight** using two plugins. Header injection, body field renames, sensitive-field stripping, conditional transforms. No backend change.
 
@@ -22,7 +22,7 @@ $ curl -s "$KONNECT_PROXY_URL/flights/anything?page=2&size=20" \
 
 ## Who this module is for
 
-You finished M03. You have a Service + Route + Consumers + `key-auth`. M04 is helpful but optional — transformers don't depend on rate-limit or cache.
+You finished M03. You have a Service + Route + Consumers + `key-auth`. M04 is helpful but optional - transformers don't depend on rate-limit or cache.
 
 ## Three concepts you need today
 
@@ -55,7 +55,7 @@ Upstream response → response-transformer-advanced → Client
 | 05-B | [Response Transformer](./labs/05-response-transformer) | ~30 min | Strip internal/debug fields, add metadata, conditional transforms based on status code |
 
 ::: tip Why `*-transformer-advanced` and not the basic ones?
-The basic `request-transformer` / `response-transformer` plugins are Kong OSS. The `-advanced` versions are Konnect Enterprise — they add **template variables**, **rename**, and **conditional transforms**, all of which are essential the moment you have Consumers or per-tenant logic. Konnect serverless includes the advanced variants. We use the advanced ones throughout.
+The basic `request-transformer` / `response-transformer` plugins are Kong OSS. The `-advanced` versions are Konnect Enterprise - they add **template variables**, **rename**, and **conditional transforms**, all of which are essential the moment you have Consumers or per-tenant logic. Konnect serverless includes the advanced variants. We use the advanced ones throughout.
 :::
 
 ## Exit ticket
@@ -69,15 +69,15 @@ The basic `request-transformer` / `response-transformer` plugins are Kong OSS. T
 | Symptom | Likely cause |
 |---|---|
 | Template variable resolves to literal `$(consumer.username)` instead of the value | The advanced plugin variant isn't installed. Konnect serverless has it; some legacy decK files use the OSS plugin name. Use `request-transformer-advanced`. |
-| Body changes aren't applied | Plugin only modifies bodies with matching `content-type`. Defaults are `application/json` only — add `application/x-www-form-urlencoded` etc. if needed. |
+| Body changes aren't applied | Plugin only modifies bodies with matching `content-type`. Defaults are `application/json` only - add `application/x-www-form-urlencoded` etc. if needed. |
 | `remove.headers: [Authorization]` removes the key but downstream still sees it | The header was set by a *later* plugin (e.g. `request-transformer` running before `oauth2`). Check plugin priority. |
 | Renamed query params don't reach the upstream | `rename` is in `request-transformer-advanced`, not basic. Double-check the plugin `name` field. |
-| Response transformer doesn't fire on 5xx | Default config skips error responses — set `replace.if_status` or `add.if_status` to include 5xx if you really want to. Usually you don't. |
+| Response transformer doesn't fire on 5xx | Default config skips error responses - set `replace.if_status` or `add.if_status` to include 5xx if you really want to. Usually you don't. |
 
 ## What's next
 
-**[Module 06 — Observability](/module-06-observability/)** wires logs, metrics, and distributed traces. The correlation-id you set up in M03 finally pays off — you'll see it flow into Prometheus labels, HTTP-log lines, and OpenTelemetry spans.
+**[Module 06 - Observability](/module-06-observability/)** wires logs, metrics, and distributed traces. The correlation-id you set up in M03 finally pays off - you'll see it flow into Prometheus labels, HTTP-log lines, and OpenTelemetry spans.
 
 ---
 
-*Previous: [Module 04 — Traffic & Resilience](/module-04-traffic-control/) · Next: [Module 06 — Observability →](/module-06-observability/)*
+*Previous: [Module 04 - Traffic & Resilience](/module-04-traffic-control/) · Next: [Module 06 - Observability →](/module-06-observability/)*

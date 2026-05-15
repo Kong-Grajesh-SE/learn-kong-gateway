@@ -1,14 +1,14 @@
-# Lab 07-D — Upstream OAuth (M2M Token Injection)
+# Lab 07-D - Upstream OAuth (M2M Token Injection)
 
 > **Goal.** In ~30 minutes you'll configure Kong to **fetch an OAuth2 client-credentials token from an IdP** and inject it as `Authorization: Bearer <token>` for every upstream request. Your internal services get a clean Bearer token without ever seeing client credentials.
 >
 > **Pattern.** This is the **machine-to-machine** counterpart to Lab 07-C's browser flow. Tokens are issued to *Kong* on behalf of the API, not to the client.
 
 ::: warning Enterprise plugin
-`upstream-oauth` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.8 — but we're on 3.14, so you're good.
+`upstream-oauth` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.8 - but we're on 3.14, so you're good.
 :::
 
-::: tip OIDC vs Upstream OAuth — who is the token *for*?
+::: tip OIDC vs Upstream OAuth - who is the token *for*?
 - **OIDC (07-C)**: Token authenticates the **client** (a human user). Kong validates it; upstream typically reads `X-Authenticated-Userid`.
 - **Upstream OAuth (this lab)**: Token authenticates **Kong itself** to a *downstream API* that requires OAuth. The client may not even know OAuth is happening.
 

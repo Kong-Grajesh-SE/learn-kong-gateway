@@ -1,4 +1,4 @@
-# Module 03 — Easy Wins
+# Module 03 - Easy Wins
 
 > **The scenario.** Your gateway routes traffic correctly. But:
 > - **Anyone** can call your API. There's no notion of "who".
@@ -6,7 +6,7 @@
 > - You spotted a scraper hitting you from one specific IP. You can't block it.
 > - When a request explodes somewhere in your stack, you can't trace it end-to-end.
 >
-> In the next ~90 minutes you'll fix all four with **four Tier-1 plugins** — each is a single config block, zero external infrastructure. Maximum learning per minute. This is also where **Consumers** get a real job to do.
+> In the next ~90 minutes you'll fix all four with **four Tier-1 plugins** - each is a single config block, zero external infrastructure. Maximum learning per minute. This is also where **Consumers** get a real job to do.
 
 ## What you'll have at the end
 
@@ -28,12 +28,12 @@ You finished M01 and M02. You can create Services, Routes, and Upstreams. Same p
 ::: tip Why these four, in this order?
 | Plugin | Difficulty | Why |
 |---|---|---|
-| `key-auth` | ★★ | Needs a Consumer — your first real plugin requiring an associated entity |
+| `key-auth` | ★★ | Needs a Consumer - your first real plugin requiring an associated entity |
 | `cors` | ★ | One config block. Pure config, no entities. |
 | `ip-restriction` | ★ | One config block. Allow / deny list. |
 | `correlation-id` | ★ | One config block. Header in, header out. |
 
-JWT, HMAC, OIDC, and OAuth2 are deferred to **Module 04** (Identity & ACL) and **Module 08** (Enterprise) — they need either external IdPs or significantly more setup. Here we want immediate wins.
+JWT, HMAC, OIDC, and OAuth2 are deferred to **Module 04** (Identity & ACL) and **Module 08** (Enterprise) - they need either external IdPs or significantly more setup. Here we want immediate wins.
 :::
 
 ## Three concepts you need today
@@ -42,12 +42,12 @@ JWT, HMAC, OIDC, and OAuth2 are deferred to **Module 04** (Identity & ACL) and *
 |---|---|---|
 | **Plugin** | Middleware Kong runs at fixed phases (auth, transform, etc.) on every matching request | Plugins are how you add behaviour to a gateway without changing the upstream |
 | **Consumer** | A named identity for an API caller (a web app, a mobile app, a service) | `key-auth` validates the request *and* tells you *which Consumer* it belongs to |
-| **Plugin scope** | A plugin can be attached globally, per-Service, per-Route, or per-Consumer | More specific scope **overrides** more general — same precedence rules as M02 routes |
+| **Plugin scope** | A plugin can be attached globally, per-Service, per-Route, or per-Consumer | More specific scope **overrides** more general - same precedence rules as M02 routes |
 
 The new shape:
 
 ```
-                                          ┌──── plugin (correlation-id) — global
+                                          ┌──── plugin (correlation-id) - global
 Client ─▶ Kong Gateway ─▶ Route ─▶ Service ─▶ Upstream ─▶ httpbin
               │           │
               │           └─ plugin: key-auth, ip-restriction (attached to flights-route only)
@@ -75,16 +75,16 @@ After the labs, can you answer these without looking?
 
 | Symptom | Likely cause |
 |---|---|
-| `401 No API key found in request` after adding `key-auth` | Working as designed — that's the test. Now generate a key for a Consumer and pass it in `X-API-Key`. |
+| `401 No API key found in request` after adding `key-auth` | Working as designed - that's the test. Now generate a key for a Consumer and pass it in `X-API-Key`. |
 | Browser still gets CORS errors after enabling `cors` | You probably forgot the `OPTIONS` preflight. `cors` plugin handles it, but your route must allow `OPTIONS` in its `methods` list (or leave methods unset). |
 | `ip-restriction` blocked your own laptop and now you're locked out | You set `allow` instead of `deny` and forgot to include your IP. Reach the plugin via the Konnect UI and edit it there. |
-| `correlation-id` header isn't appearing in logs | Default generator is `uuid#counter` — confirm the plugin is attached at the right scope. Check `Konnect → Plugins`. |
+| `correlation-id` header isn't appearing in logs | Default generator is `uuid#counter` - confirm the plugin is attached at the right scope. Check `Konnect → Plugins`. |
 | Plugin attached to a Consumer is ignored | Consumer-scoped plugins only run *after* an auth plugin has identified the Consumer. Without `key-auth` (or similar), Kong has no Consumer to look up. |
 
 ## What's next
 
-**Module 04 — Identity & ACL** deepens Consumers: consumer groups, ACL allow/deny, JWT, HMAC. Then **Module 05 — Traffic & Resilience** adds rate-limiting, proxy-cache, and circuit-breaker patterns. JWT/HMAC are intentionally deferred — they reuse the Consumer mental model you'll build today, just with different credential types.
+**Module 04 - Identity & ACL** deepens Consumers: consumer groups, ACL allow/deny, JWT, HMAC. Then **Module 05 - Traffic & Resilience** adds rate-limiting, proxy-cache, and circuit-breaker patterns. JWT/HMAC are intentionally deferred - they reuse the Consumer mental model you'll build today, just with different credential types.
 
 ---
 
-*Previous: [Module 02 — Routing & Topology](/module-02-core-gateway/) · Next: Module 04 — Identity & ACL (coming soon)*
+*Previous: [Module 02 - Routing & Topology](/module-02-core-gateway/) · Next: Module 04 - Identity & ACL (coming soon)*

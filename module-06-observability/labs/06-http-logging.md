@@ -1,6 +1,6 @@
-# Lab 06-A — HTTP Logging
+# Lab 06-A - HTTP Logging
 
-> **Goal.** In ~25 minutes you'll attach `http-log` to `flights-route`, ship every request log line to a free public webhook receiver, and inspect the structure of a Kong log entry — including the latency breakdown that makes "Kong vs upstream" obvious.
+> **Goal.** In ~25 minutes you'll attach `http-log` to `flights-route`, ship every request log line to a free public webhook receiver, and inspect the structure of a Kong log entry - including the latency breakdown that makes "Kong vs upstream" obvious.
 
 ::: tip Picking up from M03+
 Start from the M03 baseline (Service + Route + Consumers + key-auth). Optional plugins from M04/M05 don't matter for observability.
@@ -8,9 +8,9 @@ Start from the M03 baseline (Service + Route + Consumers + key-auth). Optional p
 
 ---
 
-## Step 1 — Get a free log receiver (3 min)
+## Step 1 - Get a free log receiver (3 min)
 
-We need an HTTP endpoint Kong can POST to. Use [**webhook.site**](https://webhook.site) — it gives you a one-time URL that captures every request.
+We need an HTTP endpoint Kong can POST to. Use [**webhook.site**](https://webhook.site) - it gives you a one-time URL that captures every request.
 
 1. Open [webhook.site](https://webhook.site) in your browser.
 2. The page auto-creates a URL like `https://webhook.site/abc-123-xyz`. Copy it.
@@ -25,7 +25,7 @@ For real production: Datadog, Splunk, Logstash, Loki, or your own HTTPS endpoint
 
 ---
 
-## Step 2 — Rebuild the baseline + attach `http-log` (5 min)
+## Step 2 - Rebuild the baseline + attach `http-log` (5 min)
 
 ```yaml [kong.yaml]
 _format_version: '3.0'
@@ -54,7 +54,7 @@ services:
               method: POST
               timeout: 10000              # ms
               keepalive: 60000            # ms - reuse TCP
-              flush_timeout: 2            # seconds — batch logs every 2s
+              flush_timeout: 2            # seconds - batch logs every 2s
               queue_size: 100             # buffer up to 100 entries before forced flush
               content_type: application/json
 ```
@@ -72,7 +72,7 @@ Wait 15s.
 
 ---
 
-## Step 3 — Make some traffic (3 min)
+## Step 3 - Make some traffic (3 min)
 
 ```bash
 for i in {1..5}; do
@@ -82,7 +82,7 @@ for i in {1..5}; do
 done
 
 # And a couple of failures
-curl -s -o /dev/null $KONNECT_PROXY_URL/flights/status/500   # 401 — no key
+curl -s -o /dev/null $KONNECT_PROXY_URL/flights/status/500   # 401 - no key
 curl -s -o /dev/null $KONNECT_PROXY_URL/flights/status/404 \
   -H 'X-API-Key: web-app-secret-key-001'                     # 404 from upstream
 ```
@@ -93,7 +93,7 @@ Now refresh webhook.site. You should see ~7 POSTs land within a few seconds (the
 
 ---
 
-## Step 4 — Anatomy of a Kong log entry (5 min — read)
+## Step 4 - Anatomy of a Kong log entry (5 min - read)
 
 Click any entry on webhook.site. The body is a JSON object Kong fills in:
 
@@ -131,9 +131,9 @@ Click any entry on webhook.site. The body is a JSON object Kong fills in:
 ```
 
 ::: info The three latency numbers
-- **`latencies.request`** — total time from request start to response end.
-- **`latencies.kong`** — time spent inside Kong (plugins, routing, balancing).
-- **`latencies.proxy`** — time spent waiting for the upstream.
+- **`latencies.request`** - total time from request start to response end.
+- **`latencies.kong`** - time spent inside Kong (plugins, routing, balancing).
+- **`latencies.proxy`** - time spent waiting for the upstream.
 
 `request ≈ kong + proxy`. If `kong` is high, it's *your* config or plugins. If `proxy` is high, it's the upstream. **This single distinction saves hours of misattributed debugging.**
 :::
@@ -142,7 +142,7 @@ Click any entry on webhook.site. The body is a JSON object Kong fills in:
 
 ---
 
-## Step 5 — Mask sensitive headers/fields (5 min) 🧪
+## Step 5 - Mask sensitive headers/fields (5 min) 🧪
 
 Right now `request.headers.x-api-key` shows up in the log. Even if it's "REDACTED" for `key-auth`'s hide_credentials, **other** sensitive headers won't be. Let's strip them explicitly.
 
@@ -165,7 +165,7 @@ Right now `request.headers.x-api-key` shows up in the log. Even if it's "REDACTE
 ```
 
 ::: warning Always redact at the log layer
-Even when `key-auth` hides credentials from the upstream, **logging plugins read the original request** — so the key still ends up in the log unless you redact. Same for cookies, Bearer tokens, internal-only headers.
+Even when `key-auth` hides credentials from the upstream, **logging plugins read the original request** - so the key still ends up in the log unless you redact. Same for cookies, Bearer tokens, internal-only headers.
 
 If you don't trust yourself to enumerate every sensitive header, log to an **allowlist** instead: drop everything by default, log only the headers you explicitly want.
 :::
@@ -174,7 +174,7 @@ Sync. Send a few more requests. New log entries should show `"x-api-key": "[REDA
 
 ---
 
-## Step 6 — What if the receiver is down? (4 min — read)
+## Step 6 - What if the receiver is down? (4 min - read)
 
 Kong's `http-log` plugin queues log entries in memory before flushing. If the receiver is unreachable:
 
@@ -185,15 +185,15 @@ Kong's `http-log` plugin queues log entries in memory before flushing. If the re
 | `retry_count` | How many times Kong retries a failed POST. After exhausting retries, the batch is **dropped**. |
 | `keepalive` | Reuse a TCP connection across batches for efficiency. |
 
-**Logs are best-effort.** Critical events (audit logs, compliance) should also be written to an upstream you control — not just streamed to a single endpoint that might be down.
+**Logs are best-effort.** Critical events (audit logs, compliance) should also be written to an upstream you control - not just streamed to a single endpoint that might be down.
 
 For production: use a queue (Kafka, SQS) between Kong and your log store. Kong → queue is local-network-fast. Queue → store handles backpressure.
 
 ---
 
-## Step 7 — Stop logging when you're done (1 min)
+## Step 7 - Stop logging when you're done (1 min)
 
-http-log POSTs are real traffic — webhook.site has rate limits. Remove the plugin before the next lab:
+http-log POSTs are real traffic - webhook.site has rate limits. Remove the plugin before the next lab:
 
 ```yaml
 - name: flights-route
@@ -213,7 +213,7 @@ Sync.
 
 You now know:
 - `http-log` POSTs structured JSON for **every request** to any HTTPS endpoint.
-- The `latencies` block in a Kong log separates **gateway time** from **upstream time** — your first triage question becomes "Kong or backend?"
+- The `latencies` block in a Kong log separates **gateway time** from **upstream time** - your first triage question becomes "Kong or backend?"
 - Sensitive headers must be redacted at the **log layer**, not just at the upstream layer.
 - Log delivery is best-effort by default. Production = log → queue → store.
 
@@ -225,4 +225,4 @@ You now know:
 
 ---
 
-**Next:** [Lab 06-B — Prometheus & Grafana →](./06-prometheus)
+**Next:** [Lab 06-B - Prometheus & Grafana →](./06-prometheus)

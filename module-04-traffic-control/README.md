@@ -1,6 +1,6 @@
-# Module 04 — Traffic & Resilience
+# Module 04 - Traffic & Resilience
 
-> **The scenario.** The travel app is growing fast. A free-tier scraper is back at it — same client, ~50 requests/second. Meanwhile, your `flights` upstream is slow because everyone's hitting it for the same `popular-routes` listing.
+> **The scenario.** The travel app is growing fast. A free-tier scraper is back at it - same client, ~50 requests/second. Meanwhile, your `flights` upstream is slow because everyone's hitting it for the same `popular-routes` listing.
 >
 > In the next ~60 minutes you'll add two plugins that fix both: **rate-limiting** (cut the scraper down to size, fairly per Consumer) and **proxy-cache** (serve repeat requests from Kong's memory, never bothering the upstream).
 
@@ -29,7 +29,7 @@ You finished M03. You have a working Konnect CP, a `flights-svc` Service + `flig
 
 | Concept | What it is | Why it matters today |
 |---|---|---|
-| **Rate-limit window** | How many requests are allowed in a given interval (`60/minute`, `1000/hour`) | Different Consumers should get different limits — paid tier vs free, internal vs external |
+| **Rate-limit window** | How many requests are allowed in a given interval (`60/minute`, `1000/hour`) | Different Consumers should get different limits - paid tier vs free, internal vs external |
 | **Rate-limit identifier** | What Kong uses to count: `consumer`, `credential`, `ip`, `header`, `path` | "Limit per IP" and "limit per Consumer" produce very different bills |
 | **Cache key** | The hash of method + path + (optional) headers/query that determines a cache hit | Two requests with the same key share one cached response. Get this wrong and you serve user A's data to user B. |
 
@@ -64,16 +64,16 @@ Client  ─▶  rate-limiting  ─▶  proxy-cache  ─▶  Service  ─▶  Ups
 
 | Symptom | Likely cause |
 |---|---|
-| Rate-limit headers don't appear in responses | The plugin isn't attached at the scope you think — check Konnect → Plugins → filter by Service/Route. |
-| Limits seem off across multiple Kong nodes | You're using `strategy: local` — limits are per-node. Switch to `cluster` (DB) or `redis` (Konnect Enterprise). |
+| Rate-limit headers don't appear in responses | The plugin isn't attached at the scope you think - check Konnect → Plugins → filter by Service/Route. |
+| Limits seem off across multiple Kong nodes | You're using `strategy: local` - limits are per-node. Switch to `cluster` (DB) or `redis` (Konnect Enterprise). |
 | `proxy-cache` serves stale data to authenticated users | Cache key doesn't include the auth header / Consumer ID. Add `cache_by_headers` or set `cache_ttl` low. |
 | Cache HITs but latency is still 200ms | You're measuring TCP+TLS setup, not just the response. Use HTTP/2 keep-alive or repeat the loop several times. |
-| Suddenly every request is a MISS | Upstream is sending `Cache-Control: no-store` — `proxy-cache` respects upstream cache directives by default. |
+| Suddenly every request is a MISS | Upstream is sending `Cache-Control: no-store` - `proxy-cache` respects upstream cache directives by default. |
 
 ## What's next
 
-**[Module 05 — Transformations](/module-05-transformations/)** rewrites requests and responses in flight — inject headers, rename query params, strip sensitive fields. After that comes M06 (Observability) and M07 (Enterprise & Advanced — JWT, HMAC, ACL groups, OIDC, OPA, Datakit, RBAC).
+**[Module 05 - Transformations](/module-05-transformations/)** rewrites requests and responses in flight - inject headers, rename query params, strip sensitive fields. After that comes M06 (Observability) and M07 (Enterprise & Advanced - JWT, HMAC, ACL groups, OIDC, OPA, Datakit, RBAC).
 
 ---
 
-*Previous: [Module 03 — Easy Wins](/module-03-authentication/) · Next: [Module 05 — Transformations →](/module-05-transformations/)*
+*Previous: [Module 03 - Easy Wins](/module-03-authentication/) · Next: [Module 05 - Transformations →](/module-05-transformations/)*

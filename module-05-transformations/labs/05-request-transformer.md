@@ -1,4 +1,4 @@
-# Lab 05-A — Request Transformer
+# Lab 05-A - Request Transformer
 
 > **Goal.** In ~30 minutes you'll attach `request-transformer-advanced` to `flights-route` and use all five operations (`add`, `remove`, `replace`, `rename`, `append`). You'll also use **template variables** to inject per-Consumer values without writing one plugin per Consumer.
 
@@ -12,7 +12,7 @@ echo "Token: ${KONNECT_TOKEN:0:8}…  CP: $KONNECT_CP_NAME  Proxy: $KONNECT_PROX
 
 ---
 
-## Step 1 — Rebuild the baseline (3 min)
+## Step 1 - Rebuild the baseline (3 min)
 
 ```yaml [kong.yaml]
 _format_version: '3.0'
@@ -54,7 +54,7 @@ deck gateway sync kong.yaml \
 
 ---
 
-## Step 2 — Add a static header (5 min)
+## Step 2 - Add a static header (5 min)
 
 Inject `X-API-Version: v3` into every outbound request.
 
@@ -83,20 +83,20 @@ Expected:
 { "X-Api-Version": "v3", "X-Tenant-Type": "travel" }
 ```
 
-🎯 Both headers reached httpbin. They were not on the original request — Kong added them.
+🎯 Both headers reached httpbin. They were not on the original request - Kong added them.
 
 ::: tip `add` vs `replace`
-- **`add`** — only sets the header if the request didn't already have it.
-- **`replace`** — overwrites whatever was there.
+- **`add`** - only sets the header if the request didn't already have it.
+- **`replace`** - overwrites whatever was there.
 
 Subtle but matters: with `add`, a malicious client could send `X-API-Version: v0` and bypass your value. Use `replace` for headers your upstream **must** trust.
 :::
 
 ---
 
-## Step 3 — Use a template variable for per-Consumer values (7 min) 🎯
+## Step 3 - Use a template variable for per-Consumer values (7 min) 🎯
 
-`X-Tenant-Id: <consumer.custom_id>` — the value differs per Consumer. Without templates you'd need one plugin per Consumer. With templates, one plugin handles them all.
+`X-Tenant-Id: <consumer.custom_id>` - the value differs per Consumer. Without templates you'd need one plugin per Consumer. With templates, one plugin handles them all.
 
 ```yaml [Update the plugin's add.headers]
 - name: request-transformer-advanced
@@ -136,20 +136,20 @@ Expected:
 🎯 Same plugin, different values per Consumer. The template runs **after** `key-auth` identifies the Consumer.
 
 ::: info Template variables available
-- `$(consumer.username)`, `$(consumer.custom_id)`, `$(consumer.id)` — after auth
-- `$(headers.x-custom-header)` — any request header
-- `$(query_string.foo)` — any query param
-- `$(uri_captures.foo)` — regex capture groups from the matched route
-- `$(route.name)`, `$(service.name)` — current entity names
+- `$(consumer.username)`, `$(consumer.custom_id)`, `$(consumer.id)` - after auth
+- `$(headers.x-custom-header)` - any request header
+- `$(query_string.foo)` - any query param
+- `$(uri_captures.foo)` - regex capture groups from the matched route
+- `$(route.name)`, `$(service.name)` - current entity names
 
-Variables that don't resolve come back as empty strings — silently. Always test with curl before shipping.
+Variables that don't resolve come back as empty strings - silently. Always test with curl before shipping.
 :::
 
 ---
 
-## Step 4 — Rename query params for a v2 → v3 API migration (7 min) 🎯
+## Step 4 - Rename query params for a v2 → v3 API migration (7 min) 🎯
 
-Old clients send `?page=2&size=20`. New API expects `?offset=2&limit=20`. You don't want to break old clients — Kong can translate transparently.
+Old clients send `?page=2&size=20`. New API expects `?offset=2&limit=20`. You don't want to break old clients - Kong can translate transparently.
 
 ```yaml [Add rename to the plugin]
 - name: request-transformer-advanced
@@ -178,12 +178,12 @@ Expected:
 🎯 Old client URL, new API contract. Upstream never saw the old names.
 
 ::: tip `rename` is `*-advanced` only
-The basic `request-transformer` plugin doesn't have `rename` — you'd have to chain `add` + `remove`, which is error-prone. Use `-advanced`.
+The basic `request-transformer` plugin doesn't have `rename` - you'd have to chain `add` + `remove`, which is error-prone. Use `-advanced`.
 :::
 
 ---
 
-## Step 5 — Strip a sensitive query param (3 min)
+## Step 5 - Strip a sensitive query param (3 min)
 
 Frontends sometimes ship `?debug=true` in dev. You don't want that flag reaching production upstreams.
 
@@ -218,7 +218,7 @@ null                            ← X-Internal-Debug stripped
 
 ---
 
-## Step 6 — Replace a header (3 min)
+## Step 6 - Replace a header (3 min)
 
 Sometimes the *client* sets a header you want to **force** to a different value. (Your CDN sets `X-Forwarded-For` but you want Kong's view to win.)
 
@@ -263,9 +263,9 @@ For headers you must trust, list under **both** `add` and `replace`. Belt and su
 
 ---
 
-## Step 7 — Append (allow multiple values) (2 min)
+## Step 7 - Append (allow multiple values) (2 min)
 
-`append` adds a value *next to* any existing one — useful for headers that legitimately support multiple values.
+`append` adds a value *next to* any existing one - useful for headers that legitimately support multiple values.
 
 ```yaml
 append:
@@ -283,7 +283,7 @@ curl -s $KONNECT_PROXY_URL/flights/anything \
 # "1.0 my-proxy, 1.1 kong-gateway"
 ```
 
-Both values are present — that's `append`.
+Both values are present - that's `append`.
 
 ---
 
@@ -310,4 +310,4 @@ Each works on **headers**, **querystring**, and **body** (where applicable). Tem
 
 ---
 
-**Next:** [Lab 05-B — Response Transformer →](./05-response-transformer)
+**Next:** [Lab 05-B - Response Transformer →](./05-response-transformer)
