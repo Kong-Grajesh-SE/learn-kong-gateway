@@ -122,25 +122,25 @@ M01-M02 introduce zero plugins - just routing. M03 gives you four "easy wins" (T
 Pick the path that matches you:
 
 <div class="kong-paths">
-  <a class="kong-path" href="/module-01-orientation/">
+  <a class="kong-path" href="/learn-kong-gateway/module-01-orientation/">
     <div class="kong-path-emoji">🌱</div>
     <div class="kong-path-title">New to Kong</div>
     <div class="kong-path-body">Start at <strong>Module 01</strong>. You'll have a working gateway in 60 minutes. The first three modules assume only basic HTTP knowledge.</div>
     <div class="kong-path-cta">Start at M01 →</div>
   </a>
-  <a class="kong-path" href="/module-04-traffic-control/">
+  <a class="kong-path" href="/learn-kong-gateway/module-04-traffic-control/">
     <div class="kong-path-emoji">⚡</div>
     <div class="kong-path-title">Know Kong, want the meat</div>
     <div class="kong-path-body">Skim <strong>M01–M03</strong> for the new template, then drop into <strong>M04</strong> for rate-limiting + caching, and <strong>M07</strong> for advanced auth + policy.</div>
     <div class="kong-path-cta">Jump to M04 →</div>
   </a>
-  <a class="kong-path" href="/module-08-capstone/">
+  <a class="kong-path" href="/learn-kong-gateway/module-08-capstone/">
     <div class="kong-path-emoji">🏁</div>
     <div class="kong-path-title">Want to prove you can build it</div>
     <div class="kong-path-body">Try the <strong>Capstone</strong> first. Read the brief, take the 15-step acceptance test, and let the failures tell you which modules to revisit.</div>
     <div class="kong-path-cta">Take M08 →</div>
   </a>
-  <a class="kong-path" href="/plugin-reference">
+  <a class="kong-path" href="/learn-kong-gateway/plugin-reference">
     <div class="kong-path-emoji">🧩</div>
     <div class="kong-path-title">Just need a plugin config</div>
     <div class="kong-path-body">The <strong>Plugin Reference</strong> has condensed configs for every plugin in the bootcamp - searchable, with a link back to the lab that introduces it.</div>
