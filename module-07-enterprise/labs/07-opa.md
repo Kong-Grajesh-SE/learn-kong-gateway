@@ -23,9 +23,8 @@ Kong sends the full request context (method, path, headers, query, consumer, ser
 ## Step 1 - Start OPA
 
 ```bash
-# Run OPA as a sidecar (Docker Compose)
+# Run OPA as a sidecar (add to docker-compose, or run standalone)
 docker run -d --name opa \
-  --network kong-net \
   -p 8181:8181 \
   openpolicyagent/opa:latest \
   run --server --addr :8181
@@ -34,6 +33,15 @@ docker run -d --name opa \
 curl -s http://localhost:8181/v1/health | jq .
 # { "status": "ok" }
 ```
+
+::: tip Docker network for hybrid mode
+If Kong runs as a Docker container (hybrid mode), OPA must be on the same network or use `host.docker.internal` as the host:
+```bash
+docker run -d --name opa --network kong-net \
+  -p 8181:8181 openpolicyagent/opa:latest run --server --addr :8181
+```
+When configuring the plugin, use `opa_host: opa` (Docker service name) instead of `localhost`.
+:::
 
 ## Step 2 - Write a Rego policy
 
@@ -75,32 +83,44 @@ curl -s http://localhost:8181/v1/policies | jq '.result[].id'
 # "myapp"
 ```
 
-## Step 4 - Apply the OPA plugin to a route
+## Step 4 - Apply the OPA plugin to `flights-route`
 
 ::: code-group
 
 ```yaml [decK YAML]
-routes:
-  - name: flights-list
-    plugins:
-      - name: opa
-        config:
-          opa_host: opa
-          opa_port: 8181
-          opa_path: /v1/data/myapp/authz/allow
-          include_consumer_in_opa_input: true
-          include_service_in_opa_input: true
-          include_route_in_opa_input: false
-          ssl_verify: false
+services:
+  - name: flights-svc
+    routes:
+      - name: flights-route
+        plugins:
+          - name: opa
+            tags: [module-07]
+            config:
+              opa_protocol: http
+              opa_host: host.docker.internal   # use Docker service name in hybrid mode
+              opa_port: 8181
+              opa_path: /v1/data/myapp/authz/allow
+              include_consumer_in_opa_input: true
+              include_service_in_opa_input:  true
+              ssl_verify: false
 ```
 
-```bash [Admin API]
-curl -s -X POST http://localhost:8001/routes/flights-list/plugins \
+```bash [Konnect Admin API]
+ROUTE_ID=$(curl -s \
+  -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://${KONNECT_REGION}.api.konghq.com/v2/control-planes/${KONNECT_CP_ID}/core-entities/routes/flights-route" \
+  | jq -r '.id')
+
+curl -s -X POST \
+  -H "Authorization: Bearer $KONNECT_TOKEN" \
   -H "Content-Type: application/json" \
+  "https://${KONNECT_REGION}.api.konghq.com/v2/control-planes/${KONNECT_CP_ID}/core-entities/routes/${ROUTE_ID}/plugins" \
   -d '{
     "name": "opa",
+    "tags": ["module-07"],
     "config": {
-      "opa_host": "opa",
+      "opa_protocol": "http",
+      "opa_host": "host.docker.internal",
       "opa_port": 8181,
       "opa_path": "/v1/data/myapp/authz/allow",
       "include_consumer_in_opa_input": true,
@@ -115,20 +135,20 @@ curl -s -X POST http://localhost:8001/routes/flights-list/plugins \
 ## Step 5 - Test allow and deny
 
 ```bash
-# Authenticated consumer (key-auth must also be enabled) → allowed
-curl -si http://localhost:8000/api/flights \
-  -H "X-API-Key: my-secret-api-key" | head -3
-# HTTP/1.1 200 OK
+# Authenticated consumer (key-auth also enabled) → allowed by Rego policy
+curl -si $KONNECT_PROXY_URL/flights/get \
+  -H "X-API-Key: pro-key-001" | head -3
+# HTTP/2 200
 
-# No credentials → denied
-curl -si http://localhost:8000/api/flights | head -3
-# HTTP/1.1 403 Forbidden
+# No credentials → denied by Rego (consumer.username is empty)
+curl -si $KONNECT_PROXY_URL/flights/get | head -3
+# HTTP/2 403
 ```
 
 ## Step 6 - Inspect the OPA input payload
 
 ```bash
-# Test what Kong will send to OPA (manual simulation)
+# Manually simulate what Kong sends to OPA
 curl -s -X POST http://localhost:8181/v1/data/myapp/authz/allow \
   -H "Content-Type: application/json" \
   -d '{
@@ -136,13 +156,13 @@ curl -s -X POST http://localhost:8181/v1/data/myapp/authz/allow \
       "request": {
         "http": {
           "method": "GET",
-          "path": "/api/flights",
+          "path": "/flights/get",
           "headers": {}
         }
       },
       "client_ip": "10.0.0.1",
-      "consumer": { "username": "travel-web-app" },
-      "service": { "name": "kong-air" }
+      "consumer": { "username": "pro-user-001" },
+      "service": { "name": "flights-svc" }
     }
   }' | jq .
 # { "result": true }
@@ -158,15 +178,14 @@ Kong sends the following JSON to OPA on every request:
     "request": {
       "http": {
         "method": "GET",
-        "path": "/api/flights",
-        "host": "localhost:8000",
+        "path": "/flights/get",
         "headers": { "authorization": "Bearer ..." },
-        "querystring": { "page": "1" }
+        "querystring": {}
       }
     },
     "client_ip": "10.0.0.5",
-    "consumer": { "id": "...", "username": "travel-web-app" },
-    "service": { "name": "kong-air" }
+    "consumer": { "id": "...", "username": "pro-user-001" },
+    "service": { "name": "flights-svc" }
   }
 }
 ```
@@ -187,4 +206,4 @@ Kong sends the following JSON to OPA on every request:
 
 ---
 
-*Previous: [Lab 07-C - Upstream OAuth](./07-upstream-oauth) · Next: [Lab 07-E - Datakit →](./07-datakit)*
+*Previous: [Lab 07-D - Upstream OAuth](./07-upstream-oauth) · Next: [Lab 07-F - Datakit →](./07-datakit)*

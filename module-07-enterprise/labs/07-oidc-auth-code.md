@@ -1,8 +1,8 @@
 # Lab 07-C - OIDC Authorization Code Flow
 
-> **Goal.** In ~45 minutes you'll implement the full OIDC Auth Code flow end-to-end: browser-based login via Keycloak (or Kong Identity), server-side token exchange, encrypted session cookie. The result is **enterprise SSO** for any API behind Kong.
+> **Goal.** In ~45 minutes you'll implement the full OIDC Auth Code flow end-to-end: browser-based login via Keycloak, server-side token exchange, and Bearer-token validation. The result is **enterprise SSO** for any API behind Kong.
 >
-> **Pre-reqs.** Keycloak running (or use Kong Identity on Konnect). The lab assumes Keycloak at `:8080` from a docker-compose; for Kong Identity, see [the Konnect Identity setup guide](https://docs.konghq.com/konnect/reference/auth/konnect-oauth-server/).
+> **Pre-reqs.** The `module-07-enterprise/keycloak/` docker-compose running locally. See the `README.md` in that folder.
 
 ::: warning Auth Code = browser flow, not API flow
 This is for **human users in browsers**. For machine-to-machine OAuth, use **Upstream OAuth** (07-D) instead. Confusing them is the #1 OIDC setup mistake.
@@ -11,135 +11,216 @@ This is for **human users in browsers**. For machine-to-machine OAuth, use **Ups
 ## Flow Recap
 
 ```
-1. Browser  → GET http://localhost:8000/api/users/profile
-2. Kong     → No session → 302 redirect → Keycloak login page
-3. User     → Authenticates at Keycloak (:8080)
-4. Keycloak → POST auth code → Kong callback (form_post)
-5. Kong     → Exchange code for tokens (server-side, inside Docker)
-6. Kong     → Store session, set encrypted session cookie
-7. Kong     → Redirect browser to original URL
-8. Browser  → GET /api/users/profile with session cookie
-9. Kong     → Validate session → call Keycloak userinfo
-10. Kong    → Inject X-Userinfo header → Express backend
-11. Express → Return user profile data
+1. Browser   → GET $KONNECT_PROXY_URL/flights/anything
+2. Kong      → No session / no token → 302 redirect → Keycloak login page
+3. User      → Authenticates at Keycloak (:8080)
+4. Keycloak  → Issues access_token (+ refresh + id tokens)
+5. Client    → Sends Bearer <access_token> to Kong
+6. Kong      → Validates token against Keycloak discovery endpoint
+7. Kong      → Injects X-Authenticated-Userid, X-Credential-Identifier upstream
+8. Upstream  → Receives request with identity headers
 ```
 
-## Step 1 - Prerequisites
+## Step 1 - Connect Kong to Keycloak
+
+Konnect's **serverless** data plane runs in Kong's cloud and cannot reach `localhost`. Choose the option that matches your setup, then continue with Step 2 using the resulting `$KEYCLOAK_BASE` value.
+
+::: details Option A — Hybrid mode (local Docker DP + local Keycloak) · *recommended for bootcamp*
+
+**When to use:** You started a local Kong data plane with `DEPLOY_MODE=hybrid` (the Docker Compose in the module-01 lab).
 
 ```bash
-# Start Keycloak with the workshop realm
-cd get-started-guide
-npm run keycloak:setup
+# 1. Start Keycloak
+cd module-07-enterprise/keycloak
+docker compose up -d
 
-# Connect Kong to Keycloak's Docker network
-KONG_ID=$(docker ps --filter "name=kong" --format "{{.ID}}" | head -1)
-docker network connect keycloak_default $KONG_ID
+# 2. Verify the realm is loaded (from your machine)
+curl -s http://localhost:8080/realms/kong-bootcamp/.well-known/openid-configuration \
+  | jq '.issuer'
+# "http://localhost:8080/realms/kong-bootcamp"
 
-# Test internal connectivity
-docker exec $KONG_ID wget -qO- \
-  http://kong-workshop-keycloak:8080/realms/workshop/.well-known/openid-configuration \
-  | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['issuer'])"
+# 3. Set environment variables for the rest of this lab
+export KEYCLOAK_BASE="http://localhost:8080"
+export KONNECT_PROXY_URL="http://localhost:8000"   # local DP port
 ```
 
-## Step 2 - Apply OIDC plugin
+The OIDC plugin `issuer` will be `http://localhost:8080/realms/kong-bootcamp`.  
+The local Kong DP container can reach Keycloak because both run on the same Docker host.
+:::
+
+::: details Option B — Public URL via ngrok (Konnect serverless or any cloud DP)
+
+**When to use:** Your proxy URL is a `*.kongcloud.dev` serverless gateway, or any Kong DP that is not on the same machine as Keycloak.
 
 ```bash
-curl -s -X POST http://localhost:8001/routes/users-profile/plugins \
+# 1. Start Keycloak
+cd module-07-enterprise/keycloak
+docker compose up -d
+
+# 2. Expose Keycloak publicly
+ngrok http 8080
+# → Forwarding: https://abc123.ngrok.io → localhost:8080
+#   Copy the https URL — you'll use it as KEYCLOAK_BASE.
+
+# 3. Verify the realm is reachable via the public URL
+KEYCLOAK_BASE="https://abc123.ngrok.io"   # ← replace with YOUR ngrok URL
+curl -s "${KEYCLOAK_BASE}/realms/kong-bootcamp/.well-known/openid-configuration" \
+  | jq '.authorization_endpoint'
+# "https://abc123.ngrok.io/realms/kong-bootcamp/protocol/openid-connect/auth"
+
+# 4. Export for the rest of this lab
+export KEYCLOAK_BASE
+```
+
+> **Note:** The `issuer` in Keycloak's discovery doc may still say `localhost:8080` — this is cosmetic.  
+> Kong uses the `issuer` value you supply, not the one Keycloak advertises.
+:::
+
+**Pre-configured clients in the `kong-bootcamp` realm:**
+
+| Client ID | Secret | Use |
+|---|---|---|
+| `kong` | `kong-bootcamp-client-secret-replace-in-prod` | OIDC Bearer validation (this lab) |
+| `kong-m2m` | `kong-m2m-client-secret-replace-in-prod` | Client Credentials — Lab 07-D |
+
+**Test users:**
+
+| Username | Password | Role |
+|---|---|---|
+| `alice` | `alice-password` | user |
+| `bob` | `bob-password` | admin |
+
+## Step 2 - Attach `openid-connect` plugin to `flights-route`
+
+::: code-group
+
+```yaml [decK YAML]
+services:
+  - name: flights-svc
+    routes:
+      - name: flights-route
+        plugins:
+          - name: openid-connect
+            tags: [module-07]
+            config:
+              issuer: "$KEYCLOAK_BASE/realms/kong-bootcamp"
+              client_id: ["kong"]
+              client_secret: ["kong-bootcamp-client-secret-replace-in-prod"]
+              auth_methods:
+                - password           # Resource Owner Password Grant (for curl testing)
+                - bearer             # Validate Bearer tokens
+                - client_credentials # M2M (optional)
+              scopes: ["openid", "profile", "email"]
+              login_action: deny     # Return 401, don't redirect (API mode)
+              bearer_token_param_type: ["header"]
+```
+
+```bash [Konnect Admin API]
+# Resolve the route ID first
+ROUTE_ID=$(curl -s \
+  -H "Authorization: Bearer $KONNECT_TOKEN" \
+  "https://${KONNECT_REGION}.api.konghq.com/v2/control-planes/${KONNECT_CP_ID}/core-entities/routes/flights-route" \
+  | jq -r '.id')
+
+curl -s -X POST \
+  -H "Authorization: Bearer $KONNECT_TOKEN" \
   -H "Content-Type: application/json" \
-  -d '{
-    "name": "openid-connect",
-    "config": {
-      "issuer": "http://kong-workshop-keycloak:8080/realms/workshop",
-      "client_id": ["kong-demo"],
-      "client_secret": ["kong-demo-secret"],
-      "scopes": ["openid", "profile", "email"],
-      "auth_methods": ["authorization_code", "session"],
-      "response_mode": "form_post",
-      "redirect_uri": ["http://localhost:8000/api/users/profile"],
-      "login_action": "redirect",
-      "logout_path": "/logout",
-      "logout_revoke": true,
-      "logout_revoke_access_token": true,
-      "session_secret": "change-this-in-prod-32-chars-min!",
-      "session_rolling_timeout": 1800,
-      "session_absolute_timeout": 86400,
-      "leeway": 5,
-      "userinfo_headers_claims": ["email", "name", "preferred_username"],
-      "upstream_headers_claims": ["email", "name"],
-      "upstream_headers_names": ["X-User-Email", "X-User-Name"]
+  "https://${KONNECT_REGION}.api.konghq.com/v2/control-planes/${KONNECT_CP_ID}/core-entities/routes/${ROUTE_ID}/plugins" \
+  -d "{
+    \"name\": \"openid-connect\",
+    \"tags\": [\"module-07\"],
+    \"config\": {
+      \"issuer\": \"$KEYCLOAK_BASE/realms/kong-bootcamp\",
+      \"client_id\": [\"kong\"],
+      \"client_secret\": [\"kong-bootcamp-client-secret-replace-in-prod\"],
+      \"auth_methods\": [\"password\", \"bearer\", \"client_credentials\"],
+      \"scopes\": [\"openid\", \"profile\", \"email\"],
+      \"login_action\": \"deny\",
+      \"bearer_token_param_type\": [\"header\"]
     }
-  }' | jq '{id, name}'
+  }" | jq '{id, name}'
 ```
 
-## Step 3 - Test the browser flow
+:::
+
+::: warning Serverless gateway + localhost Keycloak
+If you have not completed Step 1 Option B, a `*.kongcloud.dev` serverless gateway **cannot reach** `localhost:8080`. Go back and either switch to hybrid mode (Option A) or expose Keycloak via ngrok (Option B) before continuing.
+:::
+
+## Step 3 - Get a token via password grant 🎯
 
 ```bash
-# Without session → should redirect to Keycloak
-curl -siL http://localhost:8000/api/users/profile | grep -E "HTTP|Location"
+# Use the KEYCLOAK_BASE you set in Step 1
+CLIENT_SECRET="kong-bootcamp-client-secret-replace-in-prod"
+
+TOKEN=$(curl -fsS -X POST \
+  -d 'grant_type=password' \
+  -d 'client_id=kong' \
+  -d "client_secret=$CLIENT_SECRET" \
+  -d 'username=alice' \
+  -d 'password=alice-password' \
+  -d 'scope=openid profile email' \
+  "${KEYCLOAK_BASE}/realms/kong-bootcamp/protocol/openid-connect/token" | jq -r '.access_token')
+
+echo "Token length: ${#TOKEN} chars"
 ```
 
-In a browser:
-1. Open [http://localhost:8000/api/users/profile](http://localhost:8000/api/users/profile)
-2. Redirected to Keycloak → log in as `demo` / `demo123`
-3. After login → redirected back to profile endpoint
-4. Profile data returned with user's info
-
-## Step 4 - Inspect the session cookie
-
-Open browser DevTools → Application → Cookies → `localhost`:
-
-```
-Name:     session
-Value:    <encrypted JWT session>
-HttpOnly: ✅ (no JS access)
-Secure:   production only
-SameSite: Lax
-```
-
-## Step 5 - Decode the userinfo header
-
-The `X-Userinfo` header contains a base64-encoded JSON claims object:
+## Step 4 - Call the route with the Bearer token 🎯
 
 ```bash
-# Using the cookie from browser DevTools
-curl -s -H "Cookie: session=<your-cookie>" \
-  http://localhost:8000/api/users/profile | jq '.'
+curl -si $KONNECT_PROXY_URL/flights/anything \
+  -H "Authorization: Bearer $TOKEN" \
+  | head -3
+# HTTP/2 200
 
-# Decode the X-Userinfo header (if using httpbin)
-curl -s -H "Cookie: session=<your-cookie>" \
-  http://localhost:8000/demo/headers | \
-  jq -r '.headers["X-Userinfo"]' | \
-  base64 -d 2>/dev/null | python3 -m json.tool
+# Inspect upstream-injected identity headers
+curl -s $KONNECT_PROXY_URL/flights/anything \
+  -H "Authorization: Bearer $TOKEN" \
+  | jq '.headers | with_entries(select(.key | test("X-"; "i")))'
 ```
 
-## Step 6 - Logout
+Expected headers injected by `openid-connect`:
+
+```json
+{
+  "X-Authenticated-Userid": "alice",
+  "X-Credential-Identifier": "<sub claim UUID>"
+}
+```
+
+## Step 5 - Test failure modes 🧪
 
 ```bash
-# Trigger logout (clears session + revokes token at Keycloak)
-curl -si http://localhost:8000/logout | grep -E "HTTP|Location"
-# 302 → Keycloak RP-initiated logout
+# No token → 401 (login_action: deny)
+curl -si $KONNECT_PROXY_URL/flights/get | head -3
+# HTTP/2 401
+
+# Expired / tampered token
+curl -si $KONNECT_PROXY_URL/flights/get \
+  -H "Authorization: Bearer BAD_TOKEN_HERE" | head -3
+# HTTP/2 401
 ```
 
-## Step 7 - OIDC Config reference
+## Step 6 - OIDC Config Reference
 
 | Config | Value | Description |
 |---|---|---|
 | `issuer` | Keycloak realm URL | OIDC discovery endpoint base |
-| `auth_methods` | `authorization_code`, `session` | Allowed flow types |
-| `response_mode` | `form_post` | How auth code is returned (more secure than `query`) |
-| `session_secret` | 32+ char string | AES key for session cookie encryption |
-| `session_rolling_timeout` | `1800` (30 min) | Inactivity timeout |
-| `session_absolute_timeout` | `86400` (24h) | Max session duration regardless of activity |
-| `logout_revoke` | `true` | Revoke refresh token at IdP on logout |
-| `leeway` | `5` | Clock skew tolerance (seconds) |
+| `auth_methods` | `bearer`, `password`, `authorization_code` | Allowed flow types |
+| `login_action` | `deny` (API) / `redirect` (browser) | What to do when unauthenticated |
+| `client_id` | `kong` | OAuth client registered in Keycloak |
+| `client_secret` | realm client secret | Must match Keycloak client config |
+| `scopes` | `openid profile email` | Claims to request |
+| `bearer_token_param_type` | `header` | Where to look for Bearer token |
 
-## Keycloak Test Users
-
-| Username | Password | Role | Use Case |
-|---|---|---|---|
-| `demo` | `demo123` | Standard user | Normal user flow |
-| `admin` | `admin123` | Admin | RBAC / admin features |
+::: tip Konnect-native IdP (no Keycloak needed)
+For production, use [Kong Identity](https://docs.konghq.com/konnect/reference/auth/konnect-oauth-server/) — Konnect's built-in OIDC provider. Replace the `issuer` with your Konnect org's OIDC endpoint.
+:::
 
 ---
 
-*Next: [Lab 07-B - RBAC & Teams →](./07-rbac-teams)*
+We continue with the same `flights-svc` in 07-D. **Don't clean up yet.**
+
+---
+
+**Next:** [Lab 07-D - Upstream OAuth (M2M) →](./07-upstream-oauth)

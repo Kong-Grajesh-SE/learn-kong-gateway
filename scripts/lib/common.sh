@@ -477,14 +477,17 @@ wait_for_route() {
 }
 
 wait_for_http_status() {
-  # wait_for_http_status <url> <expected_code> [timeout_seconds] [-- extra_curl_args...]
+  # wait_for_http_status <url> <expected_code> [timeout_seconds] [extra_curl_args...]
   # Polls until the URL returns the expected HTTP status code.
   # Useful for confirming a plugin has propagated (e.g. wait for 401 after attaching key-auth).
   local url=$1 expected=$2 timeout=${3:-45} interval=3 elapsed=0 http
   shift 3 || shift $#
   info "Waiting up to ${timeout}s for HTTP ${expected} from the DP…"
   while (( elapsed < timeout )); do
-    http=$(curl -sS -o /dev/null -w '%{http_code}' "$@" "$url" || echo "000")
+    # -o /tmp/_verify_wait.txt keeps body out of stdout so $http stays clean.
+    # 2>/dev/null suppresses curl's own error messages (connection refused, etc.)
+    # On curl failure we fall back to "000" so the comparison never matches prematurely.
+    http=$(curl -s -o /tmp/_verify_wait.txt -w '%{http_code}' "$@" "$url" 2>/dev/null) || http="000"
     if [[ "$http" == "$expected" ]]; then
       ok "Plugin active: HTTP ${expected} after ${elapsed}s"
       return 0

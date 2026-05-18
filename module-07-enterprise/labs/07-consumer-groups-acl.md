@@ -98,11 +98,14 @@ Each Consumer joins exactly one tier:
 ```yaml [decK - append `groups:` to each Consumer]
 consumers:
   - username: free-user-001
-    groups: [free-tier]
+    groups:
+      - name: free-tier
   - username: pro-user-001
-    groups: [pro-tier]
+    groups:
+      - name: pro-tier
   - username: enterprise-user-001
-    groups: [enterprise-tier]
+    groups:
+      - name: enterprise-tier
 ```
 
 Or via Admin API:

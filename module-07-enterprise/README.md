@@ -63,6 +63,62 @@ After completing the labs you take, answer these:
 | Datakit pipeline fails halfway | One of the upstream calls in your pipeline returned non-2xx. Datakit doesn't retry by default - add `on_error` handling per step. |
 | RBAC role doesn't take effect | Workspace context - the user has the role *in a workspace they're not viewing*. Kong Manager URL must include the workspace slug. |
 
+## Verify your work
+
+```bash
+# From the repo root
+./scripts/verify-module-07.sh [serverless|hybrid]
+
+# Skip Konnect portal review pauses (useful for CI / re-runs)
+SKIP_REVIEW=1 ./scripts/verify-module-07.sh
+```
+
+The script walks all seven labs in sequence against a live Konnect gateway. Each lab:
+
+1. Creates the required plugin on `flights-route`
+2. Runs HTTP assertions (status codes, response headers, token validation)
+3. **Pauses** so you can inspect the plugin config in the Konnect portal
+4. Removes the plugin after you press Enter, leaving the route clean for the next lab
+
+### What each lab verifies
+
+| Lab | Runs | What the script tests |
+|---|---|---|
+| **07-A** JWT + HMAC | ✅ Always | JWT plugin with `key_claim_name=iss`; HS256 token minted via `openssl`; Consumer mapped via `X-Consumer-Username`; tampered token → 401; missing → 401. HMAC `hmac-auth` with `date+request-line+content-md5`; correctly signed POST → 200; bad signature → 401. |
+| **07-B** Consumer Groups | ✅ Always | `key-auth` + `acl`: `free-tier` → 403, `pro`/`enterprise` → 200. `rate-limiting-advanced` per group (10/100/1000 rpm); gracefully skipped with a warning if the Enterprise plugin isn't available on your CP tier. |
+| **07-C** OIDC Auth Code | ⚙️ Needs Keycloak | Interactive menu: **A** hybrid (localhost:8080) / **B** ngrok public URL / **S** skip. Verifies realm discovery; `openid-connect` plugin; `alice` password-grant token → 200; unauthenticated → 401. |
+| **07-D** Upstream OAuth | ⚙️ Needs Keycloak | `kong-m2m` client-credentials token verified directly; `upstream-oauth` plugin attached; upstream receives `Authorization: Bearer <token>` injected by Kong. |
+| **07-E** OPA | ⚙️ Needs OPA | Prompts for `OPA_URL` (or press Enter to skip). `opa` plugin attached with consumer + service context; route called; HTTP status logged (outcome depends on your Rego policy). |
+| **07-F** Datakit | ⚡ Config-only | Attaches a 1-node pipeline; gracefully skipped with a warning if the plugin isn't available on your CP tier. |
+| **07-G** RBAC | ℹ️ Informational | Self-hosted Kong Manager only. Script prints guidance referencing `cloud.konghq.com → Organization → Teams` and exits. |
+
+### Keycloak for Labs 07-C and 07-D
+
+**Option A — hybrid mode** (local Docker DP, Keycloak on the same host):
+```bash
+cd module-07-enterprise/keycloak && docker compose up -d
+# Then select A at the script's interactive menu
+```
+
+**Option B — serverless mode** (Keycloak exposed via ngrok):
+```bash
+./scripts/setup-keycloak.sh ngrok   # starts Keycloak, opens tunnel, prints public URL
+# Then select B at the script's interactive menu and paste the URL
+```
+
+Pre-built users: `alice` / `alice-password` · `bob-admin` / `bob-password`  
+Clients: `kong` (password + auth-code) · `kong-m2m` (client_credentials)
+
+### Environment variables
+
+| Variable | Purpose |
+|---|---|
+| `KEYCLOAK_BASE` | Pre-set to skip the interactive 07-C/D menu (e.g. `http://localhost:8080`) |
+| `OPA_URL` | Pre-set to skip the 07-E prompt (e.g. `http://host.docker.internal:8181/v1/data/myapp/authz/allow`) |
+| `SKIP_REVIEW=1` | Bypass all `pause_for_review` prompts (useful in CI or on re-runs) |
+
+---
+
 ## What's next
 
 If you've completed M01–M07 - **you've covered every plugin a typical Kong deployment uses**. The final step is putting it all together: **[Module 08 - Capstone →](/module-08-capstone/)** is one ~3-hour lab where you design and build the full production gateway with 11+ plugins working together, then prove it works with a 15-step acceptance test.

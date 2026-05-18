@@ -106,7 +106,7 @@ KONNECT_PROXY_URL=https://abc.kongcloud.dev \
 | [verify-module-04.sh](verify-module-04.sh) | M04 - Traffic & Resilience | 3 per-Consumer rate-limit instances (`X-RateLimit-Limit-Minute`), 429 + `Retry-After`, proxy-cache (`X-Cache-Status: Miss → Hit`, POST → Bypass) |
 | [verify-module-05.sh](verify-module-05.sh) | M05 - Transformations | request-transformer-advanced: add/replace/rename/remove/append + `$(consumer.custom_id)` template. response-transformer-advanced: add `_meta.version`, strip internal fields, conditional on `2XX` |
 | [verify-module-06.sh](verify-module-06.sh) | M06 - Observability | http-log (with redaction), prometheus enable + Konnect Analytics check, opentelemetry (`traceparent` forwarding + trace continuation) |
-| [verify-module-07.sh](verify-module-07.sh) | M07 - Enterprise & Advanced | JWT (HS256 mint + verify + tamper), HMAC (signed POST), Consumer Groups + ACL (3-tier access), OIDC Auth Code (Keycloak), Upstream OAuth (M2M), OPA, Datakit, RBAC (informational) |
+| [verify-module-07.sh](verify-module-07.sh) | M07 - Enterprise & Advanced | **07-A** JWT: attach plugin, mint HS256 token (`iss=partner-issuer`), verify `X-Consumer-Username`, tampered token → 401, missing → 401. HMAC: signed POST (`date`+`request-line`+`content-md5`), bad sig → 401. **07-B** 3-tier Consumer Groups + ACL: `free-tier` → 403, `pro`/`enterprise` → 200. `rate-limiting-advanced` per group (10/100/1000 rpm; graceful skip if Enterprise plugin unavailable). **07-C** OIDC via Keycloak (interactive: A=hybrid / B=ngrok / S=skip): realm discovery, `openid-connect` plugin, Bearer → 200, no token → 401. **07-D** Upstream OAuth M2M (same Keycloak): `kong-m2m` client-credentials token, `upstream-oauth` plugin, upstream receives `Authorization: Bearer`. **07-E** OPA (prompt for `OPA_URL` or skip): `opa` plugin attached, route called, outcome logged. **07-F** Datakit config-only attach (graceful skip). **07-G** RBAC informational (self-hosted only). |
 | [verify-module-08.sh](verify-module-08.sh) | M08 - Capstone | The 15-step acceptance test from the Capstone lab. Two modes: `apply` (build reference solution first), `test` (grade your own config) |
 
 ## Mode flags
@@ -218,10 +218,12 @@ Some sub-sections need external infrastructure. The scripts prompt for endpoints
 |---|---|---|
 | `verify-module-06.sh` | http-log     | Webhook receiver - use [webhook.site](https://webhook.site) for free |
 | `verify-module-06.sh` | opentelemetry | OTLP HTTP endpoint - Jaeger (local), Honeycomb, Grafana Cloud Traces |
-| `verify-module-07.sh` | OIDC (07-C) + Upstream OAuth (07-D) | **Keycloak** - `cd module-07-enterprise/keycloak && docker compose up -d`, then `KEYCLOAK_BASE=http://localhost:8080` |
+| `verify-module-07.sh` | OIDC (07-C) + Upstream OAuth (07-D) | **Keycloak** — Option A (hybrid): `cd module-07-enterprise/keycloak && docker compose up -d`, then `KEYCLOAK_BASE=http://localhost:8080`. Option B (serverless/ngrok): `./scripts/setup-keycloak.sh ngrok`, paste the printed public URL at the interactive prompt. |
 | `verify-module-07.sh` | OPA (07-E)   | OPA server - run [OPA](https://www.openpolicyagent.org) and pass `OPA_URL` |
 
 ### Quick Keycloak setup
+
+**Option A — hybrid mode** (local Kong DP + Keycloak on the same Docker host):
 
 ```bash
 cd module-07-enterprise/keycloak
@@ -232,10 +234,30 @@ docker logs -f kc-bootcamp 2>&1 | grep -m1 'Imported realm'
 curl -s http://localhost:8080/realms/kong-bootcamp/.well-known/openid-configuration | jq '.issuer'
 
 cd -
-KEYCLOAK_BASE=http://localhost:8080 ./scripts/verify-module-07.sh serverless
+KEYCLOAK_BASE=http://localhost:8080 ./scripts/verify-module-07.sh hybrid
 ```
 
-See [module-07-enterprise/keycloak/README.md](../module-07-enterprise/keycloak/README.md) for full details on users, clients, and tokens.
+**Option B — serverless / ngrok** (Konnect serverless DP, Keycloak exposed via public tunnel):
+
+```bash
+# Start Keycloak + open ngrok tunnel + patch frontendUrl automatically
+./scripts/setup-keycloak.sh ngrok
+# Prints: KEYCLOAK_BASE=https://abc123.ngrok-free.app
+
+# Run verify — enter the printed ngrok URL when prompted (Option B)
+./scripts/verify-module-07.sh serverless
+```
+
+Alternatively, set `KEYCLOAK_BASE` before running so the interactive menu is skipped:
+
+```bash
+export KEYCLOAK_BASE=https://abc123.ngrok-free.app
+./scripts/verify-module-07.sh serverless
+```
+
+Pre-built test users: `alice` / `alice-password`, `bob-admin` / `bob-password`.  
+Clients: `kong` (password + auth-code grant), `kong-m2m` (client_credentials).  
+See [module-07-enterprise/keycloak/README.md](../module-07-enterprise/keycloak/README.md) for full details.
 
 ## Architecture (how the scripts share code)
 
