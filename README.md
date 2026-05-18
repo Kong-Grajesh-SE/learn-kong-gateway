@@ -17,7 +17,6 @@ A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structure
 | **Flow** | Foundations → Easy Wins → Traffic → Transform → Observe → Advanced → Capstone |
 | **Platform** | macOS · Linux · Docker (Konnect serverless works without Docker) |
 | **Audience** | Developers, DevOps, Platform teams, Enterprise architects |
-| **Demo repo** | [get-started-guide](https://github.com/Kong-Grajesh-SE/get-started-guide) |
 | **Plugin Reference** | [plugin-reference.md](./plugin-reference.md) - quick configs for every plugin |
 
 ## Bootcamp Modules
@@ -71,6 +70,7 @@ After completing the core modules, go deep with these specialist tracks:
 | **Developer Portal** | Publish APIs, OIDC SSO, self-service app registration, RBAC | [learn-kong-dev-portal ↗](https://kong-grajesh-se.github.io/learn-kong-dev-portal/) |
 | **APIOps** | GitOps with decK, GitHub Actions CI/CD, quality gates | [learn-kong-apiops-bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/) |
 | **Insomnia** | API design, testing, and debugging with Insomnia | [learn-insomnia ↗](https://kong-grajesh-se.github.io/learn-insomnia/) |
+| **Bring Your Own Agent** | Plug your own agent into Kong's MCP/AI infrastructure | [bring-your-own-agent ↗](https://kong-grajesh-se.github.io/bring-your-own-agent/) |
 
 ## Prerequisites
 
@@ -94,24 +94,6 @@ npm run docs:dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173) to view the bootcamp site.
-
-## Demo Repository
-
-All practical labs reference the [get-started-guide](https://github.com/Kong-Grajesh-SE/get-started-guide) repo which includes:
-
-| Component | Description |
-|---|---|
-| `server/` | Express.js backend with 27 API endpoints (flights, hotels, cars, weather, MCP tools) |
-| `deck/` | Full declarative Kong config (services, plugins, consumers) |
-| `docker-compose.yml` | Kong + PostgreSQL + Keycloak + Ollama stack |
-| `docs/` | Reference guides for each workshop topic |
-
-```bash
-# Start the demo backend
-cd get-started-guide
-npm install
-npm run dev:all     # starts frontend (:5173) + backend (:3001)
-```
 
 ## Repo Structure
 
