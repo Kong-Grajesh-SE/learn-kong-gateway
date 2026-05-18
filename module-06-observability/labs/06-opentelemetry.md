@@ -12,27 +12,17 @@ You need somewhere to send traces. Three options:
 
 ### Option A - Local Jaeger (hybrid Docker setup)
 
-If you're running hybrid mode, drop this into a docker-compose stack alongside the DP:
-
-```yaml
-# docker-compose.jaeger.yml
-services:
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - "16686:16686"     # Jaeger UI
-      - "4318:4318"       # OTLP/HTTP - Kong sends here
-      - "4317:4317"       # OTLP/gRPC
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
-```
+A ready-to-run stack lives in [`module-06-observability/jaeger/`](../jaeger/). It runs an **OpenTelemetry Collector** in front of **Jaeger all-in-one** so the Collector handles batching and back-pressure, and you can fan out to a cloud backend later without touching Kong's plugin config.
 
 ```bash
-docker compose -f docker-compose.jaeger.yml up -d
-open http://localhost:16686
+cd module-06-observability/jaeger
+docker compose up -d
+open http://localhost:16686     # Jaeger UI
 ```
 
-Set `OTLP_ENDPOINT=http://host.docker.internal:4318/v1/traces` (the DP container reaches your host via this DNS name).
+Set `OTLP_ENDPOINT=http://host.docker.internal:4318/v1/traces` — the DP container reaches ports published on your host via this DNS name.
+
+See [jaeger/README.md](../jaeger/README.md) for ports, verification commands, and how to add a cloud exporter.
 
 ### Option B - Free cloud OTLP collector (serverless setup)
 

@@ -1,0 +1,94 @@
+# yaml-language-server: $schema=
+# otel-collector-config.yaml
+#
+# OpenTelemetry Collector configuration for Lab 06-C.
+# (The yaml-language-server directive above disables the OTel SDK Declarative
+# Config schema that VS Code auto-detects from the filename. This file uses
+# the OTel Collector native config format, which has no published JSON schema.)
+#
+# Pipeline:
+#   OTLP receiver  →  memory_limiter + batch processors  →  Jaeger (OTLP gRPC)
+#                                                         →  debug logger
+#
+# To add a cloud backend (Honeycomb, Grafana Cloud Traces, Datadog):
+#   1. Add an exporter block below (see commented examples).
+#   2. Add it to the traces pipeline exporters list.
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+        # Allow any origin — acceptable for a local lab environment.
+        # Restrict to specific origins in production.
+        cors:
+          allowed_origins:
+            - "*"
+          max_age: 7200
+
+processors:
+  # memory_limiter must be the first processor.
+  # It drops data before the process OOMs on a sudden traffic burst.
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 75
+    spike_limit_percentage: 20
+
+  # Batch spans before exporting — fewer round-trips, lower CPU.
+  batch:
+    timeout: 1s
+    send_batch_size: 512
+    send_batch_max_size: 1024
+
+exporters:
+  # ── Primary: forward to local Jaeger via its internal OTLP gRPC port ─────
+  otlp/jaeger:
+    endpoint: jaeger:4317    # "jaeger" = the Docker Compose service name
+    tls:
+      insecure: true         # internal Docker network — no TLS needed
+
+  # ── Optional: Honeycomb ───────────────────────────────────────────────────
+  # Uncomment and set your API key in the environment or directly here.
+  #
+  # otlphttp/honeycomb:
+  #   endpoint: "https://api.honeycomb.io"
+  #   headers:
+  #     x-honeycomb-team: "${env:HONEYCOMB_API_KEY}"
+
+  # ── Optional: Grafana Cloud Traces (Tempo) ────────────────────────────────
+  # otlphttp/grafana:
+  #   endpoint: "https://<your-instance>.grafana.net/otlp"
+  #   headers:
+  #     authorization: "Basic ${env:GRAFANA_OTLP_TOKEN}"    # base64(user:apikey)
+
+  # ── Debug: print a one-line summary per span batch to stdout ─────────────
+  # Handy for confirming spans arrive: docker compose logs -f otelcol
+  debug:
+    verbosity: normal        # change to "detailed" to dump full span attributes
+
+extensions:
+  # Health check — Docker Compose or k8s liveness probes call :13133/
+  health_check:
+    endpoint: 0.0.0.0:13133
+
+  # pprof profiling endpoint — remove in production
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+service:
+  extensions: [health_check, pprof]
+
+  pipelines:
+    traces:
+      receivers:  [otlp]
+      processors: [memory_limiter, batch]
+      exporters:  [otlp/jaeger, debug]
+
+    # Accept metric OTLP payloads too (Kong can emit these in future versions).
+    # For now they are logged and dropped — add a Prometheus exporter to keep them.
+    metrics:
+      receivers:  [otlp]
+      processors: [memory_limiter, batch]
+      exporters:  [debug]

@@ -123,42 +123,48 @@ fi
 # ──────────────────────────────────────────────────────────────────────────────
 # Lab 06-B - Prometheus
 # ──────────────────────────────────────────────────────────────────────────────
-hdr "Lab 06-B - Prometheus"
+hdr "Lab 06-B - Prometheus   [mode: $DEPLOY_MODE]"
 
-step "1. Enable prometheus plugin globally (no per_consumer)"
-api_write POST "/plugins" "$(jq -n '{
-  name: "prometheus",
-  tags: ["module-06"],
-  config: {
-    status_code_metrics: true,
-    latency_metrics: true,
-    bandwidth_metrics: true,
-    upstream_health_metrics: true,
-    per_consumer: false
-  }
-}')" >/dev/null
-ok "prometheus plugin enabled globally"
+if [[ "$DEPLOY_MODE" == "serverless" ]]; then
+  # The Prometheus plugin is not available on Konnect Serverless (cloud-gateways).
+  # Serverless DPs run on managed infrastructure — there is no DP status port (8100)
+  # that an external Prometheus server can scrape.  Metrics are shipped automatically
+  # to Konnect Analytics; no plugin install is required or possible.
+  info "Prometheus plugin is not supported in serverless mode."
+  info "Konnect Serverless exports metrics to Konnect Analytics automatically — no plugin needed."
+  pause_verify "Konnect UI → Analytics → confirm the baseline requests (generated above) appear in the last 5 minutes."
+else
+  step "1. Enable prometheus plugin globally (no per_consumer)"
+  api_write POST "/plugins" "$(jq -n '{
+    name: "prometheus",
+    tags: ["module-06"],
+    config: {
+      status_code_metrics: true,
+      latency_metrics: true,
+      bandwidth_metrics: true,
+      upstream_health_metrics: true,
+      per_consumer: false
+    }
+  }')" >/dev/null || { err "Failed to enable prometheus plugin"; exit 1; }
+  ok "prometheus plugin enabled globally"
 
-step "2. Send 30 requests to populate metrics"
-for _ in {1..30}; do
-  curl -s -o /dev/null "${KONNECT_PROXY_URL}/flights/get" -H 'X-API-Key: web-app-secret-key-001'
-done
-# Mix in some 4xx/5xx
-for code in 401 403 404 500 502 503; do
-  curl -s -o /dev/null "${KONNECT_PROXY_URL}/flights/status/$code" -H 'X-API-Key: web-app-secret-key-001'
-done
-ok "30 OKs + 6 errors sent"
+  step "2. Send 30 requests to populate metrics"
+  for _ in {1..30}; do
+    curl -s -o /dev/null "${KONNECT_PROXY_URL}/flights/get" -H 'X-API-Key: web-app-secret-key-001'
+  done
+  # Mix in some 4xx/5xx
+  for code in 401 403 404 500 502 503; do
+    curl -s -o /dev/null "${KONNECT_PROXY_URL}/flights/status/$code" -H 'X-API-Key: web-app-secret-key-001'
+  done
+  ok "30 OKs + 6 errors sent"
 
-if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
-  step "3. Hybrid: scrape /metrics from the DP container (port 8100)"
-  if docker exec "$KONG_DP_CONTAINER" sh -c 'curl -s http://localhost:8100/metrics | grep "^kong_http_requests_total" | head -5' 2>/dev/null; then
+  step "3. Scrape /metrics from the DP container (port 8100)"
+  if docker exec "$KONG_DP_CONTAINER" sh -c \
+       'curl -s http://localhost:8100/metrics | grep "^kong_http_requests_total" | head -5' 2>/dev/null; then
     ok "/metrics on the DP shows kong_http_requests_total"
   else
     warn "Could not scrape /metrics inside the DP container (port 8100 may not be exposed)."
   fi
-else
-  info "Serverless mode: /metrics is not publicly exposed. Metrics flow into Konnect Analytics."
-  pause_verify "Konnect → Analytics → look at the last 5 minutes - confirm the 36 requests are visible, with a 4xx/5xx breakdown."
 fi
 
 # ──────────────────────────────────────────────────────────────────────────────
