@@ -207,3 +207,8 @@ Kong sends the following JSON to OPA on every request:
 ---
 
 *Previous: [Lab 07-D - Upstream OAuth](./07-upstream-oauth) · Next: [Lab 07-F - Datakit →](./07-datakit)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

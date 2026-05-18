@@ -366,8 +366,8 @@ CORR=$(curl -sI $PROXY/v3/flights/get -H "X-API-Key: $FREE_KEY" | awk '/^x-corre
 BODY=$(curl -s $PROXY/v3/flights/get -H "X-API-Key: $FREE_KEY")
 HAS_DEBUG=$(echo "$BODY" | jq 'has("_debug")')
 check "12. _debug stripped"      "false" "$HAS_DEBUG"
-# 13. Response body has _meta.version=v3
-META_VER=$(echo "$BODY" | jq -r '._meta.version // "absent"')
+# 13. Response body has _meta.version=v3 (flat key with literal dot)
+META_VER=$(echo "$BODY" | jq -r '.["_meta.version"] // "absent"')
 check "13. _meta.version = v3"   "v3"    "$META_VER"
 # 14. Hot endpoint cached (X-Cache-Status: Hit on second request)
 curl -s -o /dev/null $PROXY/v3/flights/popular -H "X-API-Key: $INT_KEY" # warm
@@ -420,3 +420,8 @@ Thanks for working through the bootcamp.
 ---
 
 *Previous: [Module 07 - Enterprise & Advanced](/module-07-enterprise/) · Home: [Bootcamp index](/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

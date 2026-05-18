@@ -1,4 +1,4 @@
-# Local OTLP trace stack — Lab 06-C (OpenTelemetry)
+# Local OTLP trace stack - Lab 06-C (OpenTelemetry)
 
 Two-container stack: **OpenTelemetry Collector** in front of **Jaeger all-in-one**.
 
@@ -44,14 +44,14 @@ Use `host.docker.internal` so the Kong DP container can reach ports published on
     batch_flush_delay: 3
 ```
 
-Or with the Admin API / decK sync — see [06-opentelemetry.md](../labs/06-opentelemetry.md).
+Or with the Admin API / decK sync - see [06-opentelemetry.md](../labs/06-opentelemetry.md).
 
 ---
 
 ## Verify spans are arriving
 
 ```bash
-# Watch the collector log — prints one summary line per exported batch:
+# Watch the collector log - prints one summary line per exported batch:
 docker compose logs -f otelcol
 
 # Confirm Jaeger has received at least one service:
@@ -96,18 +96,23 @@ docker compose up -d
 
 3. Add the exporter name to the `traces.exporters` list so spans go to both Jaeger and the cloud.
 
-No changes to Kong's plugin configuration are needed — the collector fans out.
+No changes to Kong's plugin configuration are needed - the collector fans out.
 
 ---
 
 ## Stop and wipe
 
 ```bash
-# Stop containers (traces lost — in-memory only):
+# Stop containers (traces lost - in-memory only):
 docker compose down
 
 # Stop and remove the named network too:
 docker compose down --remove-orphans
 ```
 
-Jaeger stores traces in memory only. All history is lost on restart — this is intentional for a lab environment. For persistent storage see [Jaeger docs → Storage Backends](https://www.jaegertracing.io/docs/latest/deployment/#storage-backends).
+Jaeger stores traces in memory only. All history is lost on restart - this is intentional for a lab environment. For persistent storage see [Jaeger docs → Storage Backends](https://www.jaegertracing.io/docs/latest/deployment/#storage-backends).
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

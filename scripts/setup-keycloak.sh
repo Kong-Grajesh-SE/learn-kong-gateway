@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup-keycloak.sh — Start the bootcamp Keycloak instance and verify it's ready.
+# setup-keycloak.sh - Start the bootcamp Keycloak instance and verify it's ready.
 #
 # What it does:
 #   1. Starts (or restarts) the kc-bootcamp container via Docker Compose
@@ -19,7 +19,7 @@
 #   KC_PORT        Keycloak host port       (default: 8080)
 #   KC_ADMIN       Keycloak admin username  (default: admin)
 #   KC_PASS        Keycloak admin password  (default: admin)
-#   NGROK_AUTHTOKEN  ngrok auth token — required only for the ngrok command
+#   NGROK_AUTHTOKEN  ngrok auth token - required only for the ngrok command
 #                    (or pre-configured via: ngrok config add-authtoken <token>)
 
 set -uo pipefail
@@ -116,7 +116,7 @@ case "$CMD" in
     ;;
 
   cleanup)
-    hdr "Cleanup — remove Keycloak container, volumes and image"
+    hdr "Cleanup - remove Keycloak container, volumes and image"
     warn "This will:"
     warn "  • Stop and remove the kc-bootcamp container"
     warn "  • Delete the embedded-DB volume (all realm data wiped)"
@@ -139,7 +139,7 @@ case "$CMD" in
     ;;
 
   ngrok)
-    ;;  # fall through — ngrok command starts KC first, then opens tunnel
+    ;;  # fall through - ngrok command starts KC first, then opens tunnel
 
   start)
     ;;  # fall through to startup sequence below
@@ -159,7 +159,7 @@ info "Realm:        ${KC_REALM}  |  Port: ${KC_PORT}"
 # Check if already running and healthy
 if docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kc-bootcamp$'; then
   if curl -sf "${ISSUER}/.well-known/openid-configuration" -o /dev/null 2>/dev/null; then
-    ok "kc-bootcamp is already running and healthy — nothing to do."
+    ok "kc-bootcamp is already running and healthy - nothing to do."
     echo
   else
     info "Container is running but realm not yet ready. Waiting…"
@@ -207,7 +207,7 @@ M2M_RESPONSE=$(curl -sf -X POST \
 if printf '%s' "$M2M_RESPONSE" | jq -e '.access_token' >/dev/null 2>&1; then
   ok "M2M client (kong-m2m) → token issued successfully"
 else
-  warn "M2M client grant failed — check realm-export.json import"
+  warn "M2M client grant failed - check realm-export.json import"
 fi
 
 # 4. Password grant for alice (Lab 07-C smoke test)
@@ -226,7 +226,7 @@ if printf '%s' "$ALICE_RESPONSE" | jq -e '.access_token' >/dev/null 2>&1; then
     | jq -r '.preferred_username // "unknown"' 2>/dev/null || echo "unknown")
   ok "User alice (kong client) → token issued  (preferred_username: ${ALICE_USER})"
 else
-  warn "Password grant for alice failed — check realm-export.json import"
+  warn "Password grant for alice failed - check realm-export.json import"
 fi
 
 # ── connection summary ────────────────────────────────────────────────────────
@@ -255,7 +255,7 @@ INFO
 
   if [[ -n "$public_url" ]]; then
     cat <<INFO
-  ${BOLD}ngrok public URL (Option B — Konnect serverless)${RST}
+  ${BOLD}ngrok public URL (Option B - Konnect serverless)${RST}
     Issuer for Kong plugin:  ${public_url}/realms/${KC_REALM}
     export KEYCLOAK_BASE=${public_url}
 
@@ -285,7 +285,7 @@ if [[ "$CMD" == "ngrok" ]]; then
 
   # ── 1. ensure keycloak is up ──────────────────────────────────────────────
   if ! docker ps --format '{{.Names}}' 2>/dev/null | grep -q '^kc-bootcamp$'; then
-    info "kc-bootcamp is not running — starting it first…"
+    info "kc-bootcamp is not running - starting it first…"
     docker compose -f "${KC_DIR}/docker-compose.yml" up -d || {
       err "docker compose up failed. Is Docker running?"
       exit 1
@@ -345,7 +345,7 @@ if [[ "$CMD" == "ngrok" ]]; then
     | jq -r '.access_token // empty') || true
 
   if [[ -z "$ADMIN_TOKEN" ]]; then
-    warn "Could not obtain Keycloak admin token — frontendUrl NOT updated."
+    warn "Could not obtain Keycloak admin token - frontendUrl NOT updated."
     warn "Kong's issuer validation may fail. Update manually in the admin UI:"
     warn "  Realm Settings → General → Frontend URL → ${NGROK_URL}"
   else
@@ -357,7 +357,7 @@ if [[ "$CMD" == "ngrok" ]]; then
     if [[ "$_patch_http" == "204" ]]; then
       ok "frontendUrl updated (HTTP 204)"
     else
-      warn "PATCH returned HTTP ${_patch_http} — frontendUrl may not be set."
+      warn "PATCH returned HTTP ${_patch_http} - frontendUrl may not be set."
     fi
   fi
 
@@ -368,11 +368,11 @@ if [[ "$CMD" == "ngrok" ]]; then
     ok "Discovery issuer matches ngrok URL ✓"
   else
     warn "Discovery issuer: '${_disc_issuer}' (expected '${NGROK_URL}/realms/${KC_REALM}')"
-    warn "Keycloak may still be propagating the frontendUrl change — wait a moment and re-check."
+    warn "Keycloak may still be propagating the frontendUrl change - wait a moment and re-check."
   fi
 
   print_summary "$NGROK_URL"
-  ok "ngrok setup complete. Tunnel PID=${NGROK_PID} — kill it with: kill ${NGROK_PID}"
+  ok "ngrok setup complete. Tunnel PID=${NGROK_PID} - kill it with: kill ${NGROK_PID}"
   info "Tail tunnel logs: tail -f /tmp/ngrok-kc.log"
   exit 0
 fi

@@ -236,3 +236,8 @@ curl -s http://localhost:8001/status | jq .database.reachable
 ---
 
 **Next step:** [🧭 Module 01 - Orientation & Setup →](/module-01-orientation/)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

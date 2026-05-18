@@ -5,10 +5,10 @@
 > **Pattern.** This is the **machine-to-machine** counterpart to Lab 07-C's browser flow. Tokens are issued to *Kong* on behalf of the API, not to the client.
 
 ::: warning Enterprise plugin
-`upstream-oauth` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.8 — we're on 3.14, so you're good.
+`upstream-oauth` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.8 - we're on 3.14, so you're good.
 :::
 
-::: tip OIDC vs Upstream OAuth — who is the token *for*?
+::: tip OIDC vs Upstream OAuth - who is the token *for*?
 - **OIDC (07-C)**: Token authenticates the **client** (a human user). Kong validates it; upstream reads `X-Authenticated-Userid`.
 - **Upstream OAuth (this lab)**: Token authenticates **Kong itself** to the *upstream API*. The client may not know OAuth is happening.
 
@@ -31,9 +31,9 @@ Upstream API receives valid token
 
 ## Step 1 - Connect Kong to Keycloak
 
-Same requirement as Lab 07-C: Kong's data plane must reach Keycloak's token endpoint. If you completed 07-C in this session, `$KEYCLOAK_BASE` and `$KONNECT_PROXY_URL` are already set — skip to Step 2.
+Same requirement as Lab 07-C: Kong's data plane must reach Keycloak's token endpoint. If you completed 07-C in this session, `$KEYCLOAK_BASE` and `$KONNECT_PROXY_URL` are already set - skip to Step 2.
 
-::: details Option A — Hybrid mode (local Docker DP + local Keycloak)
+::: details Option A - Hybrid mode (local Docker DP + local Keycloak)
 
 ```bash
 # Start Keycloak (if not already running from 07-C)
@@ -54,7 +54,7 @@ export KONNECT_PROXY_URL="http://localhost:8000"   # local DP port
 ```
 :::
 
-::: details Option B — Public URL via ngrok (Konnect serverless or any cloud DP)
+::: details Option B - Public URL via ngrok (Konnect serverless or any cloud DP)
 
 ```bash
 # Start Keycloak (if not already running from 07-C)
@@ -137,13 +137,13 @@ If you have not completed Step 1 Option B, a `*.kongcloud.dev` serverless gatewa
 ## Step 3 - Verify token injection 🎯
 
 ```bash
-# Kong fetches a token from Keycloak and injects it upstream — check what httpbin echoes back
+# Kong fetches a token from Keycloak and injects it upstream - check what httpbin echoes back
 curl -s $KONNECT_PROXY_URL/flights/anything \
   | jq '.headers.Authorization'
 # "Bearer eyJhbGciOiJS..."
 ```
 
-The client sent **no** Authorization header. Kong fetched the M2M token from Keycloak and injected it — transparently.
+The client sent **no** Authorization header. Kong fetched the M2M token from Keycloak and injected it - transparently.
 
 ```bash
 # Inspect first 60 chars of the injected token
@@ -201,3 +201,8 @@ We continue with the same `flights-svc` in 07-E. **Don't clean up yet.**
 ---
 
 **Next:** [Lab 07-E - OPA Policy-as-Code →](./07-opa)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

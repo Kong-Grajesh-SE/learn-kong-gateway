@@ -21,7 +21,7 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
-        # Allow any origin — acceptable for a local lab environment.
+        # Allow any origin - acceptable for a local lab environment.
         # Restrict to specific origins in production.
         cors:
           allowed_origins:
@@ -36,7 +36,7 @@ processors:
     limit_percentage: 75
     spike_limit_percentage: 20
 
-  # Batch spans before exporting — fewer round-trips, lower CPU.
+  # Batch spans before exporting - fewer round-trips, lower CPU.
   batch:
     timeout: 1s
     send_batch_size: 512
@@ -47,7 +47,7 @@ exporters:
   otlp/jaeger:
     endpoint: jaeger:4317    # "jaeger" = the Docker Compose service name
     tls:
-      insecure: true         # internal Docker network — no TLS needed
+      insecure: true         # internal Docker network - no TLS needed
 
   # ── Optional: Honeycomb ───────────────────────────────────────────────────
   # Uncomment and set your API key in the environment or directly here.
@@ -69,11 +69,11 @@ exporters:
     verbosity: normal        # change to "detailed" to dump full span attributes
 
 extensions:
-  # Health check — Docker Compose or k8s liveness probes call :13133/
+  # Health check - Docker Compose or k8s liveness probes call :13133/
   health_check:
     endpoint: 0.0.0.0:13133
 
-  # pprof profiling endpoint — remove in production
+  # pprof profiling endpoint - remove in production
   pprof:
     endpoint: 0.0.0.0:1777
 
@@ -87,7 +87,7 @@ service:
       exporters:  [otlp/jaeger, debug]
 
     # Accept metric OTLP payloads too (Kong can emit these in future versions).
-    # For now they are logged and dropped — add a Prometheus exporter to keep them.
+    # For now they are logged and dropped - add a Prometheus exporter to keep them.
     metrics:
       receivers:  [otlp]
       processors: [memory_limiter, batch]

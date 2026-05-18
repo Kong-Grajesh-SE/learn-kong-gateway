@@ -219,3 +219,8 @@ In Hybrid mode, the DP has no local Admin API (`:8001`). All config goes through
 ---
 
 **Next:** Continue with [Lab 01 - Quick Start](./01-quick-start) from Step 4 (Create a Service). The Service/Route/traffic flow is identical - just substitute `http://localhost:8000` for the serverless proxy URL.
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

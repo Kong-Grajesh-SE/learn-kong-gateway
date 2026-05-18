@@ -77,3 +77,8 @@ Client  ─▶  rate-limiting  ─▶  proxy-cache  ─▶  Service  ─▶  Ups
 ---
 
 *Previous: [Module 03 - Easy Wins](/module-03-authentication/) · Next: [Module 05 - Transformations →](/module-05-transformations/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

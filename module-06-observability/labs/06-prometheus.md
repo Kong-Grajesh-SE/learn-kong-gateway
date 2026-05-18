@@ -201,3 +201,8 @@ A team added a `user_id` label to a counter "for debugging." With 100K active us
 ---
 
 **Next:** [Lab 06-C - OpenTelemetry →](./06-opentelemetry)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# verify-module-07.sh  —  Module 07 (Enterprise & Advanced) live verification
+# verify-module-07.sh  -  Module 07 (Enterprise & Advanced) live verification
 #
 # Walks every lab in sequence, creates real config on 'flights-route', runs
 # HTTP assertions, pauses for Konnect portal review, then cleans up.
@@ -19,7 +19,7 @@
 #                   rate-limiting-advanced per consumer_group (10/100/1000 rpm);
 #                   graceful skip with warning if plugin unavailable on CP tier.
 #
-# 07-C    optional  OIDC via Keycloak — interactive menu when KEYCLOAK_BASE unset:
+# 07-C    optional  OIDC via Keycloak - interactive menu when KEYCLOAK_BASE unset:
 #                   A=hybrid (localhost:8080), B=ngrok/public URL, S=skip.
 #                   Verifies realm discovery, attaches openid-connect plugin
 #                   (auth_methods=[password,bearer], login_action=response),
@@ -27,20 +27,20 @@
 #                   Bearer token → 200, no token → 401.
 #                   Plugin stays visible for portal review, removed on Enter.
 #
-# 07-D    optional  Upstream OAuth M2M — same Keycloak as 07-C.
+# 07-D    optional  Upstream OAuth M2M - same Keycloak as 07-C.
 #                   Verifies kong-m2m client_credentials token endpoint directly,
 #                   attaches upstream-oauth (token_endpoint, memory cache 300s),
 #                   confirms upstream receives "Authorization: Bearer <token>".
 #
-# 07-E    optional  OPA policy-as-code — prompts for OPA_URL or Enter to skip.
+# 07-E    optional  OPA policy-as-code - prompts for OPA_URL or Enter to skip.
 #                   Parses URL into host/port/path, attaches opa plugin
 #                   (include_consumer + include_service in payload), calls route,
 #                   logs HTTP status (outcome depends on your Rego policy).
 #
-# 07-F    config    Datakit — attaches a 1-node pipeline; graceful skip with
+# 07-F    config    Datakit - attaches a 1-node pipeline; graceful skip with
 #                   warning if plugin unavailable on this CP tier.
 #
-# 07-G    skipped   RBAC — self-hosted Kong Manager only. Prints guidance and
+# 07-G    skipped   RBAC - self-hosted Kong Manager only. Prints guidance and
 #                   exits gracefully on Konnect serverless.
 #
 # Pauses: after each lab the script waits for Enter so you can inspect the live
@@ -48,9 +48,9 @@
 #         Set SKIP_REVIEW=1 to bypass all pauses (CI / re-runs).
 #
 # Environment:
-#   KEYCLOAK_BASE  — pre-set to skip the 07-C/D interactive menu
-#   OPA_URL        — pre-set to skip the 07-E prompt
-#   SKIP_REVIEW=1  — bypass all pause_for_review prompts
+#   KEYCLOAK_BASE  - pre-set to skip the 07-C/D interactive menu
+#   OPA_URL        - pre-set to skip the 07-E prompt
+#   SKIP_REVIEW=1  - bypass all pause_for_review prompts
 #
 # Usage:  ./scripts/verify-module-07.sh [serverless|hybrid]
 
@@ -369,7 +369,7 @@ done
 # ACL now allows all 3 tiers; wait for 200 with free-key (proves both old ACL is gone and new one is live)
 wait_for_http_status "${KONNECT_PROXY_URL}/flights/get" 200 30 -H 'X-API-Key: free-key-001' || true
 if (( _rla_count == 0 )); then
-  warn "  Skipping RateLimit header checks — rate-limiting-advanced unavailable on this CP tier"
+  warn "  Skipping RateLimit header checks - rate-limiting-advanced unavailable on this CP tier"
 else
   for PAIR in 'free-key-001:10' 'pro-key-001:100' 'ent-key-001:1000'; do
     KEY=${PAIR%:*}; EXPECT=${PAIR#*:}
@@ -401,9 +401,9 @@ _kc_proxy_url="${KONNECT_PROXY_URL}"
 
 if [[ -z "${KEYCLOAK_BASE:-}" ]]; then
   printf '\n  Labs 07-C and 07-D require Keycloak. How would you like to connect?\n\n'
-  printf '    A)  Hybrid mode  — local Docker Kong DP + Keycloak both on localhost\n'
-  printf '    B)  Public URL   — Keycloak exposed via ngrok / tunnel (works with serverless)\n'
-  printf '    S)  Skip         — skip 07-C and 07-D\n\n'
+  printf '    A)  Hybrid mode  - local Docker Kong DP + Keycloak both on localhost\n'
+  printf '    B)  Public URL   - Keycloak exposed via ngrok / tunnel (works with serverless)\n'
+  printf '    S)  Skip         - skip 07-C and 07-D\n\n'
   printf '  Choice [A/B/S]: '
   read -r _kc_choice
   # bash 3.2 (macOS) has no ^^ operator; use tr for uppercase
@@ -417,7 +417,7 @@ if [[ -z "${KEYCLOAK_BASE:-}" ]]; then
       ok "Option A selected: Keycloak=localhost:8080  DP proxy=$_kc_proxy_url"
       ;;
     B)
-      printf '  Public Keycloak base URL — host only, no /realms/... path\n'
+      printf '  Public Keycloak base URL - host only, no /realms/... path\n'
       printf '  (e.g. https://abc123.ngrok-free.app  or  https://abc123.ngrok.io): '
       read -r _in
       # Strip trailing slash and any accidental /realms/... suffix the user may have pasted
@@ -425,7 +425,7 @@ if [[ -z "${KEYCLOAK_BASE:-}" ]]; then
       _in="${_in%/realms*}"
       KEYCLOAK_BASE="${_in%/}"
       if [[ -z "$KEYCLOAK_BASE" ]]; then
-        warn "No URL entered — skipping 07-C and 07-D."
+        warn "No URL entered - skipping 07-C and 07-D."
         KEYCLOAK_BASE=""
       else
         # The Kong plugin uses the public ngrok URL (KEYCLOAK_BASE).
@@ -444,7 +444,7 @@ if [[ -z "${KEYCLOAK_BASE:-}" ]]; then
 fi
 
 if [[ -z "${KEYCLOAK_BASE:-}" ]]; then
-  warn "No Keycloak — 07-C and 07-D skipped."
+  warn "No Keycloak - 07-C and 07-D skipped."
 else
   ISSUER="${KEYCLOAK_BASE}/realms/kong-bootcamp"
   step "1. Verify Keycloak is reachable + has the kong-bootcamp realm"

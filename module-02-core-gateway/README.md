@@ -84,3 +84,8 @@ After the labs, can you answer these without looking?
 ---
 
 *Previous: [Module 01 - Your First Gateway](/module-01-orientation/) · Next: [Module 03 - Easy Wins →](/module-03-authentication/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

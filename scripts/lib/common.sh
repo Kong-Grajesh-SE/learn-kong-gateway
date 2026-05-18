@@ -688,8 +688,8 @@ cleanup_everything() {
     echo '_format_version: "3.0"' | deck_sync_stdin >/dev/null
     ok "decK reset complete (CP is empty)."
   else
-    # Delete plugins → routes → consumers → upstreams → services (order matters for FKs)
-    for kind in plugins routes consumers upstreams services; do
+    # Delete plugins → routes → consumers → upstreams → services → consumer_groups (order matters for FKs)
+    for kind in plugins routes consumers upstreams services consumer_groups; do
       local ids
       ids=$(api_curl GET "/$kind" | jq -r '.data[]?.id' 2>/dev/null || true)
       if [[ -n "$ids" ]]; then

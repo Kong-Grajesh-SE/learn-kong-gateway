@@ -200,3 +200,8 @@ config:
 ---
 
 *Previous: [Lab 07-D - OPA](./07-opa) · Back to [Module 07 Overview →](/module-07-enterprise/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

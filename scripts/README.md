@@ -218,12 +218,12 @@ Some sub-sections need external infrastructure. The scripts prompt for endpoints
 |---|---|---|
 | `verify-module-06.sh` | http-log     | Webhook receiver - use [webhook.site](https://webhook.site) for free |
 | `verify-module-06.sh` | opentelemetry | OTLP HTTP endpoint - Jaeger (local), Honeycomb, Grafana Cloud Traces |
-| `verify-module-07.sh` | OIDC (07-C) + Upstream OAuth (07-D) | **Keycloak** — Option A (hybrid): `cd module-07-enterprise/keycloak && docker compose up -d`, then `KEYCLOAK_BASE=http://localhost:8080`. Option B (serverless/ngrok): `./scripts/setup-keycloak.sh ngrok`, paste the printed public URL at the interactive prompt. |
+| `verify-module-07.sh` | OIDC (07-C) + Upstream OAuth (07-D) | **Keycloak** - Option A (hybrid): `cd module-07-enterprise/keycloak && docker compose up -d`, then `KEYCLOAK_BASE=http://localhost:8080`. Option B (serverless/ngrok): `./scripts/setup-keycloak.sh ngrok`, paste the printed public URL at the interactive prompt. |
 | `verify-module-07.sh` | OPA (07-E)   | OPA server - run [OPA](https://www.openpolicyagent.org) and pass `OPA_URL` |
 
 ### Quick Keycloak setup
 
-**Option A — hybrid mode** (local Kong DP + Keycloak on the same Docker host):
+**Option A - hybrid mode** (local Kong DP + Keycloak on the same Docker host):
 
 ```bash
 cd module-07-enterprise/keycloak
@@ -237,14 +237,14 @@ cd -
 KEYCLOAK_BASE=http://localhost:8080 ./scripts/verify-module-07.sh hybrid
 ```
 
-**Option B — serverless / ngrok** (Konnect serverless DP, Keycloak exposed via public tunnel):
+**Option B - serverless / ngrok** (Konnect serverless DP, Keycloak exposed via public tunnel):
 
 ```bash
 # Start Keycloak + open ngrok tunnel + patch frontendUrl automatically
 ./scripts/setup-keycloak.sh ngrok
 # Prints: KEYCLOAK_BASE=https://abc123.ngrok-free.app
 
-# Run verify — enter the printed ngrok URL when prompted (Option B)
+# Run verify - enter the printed ngrok URL when prompted (Option B)
 ./scripts/verify-module-07.sh serverless
 ```
 
@@ -371,3 +371,8 @@ hdr "Module 09 verification complete ✓"
 ## License
 
 These scripts are part of the [Kong API Gateway Bootcamp](../README.md) - same license as the parent repo.
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

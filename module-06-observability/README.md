@@ -72,3 +72,8 @@ Client → Kong ──┬─ http-log:        POST every request log line to htt
 ---
 
 *Previous: [Module 05 - Transformations](/module-05-transformations/) · Next: [Module 07 - Enterprise & Advanced →](/module-07-enterprise/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

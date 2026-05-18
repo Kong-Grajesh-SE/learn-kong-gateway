@@ -3,17 +3,17 @@
 # Local OTLP trace stack for Lab 06-C (OpenTelemetry).
 #
 # Stack:
-#   otelcol   OpenTelemetry Collector — receives OTLP from Kong, batches,
+#   otelcol   OpenTelemetry Collector - receives OTLP from Kong, batches,
 #             forwards to Jaeger.  Exposes ports 4317 (gRPC) and 4318 (HTTP)
 #             on the host so the Kong DP container can reach them via
 #             host.docker.internal.
-#   jaeger    Jaeger all-in-one — in-memory trace store + UI.  Only reachable
+#   jaeger    Jaeger all-in-one - in-memory trace store + UI.  Only reachable
 #             from otelcol (internal network); UI exposed on :16686.
 #
 # Quick start:
 #   cd module-06-observability/jaeger
 #   docker compose up -d
-#   open http://localhost:16686        # Jaeger UI — search "kong-bootcamp-flights"
+#   open http://localhost:16686        # Jaeger UI - search "kong-bootcamp-flights"
 #
 # Kong plugin endpoint (hybrid mode DP container → host):
 #   endpoint: "http://host.docker.internal:4318/v1/traces"
@@ -38,8 +38,8 @@ services:
     volumes:
       - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
     ports:
-      - "4317:4317"    # OTLP gRPC  — use grpc endpoint in Kong plugin config
-      - "4318:4318"    # OTLP HTTP  — preferred for Kong labs (simpler TLS-off)
+      - "4317:4317"    # OTLP gRPC  - use grpc endpoint in Kong plugin config
+      - "4318:4318"    # OTLP HTTP  - preferred for Kong labs (simpler TLS-off)
       - "8888:8888"    # Collector's own Prometheus metrics (optional scrape)
     depends_on:
       jaeger:
@@ -51,7 +51,7 @@ services:
   # ────────────────────────────────────────────────────────────────────────────
   # Jaeger all-in-one
   #
-  # In-memory trace store — restarting the container wipes all traces.
+  # In-memory trace store - restarting the container wipes all traces.
   # Accepts OTLP on its internal gRPC port 4317 (otelcol forwards there).
   # The Jaeger ports 4317/4318 are intentionally NOT published to the host;
   # only otelcol talks to Jaeger directly.  Kong → otelcol → Jaeger.
@@ -63,11 +63,11 @@ services:
       COLLECTOR_OTLP_ENABLED: "true"
       # Cap in-memory trace history.  Each trace is ~5-10 KB; 50 000 ≈ 250-500 MB.
       MEMORY_MAX_TRACES: "50000"
-      # Log level — set to debug if spans appear missing
+      # Log level - set to debug if spans appear missing
       LOG_LEVEL: "warn"
     ports:
       - "16686:16686"  # Jaeger query UI + API
-      # 14269 is the admin/healthcheck port — not exposed to host (internal only)
+      # 14269 is the admin/healthcheck port - not exposed to host (internal only)
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:14269/ 2>&1 | grep -q '{}' || exit 1"]
       interval: 10s

@@ -337,3 +337,8 @@ Run `./scripts/verify-module-01.sh serverless` from the repo root - it walks eve
 ---
 
 **Next:** [Module 02 - Routing & Topology →](/module-02-core-gateway/)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

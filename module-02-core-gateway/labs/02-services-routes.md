@@ -298,3 +298,8 @@ This becomes critical in Module 03+ when plugins attach to *specific* routes. At
 ---
 
 **Next:** [Lab 02-B - Upstreams & Health Checks →](./02-upstreams)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

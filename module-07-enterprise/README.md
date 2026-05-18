@@ -94,13 +94,13 @@ The script walks all seven labs in sequence against a live Konnect gateway. Each
 
 ### Keycloak for Labs 07-C and 07-D
 
-**Option A — hybrid mode** (local Docker DP, Keycloak on the same host):
+**Option A - hybrid mode** (local Docker DP, Keycloak on the same host):
 ```bash
 cd module-07-enterprise/keycloak && docker compose up -d
 # Then select A at the script's interactive menu
 ```
 
-**Option B — serverless mode** (Keycloak exposed via ngrok):
+**Option B - serverless mode** (Keycloak exposed via ngrok):
 ```bash
 ./scripts/setup-keycloak.sh ngrok   # starts Keycloak, opens tunnel, prints public URL
 # Then select B at the script's interactive menu and paste the URL
@@ -132,3 +132,8 @@ After the capstone, specialist deep-dives:
 ---
 
 *Previous: [Module 06 - Observability](/module-06-observability/) · Next: [Module 08 - Capstone →](/module-08-capstone/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

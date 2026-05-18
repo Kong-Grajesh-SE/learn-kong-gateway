@@ -316,3 +316,8 @@ Each works on **headers**, **querystring**, and **body** (where applicable). Tem
 ---
 
 **Next:** [Lab 05-B - Response Transformer →](./05-response-transformer)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

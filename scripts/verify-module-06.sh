@@ -127,11 +127,11 @@ hdr "Lab 06-B - Prometheus   [mode: $DEPLOY_MODE]"
 
 if [[ "$DEPLOY_MODE" == "serverless" ]]; then
   # The Prometheus plugin is not available on Konnect Serverless (cloud-gateways).
-  # Serverless DPs run on managed infrastructure — there is no DP status port (8100)
+  # Serverless DPs run on managed infrastructure - there is no DP status port (8100)
   # that an external Prometheus server can scrape.  Metrics are shipped automatically
   # to Konnect Analytics; no plugin install is required or possible.
   info "Prometheus plugin is not supported in serverless mode."
-  info "Konnect Serverless exports metrics to Konnect Analytics automatically — no plugin needed."
+  info "Konnect Serverless exports metrics to Konnect Analytics automatically - no plugin needed."
   pause_verify "Konnect UI → Analytics → confirm the baseline requests (generated above) appear in the last 5 minutes."
 else
   step "1. Enable prometheus plugin globally (no per_consumer)"

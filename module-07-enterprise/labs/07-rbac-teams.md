@@ -193,3 +193,8 @@ plugins:
 *🎉 Congratulations! You've completed the Kong API Gateway Bootcamp.*
 
 [← Back to Home](/)*
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

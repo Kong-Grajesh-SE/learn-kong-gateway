@@ -1,13 +1,13 @@
 # Keycloak setup for Module 07-C (OIDC) and 07-D (Upstream OAuth)
 
-> A preconfigured local Keycloak instance so you can run [Lab 07-C](../labs/07-oidc-auth-code) and [Lab 07-D](../labs/07-upstream-oauth) without spending an hour wiring up the IdP. Two users, two clients, one realm — all imported on first start.
+> A preconfigured local Keycloak instance so you can run [Lab 07-C](../labs/07-oidc-auth-code) and [Lab 07-D](../labs/07-upstream-oauth) without spending an hour wiring up the IdP. Two users, two clients, one realm - all imported on first start.
 
 ## What's in the box
 
 | File | Purpose |
 |---|---|
 | `docker-compose.yml` | Single Keycloak container, dev mode, port 8080 |
-| `realm-export.json` | Preconfigured `kong-bootcamp` realm — imported automatically on first start |
+| `realm-export.json` | Preconfigured `kong-bootcamp` realm - imported automatically on first start |
 | `README.md` | You are here |
 
 ## What's preconfigured in the realm
@@ -27,7 +27,7 @@
 
 ## Quick start
 
-Use the helper script from the repo root — it starts the container, waits for the realm import, and runs smoke tests:
+Use the helper script from the repo root - it starts the container, waits for the realm import, and runs smoke tests:
 
 ```bash
 ./scripts/setup-keycloak.sh          # start + verify
@@ -58,7 +58,7 @@ Open the admin console at <http://localhost:8080> (admin / admin) and switch the
 
 ## Deployment modes
 
-### Option A — Hybrid Docker DP (local Kong data plane)
+### Option A - Hybrid Docker DP (local Kong data plane)
 
 The Kong DP container runs on the same Docker host as Keycloak. Use `host.docker.internal` so the DP container can reach Keycloak on the host:
 
@@ -73,7 +73,7 @@ export KEYCLOAK_BASE=http://localhost:8080
 ./scripts/verify-module-07.sh   # choose Option A when prompted
 ```
 
-### Option B — Konnect serverless + ngrok tunnel
+### Option B - Konnect serverless + ngrok tunnel
 
 A Konnect serverless gateway runs in Konnect's cloud and **cannot reach `localhost`**. Expose Keycloak over the internet with ngrok so the Konnect DP can call the token and JWKS endpoints.
 
@@ -103,7 +103,7 @@ ngrok prints a forwarding URL, e.g.:
 Forwarding   https://abc123.ngrok-free.app -> http://localhost:8080
 ```
 
-Copy that HTTPS URL — it is your `KEYCLOAK_BASE` for this session.
+Copy that HTTPS URL - it is your `KEYCLOAK_BASE` for this session.
 
 #### 4. Update Keycloak's frontend URL
 
@@ -186,7 +186,7 @@ echo "Token (first 60 chars): ${TOKEN:0:60}…"
 echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq '{iss, sub, azp, exp}'
 ```
 
-## Test the Auth Code client (Lab 07-C) — password grant shortcut
+## Test the Auth Code client (Lab 07-C) - password grant shortcut
 
 The Auth Code flow requires a browser. For a quick smoke test, use the password grant (only enabled in this dev realm):
 
@@ -208,9 +208,9 @@ echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq '{preferred_username, e
 
 ---
 
-## Wiring into Kong (preview — full details in Lab 07-C)
+## Wiring into Kong (preview - full details in Lab 07-C)
 
-**Option A (hybrid DP)** — use `host.docker.internal` so the DP container can reach Keycloak:
+**Option A (hybrid DP)** - use `host.docker.internal` so the DP container can reach Keycloak:
 
 ```yaml
 plugins:
@@ -227,7 +227,7 @@ plugins:
       logout_path: /logout
 ```
 
-**Option B (serverless + ngrok)** — use the public ngrok URL:
+**Option B (serverless + ngrok)** - use the public ngrok URL:
 
 ```yaml
 plugins:
@@ -248,7 +248,7 @@ plugins:
 
 ## Production-style setup (optional)
 
-The default uses Keycloak's in-memory H2 store — fine for the lab, **wiped on every `docker compose down -v`**. For a persistent dev setup with Postgres:
+The default uses Keycloak's in-memory H2 store - fine for the lab, **wiped on every `docker compose down -v`**. For a persistent dev setup with Postgres:
 
 ```yaml
 # Add to docker-compose.yml
@@ -303,7 +303,7 @@ docker compose up -d
 ```
 
 ::: warning Secrets are test-only
-`kong-bootcamp-client-secret-replace-in-prod` and the test user passwords are checked into the repo for ease of setup. **Never** copy these into a real environment — rotate before any production use.
+`kong-bootcamp-client-secret-replace-in-prod` and the test user passwords are checked into the repo for ease of setup. **Never** copy these into a real environment - rotate before any production use.
 :::
 
 ## What's in the box
@@ -466,3 +466,8 @@ docker compose down -v       # stops + drops embedded DB
 ::: warning Secrets are test-only
 `kong-bootcamp-client-secret-replace-in-prod` and the test user passwords are checked into the repo for ease of setup. **Never** copy these into a real environment - rotate before any production use.
 :::
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

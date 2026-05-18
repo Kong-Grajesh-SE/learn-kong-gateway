@@ -367,3 +367,8 @@ M04 (Identity & ACL) will re-create them with **consumer groups** attached. Star
 ---
 
 **Next:** Module 04 - Identity & ACL (coming soon). You'll group your Consumers into tiers (free/paid/internal), enforce access with `acl`, and meet two more auth plugins: `jwt` and `hmac-auth`.
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

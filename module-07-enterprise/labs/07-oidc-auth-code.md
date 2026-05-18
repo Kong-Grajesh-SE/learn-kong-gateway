@@ -25,7 +25,7 @@ This is for **human users in browsers**. For machine-to-machine OAuth, use **Ups
 
 Konnect's **serverless** data plane runs in Kong's cloud and cannot reach `localhost`. Choose the option that matches your setup, then continue with Step 2 using the resulting `$KEYCLOAK_BASE` value.
 
-::: details Option A — Hybrid mode (local Docker DP + local Keycloak) · *recommended for bootcamp*
+::: details Option A - Hybrid mode (local Docker DP + local Keycloak) · *recommended for bootcamp*
 
 **When to use:** You started a local Kong data plane with `DEPLOY_MODE=hybrid` (the Docker Compose in the module-01 lab).
 
@@ -48,7 +48,7 @@ The OIDC plugin `issuer` will be `http://localhost:8080/realms/kong-bootcamp`.
 The local Kong DP container can reach Keycloak because both run on the same Docker host.
 :::
 
-::: details Option B — Public URL via ngrok (Konnect serverless or any cloud DP)
+::: details Option B - Public URL via ngrok (Konnect serverless or any cloud DP)
 
 **When to use:** Your proxy URL is a `*.kongcloud.dev` serverless gateway, or any Kong DP that is not on the same machine as Keycloak.
 
@@ -60,7 +60,7 @@ docker compose up -d
 # 2. Expose Keycloak publicly
 ngrok http 8080
 # → Forwarding: https://abc123.ngrok.io → localhost:8080
-#   Copy the https URL — you'll use it as KEYCLOAK_BASE.
+#   Copy the https URL - you'll use it as KEYCLOAK_BASE.
 
 # 3. Verify the realm is reachable via the public URL
 KEYCLOAK_BASE="https://abc123.ngrok.io"   # ← replace with YOUR ngrok URL
@@ -72,7 +72,7 @@ curl -s "${KEYCLOAK_BASE}/realms/kong-bootcamp/.well-known/openid-configuration"
 export KEYCLOAK_BASE
 ```
 
-> **Note:** The `issuer` in Keycloak's discovery doc may still say `localhost:8080` — this is cosmetic.  
+> **Note:** The `issuer` in Keycloak's discovery doc may still say `localhost:8080` - this is cosmetic.  
 > Kong uses the `issuer` value you supply, not the one Keycloak advertises.
 :::
 
@@ -81,7 +81,7 @@ export KEYCLOAK_BASE
 | Client ID | Secret | Use |
 |---|---|---|
 | `kong` | `kong-bootcamp-client-secret-replace-in-prod` | OIDC Bearer validation (this lab) |
-| `kong-m2m` | `kong-m2m-client-secret-replace-in-prod` | Client Credentials — Lab 07-D |
+| `kong-m2m` | `kong-m2m-client-secret-replace-in-prod` | Client Credentials - Lab 07-D |
 
 **Test users:**
 
@@ -214,7 +214,7 @@ curl -si $KONNECT_PROXY_URL/flights/get \
 | `bearer_token_param_type` | `header` | Where to look for Bearer token |
 
 ::: tip Konnect-native IdP (no Keycloak needed)
-For production, use [Kong Identity](https://docs.konghq.com/konnect/reference/auth/konnect-oauth-server/) — Konnect's built-in OIDC provider. Replace the `issuer` with your Konnect org's OIDC endpoint.
+For production, use [Kong Identity](https://docs.konghq.com/konnect/reference/auth/konnect-oauth-server/) - Konnect's built-in OIDC provider. Replace the `issuer` with your Konnect org's OIDC endpoint.
 :::
 
 ---
@@ -224,3 +224,8 @@ We continue with the same `flights-svc` in 07-D. **Don't clean up yet.**
 ---
 
 **Next:** [Lab 07-D - Upstream OAuth (M2M) →](./07-upstream-oauth)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

@@ -350,3 +350,8 @@ The Module 02 verification script (coming next) exercises every step here automa
 ---
 
 **Next:** [Module 03 - Easy Wins →](/module-03-authentication/) - your first four plugins: `key-auth`, `cors`, `ip-restriction`, `correlation-id`. Each takes one config block. Big payoff for low effort.
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

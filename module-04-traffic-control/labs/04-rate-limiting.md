@@ -297,3 +297,8 @@ Revert to `limit_by: consumer` before the next lab.
 ---
 
 **Next:** [Lab 04-B - Proxy Cache →](./04-proxy-cache)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

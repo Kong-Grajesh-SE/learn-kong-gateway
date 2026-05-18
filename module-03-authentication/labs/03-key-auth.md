@@ -374,3 +374,8 @@ You learned:
 ---
 
 **Next:** [Lab 03-B - CORS, IP Restriction, Correlation ID →](./03-easy-wins)
+
+---
+
+> **Found an issue with this page?**  
+> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.
