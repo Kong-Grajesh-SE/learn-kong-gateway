@@ -6,3 +6,4 @@ dist/
 scripts/.env
 scripts/*-config-dump.yaml
 .claude/
+insomnia/

@@ -105,6 +105,7 @@ export default defineConfig({
           { text: '🔄 APIOps with decK',       link: 'https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/', target: '_blank' },
           { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
           { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
+          { text: '🌋 Volcano SDK Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-volcano-sdk/', target: '_blank' },
         ],
       },
       {
