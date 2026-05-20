@@ -194,26 +194,6 @@ After the core bootcamp, go deep on the use cases you actually ship:
    ─────────────────────────────────────────────────────────────────────────── */
 
 .VPHome .VPHero + .VPFeatures { padding-top: 48px; }
-.VPHero .image-container {
-  width: 400px !important;
-  height: 400px !important;
-  border-radius: 0 !important;
-  overflow: visible !important;
-}
-.VPHero .image-src {
-  max-width: 400px !important;
-  width: 400px !important;
-}
-@media (min-width: 960px) {
-  .VPHero .image-container {
-    width: 480px !important;
-    height: 480px !important;
-  }
-  .VPHero .image-src {
-    max-width: 480px !important;
-    width: 480px !important;
-  }
-}
 
 /* ── Kong version banner ─────────────────────────────────────────────────── */
 .kong-version-banner {
@@ -390,8 +370,3 @@ After the core bootcamp, go deep on the use cases you actually ship:
   color: var(--kong-bay);
 }
 </style>
-
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.
