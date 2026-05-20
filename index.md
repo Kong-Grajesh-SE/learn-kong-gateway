@@ -148,45 +148,6 @@ Pick the path that matches you:
   </a>
 </div>
 
----
-
-## Specialist deep-dives
-
-After the core bootcamp, go deep on the use cases you actually ship:
-
-<div class="kong-specialists">
-  <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-kong-ai-gateway/" target="_blank" rel="noopener">
-    <div class="kong-specialist-emoji">🤖</div>
-    <div class="kong-specialist-title">AI Gateway</div>
-    <div class="kong-specialist-body">LLM proxying, prompt-injection guards, semantic caching, PII sanitisation.</div>
-  </a>
-  <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/" target="_blank" rel="noopener">
-    <div class="kong-specialist-emoji">🛠️</div>
-    <div class="kong-specialist-title">Agentic AI & MCP</div>
-    <div class="kong-specialist-body">MCP proxy patterns, OAuth2/PKCE for agents, agent-to-agent routing.</div>
-  </a>
-  <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-kong-dev-portal/" target="_blank" rel="noopener">
-    <div class="kong-specialist-emoji">🌐</div>
-    <div class="kong-specialist-title">Developer Portal</div>
-    <div class="kong-specialist-body">Publish APIs, OIDC SSO for portal users, self-service app registration, RBAC.</div>
-  </a>
-  <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/" target="_blank" rel="noopener">
-    <div class="kong-specialist-emoji">🔄</div>
-    <div class="kong-specialist-title">APIOps with decK</div>
-    <div class="kong-specialist-body">GitOps for Kong config - GitHub Actions, quality gates, drift detection.</div>
-  </a>
-  <a class="kong-specialist" href="https://kong-grajesh-se.github.io/learn-insomnia/" target="_blank" rel="noopener">
-    <div class="kong-specialist-emoji">🎮</div>
-    <div class="kong-specialist-title">Insomnia</div>
-    <div class="kong-specialist-body">API design, testing, and debugging with Insomnia.</div>
-  </a>
-  <a class="kong-specialist" href="https://kong-grajesh-se.github.io/bring-your-own-agent/" target="_blank" rel="noopener">
-    <div class="kong-specialist-emoji">🤝</div>
-    <div class="kong-specialist-title">Bring Your Own Agent</div>
-    <div class="kong-specialist-body">Plug your own agent into Kong's MCP/AI infrastructure.</div>
-  </a>
-</div>
-
 <style>
 /* ───────────────────────────────────────────────────────────────────────────
    Home page - extensions to the Kong Design System.
@@ -332,41 +293,4 @@ After the core bootcamp, go deep on the use cases you actually ship:
   color: var(--kong-bay);
 }
 .kong-path:hover .kong-path-cta { color: var(--kong-lime); }
-
-/* ── Specialist bootcamp cards ───────────────────────────────────────────── */
-.kong-specialists {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-  max-width: 1100px;
-  margin: 0 auto 80px;
-}
-.kong-specialist {
-  display: block;
-  padding: 18px;
-  background: var(--kong-surface-3);
-  border: 1px solid var(--kong-border-muted);
-  border-radius: 10px;
-  text-decoration: none !important;
-  color: inherit;
-  transition: transform 0.2s, border-color 0.2s, background 0.2s;
-}
-.kong-specialist:hover {
-  transform: translateY(-2px);
-  border-color: rgba(204, 255, 0, 0.25);
-  background: var(--kong-surface);
-}
-.kong-specialist-emoji { font-size: 1.4rem; margin-bottom: 6px; }
-.kong-specialist-title {
-  font-family: 'Funnel Sans', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--kong-lime);
-  margin-bottom: 6px;
-}
-.kong-specialist-body {
-  font-size: 0.82rem;
-  line-height: 1.55;
-  color: var(--kong-bay);
-}
 </style>
