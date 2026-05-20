@@ -193,8 +193,8 @@ body {
   line-height: 1.75;
 }
 
-.dark .VPHero .image { max-width: 320px !important; max-height: 320px !important; }
-.dark .VPHero .image-container { max-width: 320px !important; max-height: 320px !important; }
+.dark .VPHero .image { max-width: 420px !important; max-height: 420px !important; }
+.dark .VPHero .image-container { max-width: 420px !important; max-height: 420px !important; }
 .dark .VPHero .image-container img { max-width: 100% !important; max-height: 100% !important; object-fit: contain; }
 
 /* ════════ FEATURE CARDS ═════════════════════════════════════════════════ */
