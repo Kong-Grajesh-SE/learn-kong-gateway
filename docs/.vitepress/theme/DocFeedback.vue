@@ -17,7 +17,7 @@ const issueUrl = computed(() => {
   if (!githubRepo.value) return ''
   const title = encodeURIComponent(`Feedback: ${page.value.title || route.path}`)
   const body = encodeURIComponent(
-    `**Page:** ${route.path}\n**URL:** ${site.value.base}${route.path.replace(/^\//, '')}\n\n**Feedback:**\n\n_Please describe the issue or suggestion:_\n`
+    `**Page:** ${route.path}\n**URL:** ${route.path}\n\n**Feedback:**\n\n_Please describe the issue or suggestion:_\n`
   )
   return `https://github.com/${githubRepo.value}/issues/new?title=${title}&body=${body}&labels=feedback`
 })

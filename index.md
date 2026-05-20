@@ -27,49 +27,49 @@ features:
     title: "01 - Your First Gateway"
     details: "Create a serverless Kong gateway on Konnect. Build a Service + Route and proxy your first real request to httpbin.konghq.com. No Docker or prior Kong knowledge required - ~60 min."
     link: /module-01-orientation/
-    linkText: Start here →
+    linkText: Start here
 
   - icon: 🔀
     title: "02 - Routing & Topology"
     details: "Three Services routed by path and method. Load-balance across two backend targets with weighted round-robin, then add active + passive health checks for auto-failover. No plugins yet - just routing primitives."
     link: /module-02-core-gateway/
-    linkText: Build a real topology →
+    linkText: Build a real topology
 
   - icon: 🔑
     title: "03 - Easy Wins"
     details: "Four Tier-1 plugins, one config block each: key-auth (with Consumers), cors, ip-restriction, correlation-id. Big payoff for low effort. This is also where Consumers get a real job."
     link: /module-03-authentication/
-    linkText: Get quick wins →
+    linkText: Get quick wins
 
   - icon: 🚦
     title: "04 - Traffic & Resilience"
     details: "Per-Consumer rate limits with X-RateLimit headers + Retry-After contract. Then cache GETs in Kong's memory and watch latency drop from 200ms to <10ms. Two plugins, ~60 min."
     link: /module-04-traffic-control/
-    linkText: Add guardrails →
+    linkText: Add guardrails
 
   - icon: 🔧
     title: "05 - Transformations"
     details: "Rewrite requests and responses on the fly. Inject per-Consumer headers via templates, rename query params for v2→v3 migrations, strip sensitive fields, conditional transforms by status code."
     link: /module-05-transformations/
-    linkText: Reshape traffic →
+    linkText: Reshape traffic
 
   - icon: 📊
     title: "06 - Observability"
     details: "Three pillars wired up: http-log (push), prometheus (pull), opentelemetry (push). The four RED queries (rate, errors, p95 upstream, p95 Kong). Why per-Consumer labels are a cardinality bomb."
     link: /module-06-observability/
-    linkText: See your traffic →
+    linkText: See your traffic
 
   - icon: 🔐
     title: "07 - Enterprise & Advanced"
     details: "Seven advanced plugins/features: JWT, HMAC, ACL with Consumer Groups, OIDC Auth Code Flow, Upstream OAuth (M2M), OPA policy-as-code, Datakit orchestration, Kong Manager RBAC. ~3.5h, à la carte."
     link: /module-07-enterprise/
-    linkText: Go advanced →
+    linkText: Go advanced
 
   - icon: 🏁
     title: "08 - Capstone"
     details: "Design and build the full production gateway. 11+ plugins working together, three Consumer tiers, two auth methods, full observability - proved by a 15-step acceptance test. ~3 hours. No more hand-holding."
     link: /module-08-capstone/
-    linkText: Take the capstone →
+    linkText: Take the capstone
 
 ---
 
