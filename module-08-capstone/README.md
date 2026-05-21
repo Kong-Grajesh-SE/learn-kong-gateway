@@ -88,7 +88,7 @@ Run the 15-step acceptance script at the end of the lab. **Every step must pass.
 This is the final module of the core bootcamp. From here:
 
 - Run the verification script (coming soon).
-- Tackle a **specialist bootcamp** - AI Gateway, Agentic AI & MCP, Developer Portal, APIOps.
+- Continue with other bootcamps to deepen your Kong platform knowledge.
 - Take what you've built into your real team's environment.
 
 ::: tip If you got 15/15

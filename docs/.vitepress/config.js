@@ -97,18 +97,6 @@ export default defineConfig({
         ],
       },
       {
-        text: '🚀 Specialist Bootcamps',
-        items: [
-          { text: '🤖 AI Gateway Bootcamp',    link: 'https://kong-grajesh-se.github.io/learn-kong-ai-gateway/', target: '_blank' },
-          { text: '🛠️ Agentic AI & MCP',       link: 'https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/', target: '_blank' },
-          { text: '🌐 Developer Portal',       link: 'https://kong-grajesh-se.github.io/learn-kong-dev-portal/', target: '_blank' },
-          { text: '🔄 APIOps with decK',       link: 'https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/', target: '_blank' },
-          { text: '🎮 Insomnia Bootcamp',      link: 'https://kong-grajesh-se.github.io/learn-insomnia/', target: '_blank' },
-          { text: '🤝 Bring Your Own Agent',   link: 'https://kong-grajesh-se.github.io/bring-your-own-agent/', target: '_blank' },
-          { text: '🌋 Volcano SDK Bootcamp',  link: 'https://kong-grajesh-se.github.io/learn-volcano-sdk/', target: '_blank' },
-        ],
-      },
-      {
         text: '🔗 Resources',
         items: [
           { text: '📖 Kong Docs',    link: 'https://developer.konghq.com/gateway/', target: '_blank' },
@@ -118,6 +106,7 @@ export default defineConfig({
           { text: '🎮 Insomnia',     link: 'https://insomnia.rest', target: '_blank' },
         ],
       },
+      { text: '🏠 All Bootcamps', link: 'https://kong-grajesh-se.github.io/learn-kong-bootcamps/', target: '_blank' },
     ],
 
     // Sidebar - one group per module, collapsed by default except first

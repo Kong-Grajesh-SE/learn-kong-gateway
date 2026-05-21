@@ -123,12 +123,6 @@ Clients: `kong` (password + auth-code) · `kong-m2m` (client_credentials)
 
 If you've completed M01–M07 - **you've covered every plugin a typical Kong deployment uses**. The final step is putting it all together: **[Module 08 - Capstone →](/module-08-capstone/)** is one ~3-hour lab where you design and build the full production gateway with 11+ plugins working together, then prove it works with a 15-step acceptance test.
 
-After the capstone, specialist deep-dives:
-- **AI Gateway Bootcamp ↗** - LLM proxying, prompt injection guards, semantic caching.
-- **Agentic AI & MCP Bootcamp ↗** - MCP proxy patterns, agent-to-agent routing.
-- **Developer Portal Bootcamp ↗** - Publishing APIs to external developers with self-service.
-- **APIOps Bootcamp ↗** - Production-grade GitHub Actions pipelines for Kong config.
-
 ---
 
 *Previous: [Module 06 - Observability](/module-06-observability/) · Next: [Module 08 - Capstone →](/module-08-capstone/)*

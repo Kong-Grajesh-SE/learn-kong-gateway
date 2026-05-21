@@ -411,7 +411,7 @@ echo '_format_version: "3.0"' | deck gateway sync - \
 If you got 15/15 - congratulations. You can design and operate Kong gateways now.
 
 **What to do next:**
-- Specialist bootcamps (AI Gateway, Agentic AI & MCP, Dev Portal, APIOps) for deeper niches.
+- Continue with other bootcamps (AI Gateway, Agentic AI & MCP, Dev Portal, APIOps) for deeper topics.
 - Take the verify-script approach in your own team's repo - automated acceptance tests for every PR that touches gateway config.
 - The Capstone YAML you just wrote is a reasonable starting point for a real `kong.yaml` in production. Strip the lab tags, add your real upstreams and IdP URLs, and you have something to deploy.
 

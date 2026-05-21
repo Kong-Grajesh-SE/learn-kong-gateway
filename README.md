@@ -6,14 +6,14 @@
 
 > ⚙️ **Requires Kong Gateway 3.14 or newer**, deployed on Konnect (free tier works) or self-hosted. Plugin schemas, header behavior (`X-Forwarded-Path`, `X-Forwarded-Prefix`), and decK syntax assume 3.14+. Older Kong releases will fail several labs.
 
-A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structured modules, fully hands-on - from your first proxied request to a 15-step production capstone - plus specialist deep-dives.
+A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structured modules, fully hands-on - from your first proxied request to a 15-step production capstone.
 
 ## Overview
 
 | | |
 |---|---|
 | **Kong version** | **Kong Gateway 3.14+** (older versions will fail several labs) |
-| **Format** | 8 modules (incl. Capstone) + Plugin Reference + Specialist Bootcamps |
+| **Format** | 8 modules (incl. Capstone) + Plugin Reference |
 | **Flow** | Foundations → Easy Wins → Traffic → Transform → Observe → Advanced → Capstone |
 | **Platform** | macOS · Linux · Docker (Konnect serverless works without Docker) |
 | **Audience** | Developers, DevOps, Platform teams, Enterprise architects |
@@ -58,19 +58,6 @@ See the **[Plugin Reference →](./plugin-reference.md)** for the full reference
 | **Traffic Control** | `rate-limiting-advanced` · `proxy-cache` · `proxy-cache-advanced` · `datakit` |
 | **Transformation** | `request-transformer-advanced` · `response-transformer-advanced` · `correlation-id` |
 | **Observability** | `http-log` · `prometheus` · `opentelemetry` |
-
-## Specialist Bootcamps
-
-After completing the core modules, go deep with these specialist tracks:
-
-| Bootcamp | Focus | Link |
-|---|---|---|
-| **AI Gateway** | LLM proxy, prompt injection guards, semantic caching, PII sanitization | [learn-kong-ai-gateway ↗](https://kong-grajesh-se.github.io/learn-kong-ai-gateway/) |
-| **Agentic AI & MCP** | MCP proxy, OAuth2/PKCE for agents, Agent-to-Agent routing | [learn-kong-agentic-bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-agentic-bootcamp/) |
-| **Developer Portal** | Publish APIs, OIDC SSO, self-service app registration, RBAC | [learn-kong-dev-portal ↗](https://kong-grajesh-se.github.io/learn-kong-dev-portal/) |
-| **APIOps** | GitOps with decK, GitHub Actions CI/CD, quality gates | [learn-kong-apiops-bootcamp ↗](https://kong-grajesh-se.github.io/learn-kong-apiops-bootcamp/) |
-| **Insomnia** | API design, testing, and debugging with Insomnia | [learn-insomnia ↗](https://kong-grajesh-se.github.io/learn-insomnia/) |
-| **Bring Your Own Agent** | Plug your own agent into Kong's MCP/AI infrastructure | [bring-your-own-agent ↗](https://kong-grajesh-se.github.io/bring-your-own-agent/) |
 
 ## Prerequisites
 
