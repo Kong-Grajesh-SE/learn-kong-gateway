@@ -202,7 +202,3 @@ We continue with the same `flights-svc` in 07-E. **Don't clean up yet.**
 
 **Next:** [Lab 07-E - OPA Policy-as-Code →](./07-opa)
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

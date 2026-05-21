@@ -225,7 +225,3 @@ We continue with the same `flights-svc` in 07-D. **Don't clean up yet.**
 
 **Next:** [Lab 07-D - Upstream OAuth (M2M) →](./07-upstream-oauth)
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

@@ -198,7 +198,3 @@ echo '_format_version: "3.0"' | deck gateway sync - \
 
 **Next:** [Module 05 - Transformations →](/module-05-transformations/) - reshape requests and responses in flight. Strip sensitive fields. Add headers your upstream expects. Rename query params during a migration.
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

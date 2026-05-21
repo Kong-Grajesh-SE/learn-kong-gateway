@@ -89,7 +89,3 @@ After the labs, can you answer these without looking?
 
 *Previous: [Module 02 - Routing & Topology](/module-02-core-gateway/) · Next: Module 04 - Identity & ACL (coming soon)*
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

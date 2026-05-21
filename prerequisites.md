@@ -247,7 +247,3 @@ Expected response:
 
 **You're ready!** → [🏗️ Deployment Options →](/deployment-overview)
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

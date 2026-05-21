@@ -99,7 +99,3 @@ You're now competent enough to **design** a Kong deployment, not just follow one
 
 *Previous: [Module 07 - Enterprise & Advanced](/module-07-enterprise/) · Home: [Bootcamp index](/)*
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

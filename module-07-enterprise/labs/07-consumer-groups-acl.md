@@ -313,7 +313,3 @@ We continue with the same Service in 07-C (OIDC). **Don't clean up yet.**
 
 **Next:** [Lab 07-C - OIDC Authorization Code Flow →](./07-oidc-auth-code)
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

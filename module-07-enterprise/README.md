@@ -133,7 +133,3 @@ After the capstone, specialist deep-dives:
 
 *Previous: [Module 06 - Observability](/module-06-observability/) · Next: [Module 08 - Capstone →](/module-08-capstone/)*
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

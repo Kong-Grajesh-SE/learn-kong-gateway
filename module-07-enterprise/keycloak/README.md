@@ -467,7 +467,3 @@ docker compose down -v       # stops + drops embedded DB
 `kong-bootcamp-client-secret-replace-in-prod` and the test user passwords are checked into the repo for ease of setup. **Never** copy these into a real environment - rotate before any production use.
 :::
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

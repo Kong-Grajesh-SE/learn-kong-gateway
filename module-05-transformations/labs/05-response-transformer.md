@@ -243,7 +243,3 @@ echo '_format_version: "3.0"' | deck gateway sync - \
 
 **Next:** [Module 06 - Observability →](/module-06-observability/) - make your gateway's traffic visible. Stream logs, scrape metrics, distributed traces.
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

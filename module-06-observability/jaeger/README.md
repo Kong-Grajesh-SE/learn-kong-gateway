@@ -112,7 +112,3 @@ docker compose down --remove-orphans
 
 Jaeger stores traces in memory only. All history is lost on restart - this is intentional for a lab environment. For persistent storage see [Jaeger docs → Storage Backends](https://www.jaegertracing.io/docs/latest/deployment/#storage-backends).
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

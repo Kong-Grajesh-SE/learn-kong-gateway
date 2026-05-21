@@ -82,7 +82,3 @@ The basic `request-transformer` / `response-transformer` plugins are Kong OSS. T
 
 *Previous: [Module 04 - Traffic & Resilience](/module-04-traffic-control/) · Next: [Module 06 - Observability →](/module-06-observability/)*
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

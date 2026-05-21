@@ -372,7 +372,3 @@ hdr "Module 09 verification complete ✓"
 
 These scripts are part of the [Kong API Gateway Bootcamp](../README.md) - same license as the parent repo.
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

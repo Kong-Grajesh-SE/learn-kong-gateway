@@ -257,7 +257,3 @@ We continue with the Service in 07-B (Consumer Groups + ACL). **Don't clean up y
 
 **Next:** [Lab 07-B - Consumer Groups & ACL →](./07-consumer-groups-acl)
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.

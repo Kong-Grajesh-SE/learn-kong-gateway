@@ -1600,7 +1600,3 @@ curl -s http://localhost:8000/demo/anything | jq '{method, headers, json}'
 
 *← [🏗️ Deployment Options](/deployment-overview) · [🧭 Start Module 01 →](/module-01-orientation/)*
 
----
-
-> **Found an issue with this page?**  
-> [Open a GitHub issue](https://github.com/Kong-Grajesh-SE/learn-kong-gateway/issues/new) - all reports are monitored and fixed promptly.
