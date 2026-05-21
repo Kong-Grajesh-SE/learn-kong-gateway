@@ -328,11 +328,31 @@ body {
 .kong-deploy-card .card-desc { font-size: 0.85rem; color: var(--kong-text-muted); line-height: 1.5; }
 
 /* ════════ RESPONSIVE ════════════════════════════════════════════════════ */
+@media (max-width: 959px) {
+  .dark .VPHero .image,
+  .dark .VPHero .image-container { max-width: 280px !important; max-height: 280px !important; }
+}
 @media (max-width: 768px) {
   .VPHero .name    { font-size: 2.2rem; }
   .VPHero .text    { font-size: 1.3rem; }
-  .VPHero .tagline { font-size: 0.95rem; }
+  .VPHero .tagline { font-size: 0.95rem; max-width: 100%; }
   .kong-deploy-grid { grid-template-columns: 1fr; }
+  .kong-version-banner { flex-direction: column; text-align: center; gap: 8px; padding: 12px 14px; }
+  .kong-version-text { min-width: 0; }
+  .kong-stats-strip { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
+  .kong-paths { grid-template-columns: 1fr; }
+  .kong-path { padding: 18px; }
+  .VPHome .vp-doc { padding: 0 16px; }
+  .dark .VPFeature .details { font-size: 0.82rem; }
+  .vp-doc table { font-size: 0.85rem; display: block; overflow-x: auto; }
+}
+@media (max-width: 480px) {
+  .VPHero .name    { font-size: 1.8rem; }
+  .VPHero .text    { font-size: 1.1rem; }
+  .VPHero .tagline { font-size: 0.88rem; }
+  .kong-stats-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 32px auto 16px; }
+  .kong-stats-strip .stat-num { font-size: 1.4rem; }
+  .kong-version-banner { margin: 32px 8px 0; }
 }
 
 /* ════════ SCROLL OFFSET - prevent headings hiding under sticky nav ══════ */

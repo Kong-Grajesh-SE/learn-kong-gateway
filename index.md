@@ -222,7 +222,15 @@ Pick the path that matches you:
   margin-top: 6px;
 }
 @media (max-width: 768px) {
-  .kong-stats-strip { grid-template-columns: repeat(2, 1fr); }
+  .kong-stats-strip { grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 16px; }
+  .kong-stats-strip .stat-num { font-size: 1.6rem; }
+  .kong-version-banner { flex-direction: column; text-align: center; gap: 8px; padding: 12px 14px; }
+  .kong-version-text { min-width: 0; }
+  .kong-paths { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .kong-stats-strip { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .kong-stats-strip .stat-num { font-size: 1.3rem; }
 }
 
 /* ── Section spacing ─────────────────────────────────────────────────────── */
