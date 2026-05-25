@@ -2,6 +2,8 @@
 
 > **Goal.** In ~45 minutes you'll set up two **stateless** auth plugins: `jwt` (any JWS-signed token) and `hmac-auth` (signed request bodies + headers, replay-protected). You'll mint tokens / signatures locally and watch Kong validate them at the edge.
 
+![Kong Advanced Authentication Architecture](../../public/advanced_auth_architecture.png)
+
 ::: tip Stateless = Kong stores no credential metadata per request
 Both plugins validate a signature using a shared secret on the Consumer. There's no per-request DB lookup, no token cache to invalidate. **Scales horizontally for free.** That's their key advantage over `key-auth`.
 :::

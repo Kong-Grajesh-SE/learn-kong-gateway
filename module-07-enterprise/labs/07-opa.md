@@ -4,6 +4,8 @@
 >
 > **Why OPA instead of `acl`?** ACL is a static allowlist by group. OPA is a **policy engine** - it can read request headers, body, time-of-day, even external HTTP data, then return allow/deny. The security team can change policies without re-deploying gateway config.
 
+![Kong OPA Architecture](../../public/opa_architecture.png)
+
 ::: warning Enterprise plugin
 `opa` requires **Kong Gateway Enterprise** or **Konnect**. We're on Kong 3.14, so this works.
 :::

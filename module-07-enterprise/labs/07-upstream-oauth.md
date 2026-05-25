@@ -4,6 +4,8 @@
 >
 > **Pattern.** This is the **machine-to-machine** counterpart to Lab 07-C's browser flow. Tokens are issued to *Kong* on behalf of the API, not to the client.
 
+![Kong Upstream OAuth Architecture](../../public/upstream_oauth_architecture.png)
+
 ::: warning Enterprise plugin
 `upstream-oauth` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.8 - we're on 3.14, so you're good.
 :::

@@ -2,6 +2,8 @@
 
 > **Goal.** In ~30 minutes you'll attach `request-transformer-advanced` to `flights-route` and use all five operations (`add`, `remove`, `replace`, `rename`, `append`). You'll also use **template variables** to inject per-Consumer values without writing one plugin per Consumer.
 
+![Kong Request Transformer Architecture](../../public/request_transformer_architecture.png)
+
 ::: tip Picking up from M04
 Start from a clean CP. Same baseline as before: `flights-svc` + `flights-route` + Consumers + `key-auth`.
 

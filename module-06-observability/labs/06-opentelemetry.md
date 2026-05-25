@@ -2,6 +2,8 @@
 
 > **Goal.** In ~35 minutes you'll attach the `opentelemetry` plugin to your gateway, send traces to an OTLP collector (Jaeger), and observe how Kong's spans connect to your upstream's spans - when you have an upstream that emits them.
 
+![Kong OpenTelemetry Architecture](../../public/opentelemetry_architecture.png)
+
 OpenTelemetry (OTel) is the open standard for distributed traces. Kong's plugin emits **spans** (work units with start/end timestamps) and propagates **trace context** via the `traceparent` header so downstream services can continue the trace.
 
 ---

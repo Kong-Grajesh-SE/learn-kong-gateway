@@ -2,6 +2,8 @@
 
 > **Goal.** In ~30 minutes you'll organize Consumers into **groups** (`free`, `pro`, `enterprise`), then use `acl` to allow/deny by group - without listing individual Consumers. This is the standard pattern for tier-based access control.
 
+![Kong Consumer Groups and ACL Architecture](../../public/consumer_groups_acl_architecture.png)
+
 After this lab you'll be able to:
 - Add a Consumer to a Consumer Group with one API call.
 - Allow a Route to be accessed only by certain groups.

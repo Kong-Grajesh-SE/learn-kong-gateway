@@ -2,6 +2,8 @@
 
 > **Goal.** In ~25 minutes you'll attach `proxy-cache` to `flights-route`, watch a request hit the upstream once and then serve from Kong's memory for every subsequent identical request, and learn what NOT to cache.
 
+![Kong Proxy Cache Architecture](../../public/proxy_cache_architecture.png)
+
 Picking up from Lab 04-A - `flights-svc`, `flights-route`, three Consumers, `key-auth`, and per-Consumer `rate-limiting` are still in place.
 
 ---

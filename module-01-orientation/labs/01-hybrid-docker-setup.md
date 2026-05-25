@@ -4,6 +4,8 @@
 >
 > **Skip this lab if** you just want to learn Kong's concepts - go to [01-quick-start (serverless)](./01-quick-start) instead. You can always come back.
 
+![Kong Hybrid Mode Architecture](../../public/hybrid_docker_architecture.png)
+
 ::: info Hybrid Architecture
 **Control Plane (CP)** → Konnect cloud. Holds all configuration.
 **Data Plane (DP)** → Your laptop (Docker). Handles all live API traffic.

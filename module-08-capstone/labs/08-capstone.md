@@ -2,6 +2,8 @@
 
 > **Goal.** In ~2.5–3 hours, build a single Kong gateway that satisfies the **15-step acceptance script** at the end. Eleven-plus plugins, three Consumer tiers, two auth methods, full observability. **No more step-by-step.** You'll get a brief, hints, and an acceptance test - *how* you implement it is up to you.
 
+![Kong Capstone Architecture](../../public/capstone_architecture.png)
+
 ::: tip How to use this lab
 Read **Stage 0** all the way through before you type anything. Sketch your `kong.yaml` on paper or in a scratch file. Then start executing.
 

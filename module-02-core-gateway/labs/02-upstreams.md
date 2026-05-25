@@ -2,6 +2,8 @@
 
 > **Goal.** In ~50 minutes you'll move `flights-svc` from a single backend to a pool of **two targets** with **weighted load balancing**, then add **active and passive health checks** that auto-remove sick targets - and put them back when they recover.
 
+![Kong Upstreams Architecture](../../public/upstreams_architecture.png)
+
 Picking up from Lab 02-A. Same Konnect CP, same env vars. The three Services (`flights-svc`, `hotels-svc`, `cars-svc`) and their routes are still in place.
 
 ---

@@ -4,6 +4,8 @@
 >
 > **Pre-reqs.** The `module-07-enterprise/keycloak/` docker-compose running locally. See the `README.md` in that folder.
 
+![Kong OIDC Auth Code Architecture](../../public/oidc_auth_code_architecture.png)
+
 ::: warning Auth Code = browser flow, not API flow
 This is for **human users in browsers**. For machine-to-machine OAuth, use **Upstream OAuth** (07-D) instead. Confusing them is the #1 OIDC setup mistake.
 :::

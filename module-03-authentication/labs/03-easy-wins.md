@@ -2,6 +2,8 @@
 
 > **Goal.** In ~45 minutes you'll add three more Tier-1 plugins back-to-back. Each is a single config block. You'll **enable, test the failure mode each one prevents**, and move on.
 
+![Kong Standard Plugins Architecture](../../public/easy_wins_architecture.png)
+
 Picking up from Lab 03-A. Same `flights-svc` and `flights-route` are in place, no plugins on the route (you dropped `key-auth` at the end of 03-A).
 
 ---

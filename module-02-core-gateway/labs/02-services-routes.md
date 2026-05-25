@@ -2,6 +2,8 @@
 
 > **Goal.** In ~40 minutes you'll register **three Services**, route them by **path and method**, and learn what happens when routes overlap or conflict. We'll deliberately break things so you can see Kong's matching priority in action.
 
+![Kong Services and Routes Architecture](../../public/services_routes_architecture.png)
+
 ::: tip Picking up from M01
 This lab assumes the same Konnect Control Plane and env vars from [Module 01](/module-01-orientation/). If you ran the cleanup at the end of M01, your CP is empty - exactly what we want.
 

@@ -4,6 +4,8 @@
 >
 > **When you'd reach for Datakit.** The upstream needs work the upstream itself can't (or shouldn't) do - calling another service, reshaping data, evaluating conditional logic. Without Datakit you'd chain several Kong plugins or write a microservice; with Datakit it's a single DAG declared inline.
 
+![Kong Datakit Architecture](../../public/datakit_architecture.png)
+
 ::: warning Enterprise plugin
 `datakit` requires **Kong Gateway Enterprise** or **Konnect**. Min version: Kong Gateway 3.11 - we're on 3.14, so this works.
 :::

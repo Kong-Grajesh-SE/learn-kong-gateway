@@ -2,6 +2,8 @@
 
 > **Goal.** In ~30 minutes you'll attach `response-transformer-advanced` to `flights-route` and rewrite responses before they leave the gateway. You'll strip internal fields, add metadata, and make a transform fire **only for certain status codes**.
 
+![Kong Response Transformer Architecture](../../public/response_transformer_architecture.png)
+
 Picking up from Lab 05-A - request transformer is in place, baseline still works.
 
 ---

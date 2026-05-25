@@ -4,6 +4,8 @@
 >
 > **No Docker required.** Konnect runs the gateway for you. If you prefer running it locally in Docker, see [01-hybrid-docker-setup](./01-hybrid-docker-setup) instead.
 
+![API Gateway Quick Start Architecture](../../public/quick_start_architecture.png)
+
 Throughout the lab, every step ends with a **✅ Checkpoint** so you know you're on track before continuing.
 
 ---

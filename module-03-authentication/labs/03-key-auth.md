@@ -2,6 +2,8 @@
 
 > **Goal.** In ~45 minutes you'll create two Consumers, give each one an API key, attach `key-auth` to a Route, and test what happens with no key, a wrong key, and the right key. You'll finish with a gateway that knows *who* is calling - the foundation everything in M04+ builds on.
 
+![Kong Key Authentication Architecture](../../public/key_auth_architecture.png)
+
 ::: tip Picking up from M02
 Make sure you ran the M02 cleanup at the end of Lab 02-B. The lab assumes an empty CP.
 

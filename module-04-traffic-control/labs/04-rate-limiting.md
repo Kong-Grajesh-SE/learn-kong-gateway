@@ -2,6 +2,8 @@
 
 > **Goal.** In ~35 minutes you'll attach `rate-limiting` to `flights-route`, watch counters update in the response headers, deliberately exceed the limit (HTTP 429), and learn how to set **different limits for different Consumers**.
 
+![Kong Rate Limiting Architecture](../../public/rate_limiting_architecture.png)
+
 ::: tip Picking up from M03
 Make sure the M03 cleanup ran. We start from an empty CP.
 

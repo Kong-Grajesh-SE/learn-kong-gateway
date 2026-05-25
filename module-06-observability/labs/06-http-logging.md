@@ -2,6 +2,8 @@
 
 > **Goal.** In ~25 minutes you'll attach `http-log` to `flights-route`, ship every request log line to a free public webhook receiver, and inspect the structure of a Kong log entry - including the latency breakdown that makes "Kong vs upstream" obvious.
 
+![Kong HTTP Logging Architecture](../../public/http_logging_architecture.png)
+
 ::: tip Picking up from M03+
 Start from the M03 baseline (Service + Route + Consumers + key-auth). Optional plugins from M04/M05 don't matter for observability.
 :::

@@ -2,6 +2,8 @@
 
 > **Goal.** In ~30 minutes you'll enable the `prometheus` plugin, learn what each metric means, and build the four **RED metrics** queries (Rate, Errors, Duration) you'll use forever after.
 
+![Kong Prometheus Architecture](../../public/prometheus_architecture.png)
+
 ::: warning Serverless caveat
 Konnect **serverless** gateways don't expose a public `/metrics` endpoint - instead the same metrics flow into Konnect Analytics. You can still complete this lab on serverless conceptually, but the scrape step requires either:
 - A **hybrid** Docker DP (which exposes `/metrics` on port 8100), or
