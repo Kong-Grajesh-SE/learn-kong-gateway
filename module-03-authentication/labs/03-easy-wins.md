@@ -304,17 +304,7 @@ Three real uses *today*:
 
 You added three more plugins, each solving a real, immediate problem:
 
-```
-                     CORS - let app.mytravel.com call us
-                     IP-Restriction - block scrapers / restrict to office IPs
-                     Correlation-ID - one ID per request, end to end
-
-Client ─▶ Kong Gateway ─▶ Service ─▶ Upstream
-              │
-              ├─ correlation-id (global)  ← injects X-Correlation-ID
-              ├─ cors (global)            ← sets Access-Control-* on responses
-              └─ ip-restriction (route)   ← allow/deny by client IP
-```
+![Kong Standard Plugins Architecture](../../public/easy_wins_architecture_1.png)
 
 **Plugin scope reminder:**
 - `cors` and `correlation-id` are **global** - apply to every request through the gateway.
