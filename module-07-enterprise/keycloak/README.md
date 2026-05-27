@@ -21,7 +21,7 @@
 | **User 2** | `bob-admin` / `bob-password` (role: admin) |
 | **Client (Auth Code, Lab 07-C)** | `kong` / secret: `kong-bootcamp-client-secret-replace-in-prod` |
 | **Client (M2M, Lab 07-D)** | `kong-m2m` / secret: `kong-m2m-client-secret-replace-in-prod` |
-| **Redirect URIs allowed** | `http://localhost:8000/*`, `http://localhost:8080/*`, `https://*.kongcloud.dev/*` |
+| **Redirect URIs allowed** | `http://localhost:8000/*`, `http://localhost:8080/*`, `https://*.kongcloud.dev/*`, `https://*.us.serverless.gateways.konggateway.com/*` |
 
 ---
 
@@ -76,6 +76,17 @@ export KEYCLOAK_BASE=http://localhost:8080
 ### Option B - Konnect serverless + ngrok tunnel
 
 A Konnect serverless gateway runs in Konnect's cloud and **cannot reach `localhost`**. Expose Keycloak over the internet with ngrok so the Konnect DP can call the token and JWKS endpoints.
+
+#### Recommended: use the helper script
+
+The `setup-keycloak.sh ngrok` command starts Keycloak (if not already running), opens the tunnel, and automatically sets Keycloak's `frontendUrl` to the public HTTPS URL — ensuring the `iss` claim in every token matches the issuer Kong's OIDC plugin validates against:
+
+```bash
+./scripts/setup-keycloak.sh ngrok
+# Prints: export KEYCLOAK_BASE=https://xxxxx.ngrok-free.app
+```
+
+Copy the printed `export` and skip to step 5. The manual steps below are for reference.
 
 #### 1. Install ngrok
 
@@ -140,8 +151,8 @@ export KEYCLOAK_BASE=$NGROK_URL
 The free ngrok plan assigns a new URL each time you run `ngrok http 8080`. You must repeat step 4 (update frontend URL) and re-export `KEYCLOAK_BASE` after every restart. A paid ngrok plan with a static domain avoids this.
 :::
 
-::: tip Redirect URI is already whitelisted
-`realm-export.json` pre-approves `https://*.kongcloud.dev/*` as a valid redirect URI, so the OIDC authorization-code callback works with any Konnect serverless proxy URL without touching the Keycloak admin UI.
+::: tip Redirect URIs are pre-approved
+`realm-export.json` pre-approves `https://*.kongcloud.dev/*` and `https://*.us.serverless.gateways.konggateway.com/*` as valid redirect URIs, covering both Konnect proxy URL patterns without any manual Keycloak admin UI changes.
 :::
 
 ---
@@ -205,6 +216,59 @@ TOKEN=$(curl -s -X POST \
 
 echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq '{preferred_username, email, realm_access}'
 ```
+
+---
+
+## Testing via browser (full OIDC Authorization Code flow)
+
+The password grant above is a non-interactive shortcut. To exercise the real browser login experience — Keycloak login page → credential entry → redirect back to Kong — use one of the two options below.
+
+### Option A — Quick test: inject token via ModHeader
+
+No Kong plugin changes required.
+
+1. Install the [ModHeader](https://modheader.com) browser extension (Chrome / Firefox)
+2. Open any tab, press **F12 → Console**, and run:
+   ```js
+   const r = await fetch("https://YOUR-NGROK.ngrok-free.app/realms/kong-bootcamp/protocol/openid-connect/token", {
+     method: "POST",
+     headers: {
+       "Content-Type": "application/x-www-form-urlencoded",
+       "ngrok-skip-browser-warning": "true"   // bypasses ngrok free-tier interstitial on POST
+     },
+     body: new URLSearchParams({
+       grant_type: "password",
+       client_id: "kong",
+       client_secret: "kong-bootcamp-client-secret-replace-in-prod",
+       username: "alice",
+       password: "alice-password"
+     })
+   });
+   const { access_token } = await r.json();
+   console.log(access_token);
+   ```
+   Replace `YOUR-NGROK` with your actual ngrok subdomain. For hybrid/localhost mode use `localhost:8080` and remove the bypass header.
+
+3. In ModHeader, add request header: `Authorization: Bearer <paste-token>`
+4. Navigate to your Kong proxy URL — expect a **200** response with the httpbin JSON body
+
+### Option B — Full login page: authorization code flow
+
+Requires a one-time plugin config change in the Konnect portal.
+
+1. Update the `openid-connect` plugin on `flights-route`:
+
+   | Config field | Verify script value | Browser login value |
+   |---|---|---|
+   | `login_action` | `response` | `redirect` |
+   | `auth_methods` | `password, bearer, client_credentials` | `authorization_code, bearer, session` |
+
+2. Navigate to your Kong proxy URL in the browser
+3. Kong detects no session → redirects to the Keycloak login page
+4. Log in as **`alice`** / **`alice-password`**
+5. Keycloak redirects back to Kong → Kong exchanges the auth code → sets a session cookie → returns the **200** httpbin response
+
+> **Before re-running the verify script**, revert `login_action` to `response` and `auth_methods` to `["password", "bearer", "client_credentials"]`. The automated tests use the password-grant flow and will fail against a redirect-only config.
 
 ---
 

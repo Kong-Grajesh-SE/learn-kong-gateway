@@ -87,7 +87,8 @@
       "redirectUris": [
         "http://localhost:8000/*",
         "http://localhost:8080/*",
-        "https://*.kongcloud.dev/*"
+        "https://*.kongcloud.dev/*",
+        "https://*.us.serverless.gateways.konggateway.com/*"
       ],
       "webOrigins": [
         "http://localhost:8000",
@@ -109,6 +110,7 @@
         "backchannel.logout.revoke.offline.tokens": "false"
       },
       "defaultClientScopes": [
+        "openid",
         "web-origins",
         "profile",
         "roles",
@@ -141,7 +143,17 @@
       }
     }
   ],
-  "clientScopes": [],
+  "clientScopes": [
+    { "name": "openid",          "protocol": "openid-connect", "description": "OpenID Connect built-in scope",                              "attributes": { "include.in.token.scope": "true"  } },
+    { "name": "profile",         "protocol": "openid-connect", "description": "OpenID Connect built-in scope: profile",                     "attributes": { "include.in.token.scope": "true"  } },
+    { "name": "email",           "protocol": "openid-connect", "description": "OpenID Connect built-in scope: email",                       "attributes": { "include.in.token.scope": "true"  } },
+    { "name": "roles",           "protocol": "openid-connect", "description": "OpenID Connect scope for realm and client roles",            "attributes": { "include.in.token.scope": "false" } },
+    { "name": "web-origins",     "protocol": "openid-connect", "description": "OpenID Connect scope for allowed web origins",               "attributes": { "include.in.token.scope": "false" } },
+    { "name": "offline_access",  "protocol": "openid-connect", "description": "OpenID Connect built-in scope: offline_access",              "attributes": { "include.in.token.scope": "true"  } },
+    { "name": "microprofile-jwt","protocol": "openid-connect", "description": "Microprofile - JWT built-in scope",                         "attributes": { "include.in.token.scope": "true"  } },
+    { "name": "address",         "protocol": "openid-connect", "description": "OpenID Connect built-in scope: address",                     "attributes": { "include.in.token.scope": "true"  } },
+    { "name": "phone",           "protocol": "openid-connect", "description": "OpenID Connect built-in scope: phone",                       "attributes": { "include.in.token.scope": "true"  } }
+  ],
   "browserSecurityHeaders": {
     "contentSecurityPolicyReportOnly": "",
     "xContentTypeOptions": "nosniff",
