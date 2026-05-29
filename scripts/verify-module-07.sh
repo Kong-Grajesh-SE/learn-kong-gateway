@@ -92,6 +92,7 @@ check_kong_version
 verify_hybrid_dp
 
 cleanup_if_needed
+snapshot_deck_dump "module-07" "pre-apply"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers specific to this module
@@ -214,6 +215,7 @@ ok "flights-route id=$RID"
 # Lab 07-A - JWT + HMAC
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 07-A - JWT + HMAC"
+snapshot_deck_dump "module-07" "lab-07a-pre"
 
 # ────── JWT ──────
 step "JWT: attach plugin (key_claim_name=iss, verify exp) to flights-route"
@@ -317,6 +319,7 @@ HMAC_PID=$(api_curl GET "/routes/$RID/plugins?name=hmac-auth" | jq -r '.data[0]?
 # Lab 07-B - Consumer Groups + ACL
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 07-B - Consumer Groups + ACL"
+snapshot_deck_dump "module-07" "lab-07b-pre"
 
 step "1. Attach key-auth + acl (allow only pro-tier and enterprise-tier) to flights-route"
 api_write POST "/routes/$RID/plugins" \
@@ -395,6 +398,7 @@ done
 # Lab 07-C - OIDC Auth Code Flow (requires Keycloak)
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 07-C - OIDC Authorization Code Flow"
+snapshot_deck_dump "module-07" "lab-07c-pre"
 
 # _kc_proxy_url: proxy URL to use for Keycloak labs (may differ from KONNECT_PROXY_URL in serverless mode)
 _kc_proxy_url="${KONNECT_PROXY_URL}"
@@ -515,6 +519,7 @@ fi
 # Lab 07-D - Upstream OAuth (M2M; requires Keycloak)
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 07-D - Upstream OAuth (M2M)"
+snapshot_deck_dump "module-07" "lab-07d-pre"
 
 if [[ -z "${KEYCLOAK_BASE:-}" ]]; then
   warn "No Keycloak - skipping 07-D."
@@ -582,6 +587,7 @@ fi
 # Lab 07-E - OPA (requires OPA running)
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 07-E - OPA Policy-as-Code"
+snapshot_deck_dump "module-07" "lab-07e-pre"
 
 prompt_var OPA_URL "OPA decision endpoint (e.g. http://host.docker.internal:8181/v1/data/myapp/authz/allow). Press Enter to SKIP."
 
@@ -633,6 +639,7 @@ fi
 # Lab 07-F - Datakit (config-only verification)
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 07-F - Datakit (config-only verification)"
+snapshot_deck_dump "module-07" "lab-07f-pre"
 step "1. Attempt to attach a minimal datakit plugin"
 DK_RESULT=$(api_write POST "/routes/$RID/plugins" "$(jq -n '{
   name: "datakit",

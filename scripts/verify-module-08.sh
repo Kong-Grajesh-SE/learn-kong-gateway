@@ -66,6 +66,7 @@ mint_jwt_hs256() {
 if [[ "$RUN_MODE" == "apply" ]]; then
   hdr "Apply: building the reference Capstone solution"
   cleanup_if_needed
+  snapshot_deck_dump "module-08" "pre-apply"
 
   # Use a public IP service - httpbin.konghq.com is on the internal network and
   # returns a private IP that Kong DP (cloud) never sees.

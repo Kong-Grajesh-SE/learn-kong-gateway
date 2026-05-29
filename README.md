@@ -8,6 +8,8 @@
 
 A partner-ready, end-to-end bootcamp for mastering Kong Gateway. Eight structured modules, fully hands-on - from your first proxied request to a 15-step production capstone.
 
+![Bootcamp Recap](./public/bootcamp_recap.png)
+
 ## Overview
 
 | | |

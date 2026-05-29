@@ -28,6 +28,7 @@ check_kong_version
 verify_hybrid_dp
 
 cleanup_if_needed
+snapshot_deck_dump "module-03" "pre-apply"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Build the baseline: Service + Route + 2 Consumers + an anonymous Consumer
@@ -100,6 +101,7 @@ pause_verify "Konnect → Consumers: confirm web-app (key: web-app-secret-key-00
 # Lab 03-A - key-auth deep dive
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 03-A - Consumers & key-auth"
+snapshot_deck_dump "module-03" "lab-03a-pre"
 
 step "1. Attach key-auth (no anonymous fallback yet) to flights-route"
 attach_keyauth() {
@@ -211,6 +213,7 @@ pause_verify "Konnect → Plugins: key-auth on flights-route with anonymous → 
 # Lab 03-B - cors + ip-restriction + correlation-id
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 03-B - CORS, IP Restriction, Correlation ID"
+snapshot_deck_dump "module-03" "lab-03b-pre"
 
 step "1. Detach key-auth and apply baseline + 3 Tier-1 plugins"
 

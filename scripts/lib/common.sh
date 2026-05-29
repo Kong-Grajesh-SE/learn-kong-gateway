@@ -642,6 +642,55 @@ cleanup_if_needed() {
   cleanup_everything
 }
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Snapshot helper — deck dump before each test applies config
+# ──────────────────────────────────────────────────────────────────────────────
+snapshot_deck_dump() {
+  # snapshot_deck_dump <test_name> <label>
+  # Creates:  scripts/snapshots/<test_name>/<label>.yaml
+  # Example:  snapshot_deck_dump "module-01" "pre-apply"
+  local test_name=$1 label=${2:-pre-apply}
+  local snap_dir="${SCRIPT_DIR}/snapshots/${test_name}"
+  mkdir -p "$snap_dir"
+  local snap_file="${snap_dir}/${label}.yaml"
+
+  step "Snapshot: saving deck dump → ${snap_file##*/}"
+  if command -v deck >/dev/null 2>&1; then
+    if deck gateway dump \
+         --konnect-token "$KONNECT_TOKEN" \
+         --konnect-control-plane-name "$KONNECT_CP_NAME" \
+         --output-file "$snap_file" >/dev/null 2>&1; then
+      ok "Snapshot saved: $snap_file"
+    else
+      warn "deck gateway dump failed — saving API-based snapshot instead"
+      _snapshot_via_api "$snap_file"
+    fi
+  else
+    info "deck not available — saving API-based snapshot"
+    _snapshot_via_api "$snap_file"
+  fi
+}
+
+_snapshot_via_api() {
+  # Fallback: dump services, routes, plugins, consumers, upstreams via Admin API
+  local out=$1
+  {
+    echo "# API-based snapshot — $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    echo "_format_version: '3.0'"
+    echo "# --- services ---"
+    api_curl GET "/services" | jq -r '.data // []' 2>/dev/null
+    echo "# --- routes ---"
+    api_curl GET "/routes"   | jq -r '.data // []' 2>/dev/null
+    echo "# --- plugins ---"
+    api_curl GET "/plugins"  | jq -r '.data // []' 2>/dev/null
+    echo "# --- consumers ---"
+    api_curl GET "/consumers" | jq -r '.data // []' 2>/dev/null
+    echo "# --- upstreams ---"
+    api_curl GET "/upstreams" | jq -r '.data // []' 2>/dev/null
+  } > "$out"
+  ok "API snapshot saved: $out"
+}
+
 cleanup_generated_files() {
   # Remove any files the scripts dropped during a run.
   # NOTE: scripts/.env is preserved by default (it caches your credentials for re-runs).

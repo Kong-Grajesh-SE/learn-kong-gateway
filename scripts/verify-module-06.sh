@@ -32,6 +32,7 @@ check_kong_version
 verify_hybrid_dp
 
 cleanup_if_needed
+snapshot_deck_dump "module-06" "pre-apply"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Baseline
@@ -83,6 +84,7 @@ RID=$(api_curl GET "/routes/flights-route" | jq -r '.id')
 # Lab 06-A - HTTP Logging
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 06-A - HTTP Logging"
+snapshot_deck_dump "module-06" "lab-06a-pre"
 
 info "Logs need an HTTP endpoint to POST to. Easiest free option: https://webhook.site"
 prompt_var LOG_URL "Log receiver URL (POST target). Press Enter to SKIP http-log section."
@@ -124,6 +126,7 @@ fi
 # Lab 06-B - Prometheus
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 06-B - Prometheus   [mode: $DEPLOY_MODE]"
+snapshot_deck_dump "module-06" "lab-06b-pre"
 
 if [[ "$DEPLOY_MODE" == "serverless" ]]; then
   # The Prometheus plugin is not available on Konnect Serverless (cloud-gateways).
@@ -171,6 +174,7 @@ fi
 # Lab 06-C - OpenTelemetry
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 06-C - OpenTelemetry"
+snapshot_deck_dump "module-06" "lab-06c-pre"
 
 prompt_var OTLP_ENDPOINT "OTLP HTTP endpoint (e.g. http://localhost:4318/v1/traces). Press Enter to SKIP."
 

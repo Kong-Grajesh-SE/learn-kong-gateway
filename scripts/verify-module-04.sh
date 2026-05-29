@@ -28,6 +28,7 @@ check_kong_version
 verify_hybrid_dp
 
 cleanup_if_needed
+snapshot_deck_dump "module-04" "pre-apply"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Baseline: Service + Route + Consumers + key-auth
@@ -163,6 +164,7 @@ HTTP_WEB=$(curl -s -o /dev/null -w '%{http_code}' "${KONNECT_PROXY_URL}/flights/
 # Lab 04-A - Rate limiting
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 04-A - Rate Limiting"
+snapshot_deck_dump "module-04" "lab-04a-pre"
 
 # Find the route id once
 RID=$(api_curl GET "/routes/flights-route" | jq -r '.id')
@@ -232,6 +234,7 @@ pause_verify "Konnect → flights-route → Plugins: three rate-limiting instanc
 # Lab 04-B - Proxy Cache
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 04-B - Proxy Cache"
+snapshot_deck_dump "module-04" "lab-04b-pre"
 
 step "1. Attach proxy-cache to flights-route (60s TTL, in-memory, ignore upstream cache-control)"
 attach_cache() {

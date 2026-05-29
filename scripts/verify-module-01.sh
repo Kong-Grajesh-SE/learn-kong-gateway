@@ -96,6 +96,7 @@ fi
 
 verify_hybrid_dp
 cleanup_if_needed
+snapshot_deck_dump "module-01" "pre-apply"
 
 step "Proxy reachability - expect 404 'no Route matched' (no routes yet)"
 PROXY_BODY_HTTP=$(curl -sS -o /tmp/m01_proxy.txt -w '%{http_code}' "$KONNECT_PROXY_URL/" || true)
@@ -118,6 +119,7 @@ fi
 # Lab 01-B - First API call through Kong
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 01 - First API call through Kong"
+snapshot_deck_dump "module-01" "lab-01-pre"
 
 step "0. Sanity-check upstream directly (before Kong is in the path)"
 UP_RESP=$(curl -sS -w '\n__HTTP__%{http_code}' "$UPSTREAM_URL/get")
@@ -252,31 +254,36 @@ fi
 pause_verify "Konnect → Analytics (or your CP Overview): confirm you see request activity for '$SVC_NAME'. The traffic counter may take ~1 minute to update."
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Optional: kong-air (hybrid only - serverless DP can't reach host.docker.internal)
+# Optional: second service using an alternative public httpbin backend
+# Works in both serverless and hybrid modes (no local backend required)
 # ──────────────────────────────────────────────────────────────────────────────
-if [[ "$DEPLOY_MODE" == "hybrid" ]]; then
-  printf '\nOptional: also configure the "kong-air" service from the lab? It expects a backend on http://host.docker.internal:3001 [y/N]: '
-  read -r KA_CHOICE
-  if [[ "${KA_CHOICE:-N}" =~ ^[Yy]$ ]]; then
-    step "kong-air: create service + route"
-    m01_create_service_and_route "kong-air" "http://host.docker.internal:3001" "kong-air-route" "/kong-air"
-    if wait_for_route "${KONNECT_PROXY_URL}/kong-air/api/flights" 30; then
-      KA_HTTP=$(curl -sS -o /tmp/m01_ka.json -w '%{http_code}' "${KONNECT_PROXY_URL}/kong-air/api/flights")
-      if [[ "$KA_HTTP" == "200" ]]; then
-        ok "kong-air upstream reachable through Kong (HTTP 200)"
-        jq '.[0] // empty' /tmp/m01_ka.json 2>/dev/null || head -c 300 /tmp/m01_ka.json
-      else
-        warn "kong-air route is live but upstream returned HTTP $KA_HTTP (is kong-air running locally on :3001?)"
-      fi
-      rm -f /tmp/m01_ka.json
+printf '\nOptional: create a second service with an alternative httpbin backend? [Y/n]: '
+read -r EXTRA_CHOICE
+if [[ "${EXTRA_CHOICE:-Y}" =~ ^[Yy]$ ]]; then
+  # Pick a random alternative backend to demonstrate multiple upstreams
+  EXTRA_BACKENDS=("https://httpbin.org" "https://httpbun.com")
+  EXTRA_URL="${EXTRA_BACKENDS[$((RANDOM % ${#EXTRA_BACKENDS[@]}))]}"
+  EXTRA_SVC="httpbin-extra"
+  EXTRA_ROUTE="httpbin-extra-route"
+  EXTRA_PATH="/extra"
+
+  step "Create second service '$EXTRA_SVC' → $EXTRA_URL"
+  m01_create_service_and_route "$EXTRA_SVC" "$EXTRA_URL" "$EXTRA_ROUTE" "$EXTRA_PATH"
+
+  if wait_for_route "${KONNECT_PROXY_URL}${EXTRA_PATH}/get" 30; then
+    EXTRA_HTTP=$(curl -sS -o /tmp/m01_extra.json -w '%{http_code}' "${KONNECT_PROXY_URL}${EXTRA_PATH}/get")
+    if [[ "$EXTRA_HTTP" == "200" ]]; then
+      ok "$EXTRA_SVC upstream reachable through Kong (HTTP $EXTRA_HTTP)"
+      jq '{url, origin}' /tmp/m01_extra.json 2>/dev/null || head -c 300 /tmp/m01_extra.json
     else
-      warn "kong-air route never went live - skipping."
+      warn "$EXTRA_SVC route is live but upstream returned HTTP $EXTRA_HTTP"
     fi
+    rm -f /tmp/m01_extra.json
   else
-    info "Skipping kong-air."
+    warn "$EXTRA_SVC route never went live - skipping."
   fi
 else
-  info "Skipping kong-air (serverless DP cannot reach a backend on your laptop)."
+  info "Skipping extra httpbin service."
 fi
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -313,7 +320,7 @@ case "${CLEAN_CHOICE:-Y}" in
   *)
     cleanup_everything
     sleep 1
-    REMAINING=$(api_curl GET "/services" | jq -r '[.data[]? | select(.name=="'"$SVC_NAME"'" or .name=="kong-air")] | length')
+    REMAINING=$(api_curl GET "/services" | jq -r '[.data[]? | select(.name=="'"$SVC_NAME"'" or .name=="httpbin-extra")] | length')
     if [[ "$REMAINING" == "0" ]]; then
       ok "Cleanup complete - '$SVC_NAME' removed."
     else

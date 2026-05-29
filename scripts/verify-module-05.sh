@@ -28,6 +28,7 @@ check_kong_version
 verify_hybrid_dp
 
 cleanup_if_needed
+snapshot_deck_dump "module-05" "pre-apply"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Baseline: Service + Route + 2 Consumers + key-auth
@@ -96,6 +97,7 @@ wait_for_http_status "${KONNECT_PROXY_URL}/flights/anything" 200 90 \
 # Lab 05-A - request-transformer-advanced
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 05-A - Request Transformer"
+snapshot_deck_dump "module-05" "lab-05a-pre"
 
 step "1. Attach request-transformer-advanced with add/rename/remove/replace + template variables"
 attach_rta() {
@@ -203,6 +205,7 @@ pause_verify "Konnect → flights-route → Plugins: request-transformer-advance
 # Lab 05-B - response-transformer-advanced
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 05-B - Response Transformer"
+snapshot_deck_dump "module-05" "lab-05b-pre"
 
 step "1. Attach response-transformer-advanced (add headers + json, remove fields, conditional on 2XX)"
 attach_rtra() {

@@ -34,11 +34,13 @@ check_kong_version
 verify_hybrid_dp
 
 cleanup_if_needed
+snapshot_deck_dump "module-02" "pre-apply"
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Lab 02-A - Multi-Service routing
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 02-A - Multi-Service routing"
+snapshot_deck_dump "module-02" "lab-02a-pre"
 
 apply_lab_02a() {
   if [[ "$CFG_METHOD" == "deck" ]]; then
@@ -149,6 +151,7 @@ pause_verify "Konnect → Analytics → filter by service=flights-svc: confirm B
 # Lab 02-B - Upstreams & Health Checks
 # ──────────────────────────────────────────────────────────────────────────────
 hdr "Lab 02-B - Upstreams & Health Checks"
+snapshot_deck_dump "module-02" "lab-02b-pre"
 
 apply_lab_02b_upstream() {
   if [[ "$CFG_METHOD" == "deck" ]]; then
